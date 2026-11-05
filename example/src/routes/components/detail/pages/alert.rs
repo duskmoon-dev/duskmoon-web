@@ -1,6 +1,6 @@
 use crate::routes::components::catalog::ComponentSpec;
-use crate::routes::components::detail::page::{ApiRow, ComponentPage, primary_variant};
-use crate::routes::components::palette::{PaletteColor, variant};
+use crate::routes::components::detail::page::{primary_variant, ApiRow, ComponentPage};
+use crate::routes::components::palette::{variant, PaletteColor};
 use yew::prelude::*;
 use yew_duskmoon::Alert;
 

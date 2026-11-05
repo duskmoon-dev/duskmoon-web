@@ -33,7 +33,7 @@ pub fn switch(routes: AppRoute) -> Html {
         AppRoute::About => html! { <About /> },
         AppRoute::Components | AppRoute::ComponentsRoot => {
             html! { <Switch<ComponentsRoute> render={switch_components} /> }
-        },
+        }
         AppRoute::NotFound => html! { "Page not found" },
     }
 }

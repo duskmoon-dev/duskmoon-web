@@ -2,7 +2,7 @@ use yew::prelude::*;
 use yew_duskmoon::typography::TypographyLevel;
 use yew_duskmoon::{Link, Typography};
 
-use super::catalog::{ComponentCategory, COMPONENTS, CATEGORIES};
+use super::catalog::{ComponentCategory, CATEGORIES, COMPONENTS};
 use super::ComponentsRoute;
 
 fn catalog_group(category: &ComponentCategory) -> Html {
