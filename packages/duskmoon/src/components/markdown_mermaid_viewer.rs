@@ -184,8 +184,6 @@ fn open_viewer(
 
     body.set_inner_html("");
     body.append_child(&clone)?;
-    body.set_scroll_left(0);
-    body.set_scroll_top(0);
     // Focusing the native trigger lets dialog close/Escape restore focus to it,
     // including when the mouse activated an SVG node rather than the button.
     if let Some(button) = preview.query_selector(":scope > .dm-mermaid-zoom-trigger")? {
@@ -195,7 +193,11 @@ fn open_viewer(
             .unchecked_into::<HtmlElement>()
             .focus_with_options(&options)?;
     }
-    dialog.show_modal()
+    dialog.show_modal()?;
+    // A closed dialog has no scrollable layout, so reset only after showing it.
+    body.set_scroll_left(0);
+    body.set_scroll_top(0);
+    Ok(())
 }
 
 #[cfg(all(test, target_arch = "wasm32"))]
@@ -235,6 +237,55 @@ mod browser_tests {
             condition(),
             "Mermaid viewer did not reach the expected state"
         );
+    }
+
+    #[wasm_bindgen_test]
+    async fn reopening_viewer_resets_both_scroll_axes() {
+        let document = gloo_utils::document();
+        let root = document.create_element("div").unwrap();
+        document.body().unwrap().append_child(&root).unwrap();
+        let messages = "A->>B: A long message that requires space\n".repeat(24);
+        let app = yew::Renderer::<DmMarkdown>::with_root_and_props(
+            root.clone(),
+            props(&format!("```mermaid\nsequenceDiagram\n{messages}```")),
+        )
+        .render();
+        wait_until(|| {
+            root.query_selector(".dm-mermaid-zoom-trigger")
+                .unwrap()
+                .is_some()
+        })
+        .await;
+        let trigger = root
+            .query_selector(".dm-mermaid-zoom-trigger")
+            .unwrap()
+            .unwrap()
+            .unchecked_into::<HtmlElement>();
+        let dialog = root
+            .query_selector("dialog")
+            .unwrap()
+            .unwrap()
+            .unchecked_into::<HtmlDialogElement>();
+        let body = root
+            .query_selector(".dm-mermaid-viewer-body")
+            .unwrap()
+            .unwrap();
+        body.set_attribute("style", "width:200px;height:150px;overflow:auto;flex:none;")
+            .unwrap();
+        trigger.click();
+        wait_until(|| dialog.open()).await;
+        body.set_scroll_left(100);
+        body.set_scroll_top(100);
+        assert!(body.scroll_left() > 0 && body.scroll_top() > 0);
+        dialog.close();
+        wait_until(|| body.first_element_child().is_none()).await;
+        trigger.click();
+        wait_until(|| dialog.open()).await;
+        assert_eq!(body.scroll_left(), 0);
+        assert_eq!(body.scroll_top(), 0);
+        app.destroy();
+        wait_until(|| root.first_element_child().is_none()).await;
+        root.remove();
     }
 
     #[wasm_bindgen_test]
