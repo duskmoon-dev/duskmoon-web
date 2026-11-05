@@ -1401,8 +1401,8 @@ textarea {
 }
 
 .markdown-body .dm-mermaid-chart {
-    --dm-mermaid-accent: color-mix(in oklch, var(--dm-copper) 80%, white);
-    --dm-mermaid-panel: color-mix(in oklch, var(--color-surface-container-high) 84%, transparent);
+    --dm-mermaid-accent: var(--dm-paper-muted);
+    --dm-mermaid-panel: var(--color-surface-container-high);
     --dm-mermaid-slice-1: #82aaff;
     --dm-mermaid-slice-2: #a5d977;
     --dm-mermaid-slice-3: #ffb454;
@@ -1416,14 +1416,12 @@ textarea {
     border: 1px solid color-mix(in oklch, var(--dm-copper) 42%, var(--dm-line));
     border-radius: 8px;
     color: var(--dm-paper);
-    background:
-        linear-gradient(135deg, color-mix(in oklch, var(--color-primary-container) 44%, transparent), transparent 58%),
-        color-mix(in oklch, var(--color-surface-container) 88%, black);
+    background: var(--color-surface-container);
 }
 
 .markdown-body .dm-mermaid-chart-title {
     margin-bottom: 10px;
-    color: color-mix(in oklch, var(--dm-copper) 90%, white);
+    color: var(--dm-paper-muted);
     font-size: 0.78rem;
     font-weight: 900;
     text-transform: uppercase;
@@ -1851,30 +1849,33 @@ textarea {
 
 .markdown-body .dm-sequence-lane rect {
     fill: var(--dm-mermaid-panel);
-    stroke: color-mix(in oklch, var(--dm-copper) 48%, var(--dm-line));
+    stroke: var(--dm-mermaid-accent);
 }
 
 .markdown-body .dm-sequence-lane line {
-    stroke: color-mix(in oklch, var(--dm-line-strong) 78%, transparent);
+    stroke: var(--dm-mermaid-accent);
     stroke-dasharray: 5 5;
 }
 
-.markdown-body .dm-sequence-message line {
+.markdown-body .dm-sequence-message line,
+.markdown-body .dm-sequence-message path {
     stroke: var(--dm-mermaid-accent);
     stroke-width: 2.2;
     stroke-linecap: round;
 }
 
 .markdown-body .dm-sequence-lane text,
+.markdown-body .dm-sequence-note text,
 .markdown-body .dm-sequence-message text {
     fill: var(--dm-paper);
     font-family: var(--font-body);
-    font-size: 0.72rem;
+    font-size: 14px;
     font-weight: 800;
 }
 
-.markdown-body .dm-sequence-message text {
-    fill: color-mix(in oklch, var(--dm-mermaid-accent) 86%, white);
+.markdown-body .dm-sequence-note rect {
+    fill: color-mix(in oklch, var(--dm-copper) 12%, var(--dm-mermaid-panel));
+    stroke: var(--dm-mermaid-accent);
 }
 
 .markdown-body .dm-mermaid-pie-layout {
@@ -2030,8 +2031,13 @@ textarea {
 }
 
 .markdown-body .dm-zenuml-participant line {
-    stroke: color-mix(in oklch, var(--dm-paper) 38%, transparent);
+    stroke: var(--dm-mermaid-accent);
     stroke-dasharray: 5 5;
+}
+
+.markdown-body .dm-zenuml-participant text,
+.markdown-body .dm-zenuml-message-label {
+    font-size: 14px;
 }
 
 .markdown-body .dm-zenuml-message {

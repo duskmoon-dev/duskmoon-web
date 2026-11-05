@@ -169,12 +169,24 @@ swimlane-beta LR
   answer --> update
 ```
 
+### Sequence with aliases, long labels, and self calls
+
 ```mermaid
 sequenceDiagram
-  participant Author
-  participant Renderer
-  Author->>Renderer: Submit markdown
-  Renderer-->>Author: Return safe HTML
+  actor U as 编辑用户
+  participant C as 内容管理与版本服务
+  participant R as 编辑审核工作台
+  participant P as 已接入的发布平台
+  U->>C: 选择内容来源并提交需要审核的文章草稿
+  C->>R: 创建审核任务并附上最新文章版本
+  Note over R: 保留原稿与审核记录
+  R-->>C: 返回审核记录与修改建议（必要时补充说明）
+  C->>C: 校验文章来源并冻结当前审核版本
+  C->>P: 按照既有发布流程提交审核通过的内容
+  P-->>C: 返回发布地址<br/>与可追踪的版本编号
+  C->>C: 校验远端内容与当前文章版本一致
+  C->>R: 回写发布结果并保留已有审核记录
+  C-->>U: 通知发布完成并提供访问链接
 ```
 
 ```mermaid
@@ -312,6 +324,7 @@ timeline
 ```mermaid
 zenuml
   Author->Renderer: markdown
+  Renderer->Renderer: Validate content and prepare the rendered document
   Renderer->Author: html
 ```
 

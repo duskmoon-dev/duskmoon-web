@@ -3182,99 +3182,410 @@ fn parse_journey_task(line: &str, section: &str) -> Option<JourneyTask> {
     })
 }
 
-fn render_mermaid_sequence(source: &str, output: &mut impl fmt::Write) -> fmt::Result {
-    let mut participants: Vec<String> = Vec::new();
-    let mut messages: Vec<(String, String, String)> = Vec::new();
+struct SequenceParticipant {
+    id: String,
+    label: String,
+}
+
+struct SequenceMessage {
+    from: usize,
+    to: usize,
+    label: String,
+    dashed: bool,
+    arrow: bool,
+}
+
+struct SequenceNote {
+    from: usize,
+    to: usize,
+    label: String,
+    before_message: usize,
+}
+
+#[derive(Default)]
+struct SequenceDiagram {
+    participants: Vec<SequenceParticipant>,
+    messages: Vec<SequenceMessage>,
+    notes: Vec<SequenceNote>,
+}
+
+fn upsert_sequence_participant(
+    participants: &mut Vec<SequenceParticipant>,
+    id: &str,
+    label: Option<&str>,
+) -> usize {
+    if let Some(index) = participants
+        .iter()
+        .position(|participant| participant.id == id)
+    {
+        if let Some(label) = label {
+            participants[index].label = sequence_label(label.trim_matches('"'));
+        }
+        index
+    } else {
+        participants.push(SequenceParticipant {
+            id: id.to_owned(),
+            label: sequence_label(label.unwrap_or(id).trim_matches('"')),
+        });
+        participants.len() - 1
+    }
+}
+
+fn sequence_label(label: &str) -> String {
+    label
+        .replace("<br/>", "\n")
+        .replace("<br />", "\n")
+        .replace("<br>", "\n")
+}
+
+fn parse_mermaid_sequence(source: &str) -> SequenceDiagram {
+    let mut diagram = SequenceDiagram::default();
 
     for line in source.lines().map(str::trim) {
-        if line.is_empty() || line.starts_with("sequenceDiagram") {
+        if line.is_empty() || line.starts_with("%%") || line.starts_with("sequenceDiagram") {
             continue;
         }
 
-        if let Some(name) = line.strip_prefix("participant ") {
-            let participant = name
-                .split_once(" as ")
-                .map_or(name, |(_, label)| label)
+        if let Some(("participant" | "actor", declaration)) = line.split_once(char::is_whitespace) {
+            let declaration = declaration.trim();
+            let (id, alias) = declaration
+                .split_once(char::is_whitespace)
+                .unwrap_or((declaration, ""));
+            let label = alias
                 .trim()
-                .to_owned();
-            upsert_text(&mut participants, participant);
+                .split_once(char::is_whitespace)
+                .filter(|(keyword, _)| *keyword == "as")
+                .map(|(_, label)| label.trim());
+            if !id.is_empty() {
+                upsert_sequence_participant(&mut diagram.participants, id, label);
+            }
+            continue;
+        }
+
+        if let Some(note) = line
+            .strip_prefix("Note over ")
+            .or_else(|| line.strip_prefix("note over "))
+        {
+            if let Some((participants, label)) = note.split_once(':') {
+                let mut ids = participants.split(',').map(str::trim);
+                let from = ids.next().unwrap_or("");
+                let to = ids.next().unwrap_or(from);
+                if !from.is_empty() && !to.is_empty() && ids.next().is_none() {
+                    let from = upsert_sequence_participant(&mut diagram.participants, from, None);
+                    let to = upsert_sequence_participant(&mut diagram.participants, to, None);
+                    diagram.notes.push(SequenceNote {
+                        from,
+                        to,
+                        label: sequence_label(label.trim()),
+                        before_message: diagram.messages.len(),
+                    });
+                }
+            }
             continue;
         }
 
         if let Some((left, label)) = line.split_once(':') {
-            let (from, to) = left
-                .split_once("-->>")
-                .or_else(|| left.split_once("->>"))
-                .or_else(|| left.split_once("-->"))
-                .or_else(|| left.split_once("->"))
-                .unwrap_or(("", ""));
-            if !from.trim().is_empty() && !to.trim().is_empty() {
-                let from = from.trim().to_owned();
-                let to = to.trim().to_owned();
-                upsert_text(&mut participants, from.clone());
-                upsert_text(&mut participants, to.clone());
-                messages.push((from, to, label.trim().to_owned()));
+            let Some((from, to, arrow)) = ["-->>", "->>", "-->", "->"]
+                .into_iter()
+                .find_map(|arrow| left.split_once(arrow).map(|(from, to)| (from, to, arrow)))
+            else {
+                continue;
+            };
+            let from = from.trim();
+            // Activation/deactivation suffixes belong to the arrow, not the target ID.
+            let to = to.trim().trim_start_matches(['+', '-']).trim();
+            if !from.is_empty() && !to.is_empty() {
+                let from = upsert_sequence_participant(&mut diagram.participants, from, None);
+                let to = upsert_sequence_participant(&mut diagram.participants, to, None);
+                diagram.messages.push(SequenceMessage {
+                    from,
+                    to,
+                    label: sequence_label(label.trim()),
+                    dashed: arrow.starts_with("--"),
+                    arrow: arrow.ends_with(">>"),
+                });
             }
         }
     }
 
-    if participants.is_empty() {
-        participants.extend(["Client".to_owned(), "Server".to_owned()]);
+    diagram
+}
+
+fn sequence_text_width(label: &str) -> f32 {
+    label
+        .split('\n')
+        .map(|line| {
+            line.chars()
+                .map(|ch| match ch {
+                    'W' | 'M' | '@' | '%' => 14.0,
+                    _ if ch.is_ascii() => 8.5,
+                    _ => 16.0,
+                })
+                .sum::<f32>()
+        })
+        .fold(0.0, f32::max)
+}
+
+struct SequenceLaneLayout {
+    x: f32,
+    width: f32,
+}
+
+struct SequenceMessageLayout {
+    label_y: f32,
+    y: f32,
+    loop_width: f32,
+}
+
+struct SequenceNoteLayout {
+    x: f32,
+    y: f32,
+    width: f32,
+    height: f32,
+}
+
+struct SequenceLayout {
+    width: f32,
+    height: f32,
+    header_height: f32,
+    lanes: Vec<SequenceLaneLayout>,
+    messages: Vec<SequenceMessageLayout>,
+    notes: Vec<SequenceNoteLayout>,
+}
+
+fn layout_sequence(diagram: &SequenceDiagram) -> SequenceLayout {
+    let mut lanes = diagram
+        .participants
+        .iter()
+        .map(|participant| SequenceLaneLayout {
+            x: 0.0,
+            width: (sequence_text_width(&participant.label) + 32.0).max(120.0),
+        })
+        .collect::<Vec<_>>();
+    let header_height = diagram
+        .participants
+        .iter()
+        .map(|participant| participant.label.split('\n').count() as f32 * 20.0 + 20.0)
+        .fold(40.0, f32::max);
+    let mut constraints = vec![Vec::new(); lanes.len()];
+    let mut left_extents = lanes
+        .iter()
+        .map(|lane| lane.width / 2.0)
+        .collect::<Vec<_>>();
+    let mut right_extents = left_extents.clone();
+    for note in &diagram.notes {
+        let label_width = sequence_text_width(&note.label);
+        if note.from == note.to {
+            let extent = (label_width + 32.0).max(120.0) / 2.0;
+            left_extents[note.from] = left_extents[note.from].max(extent);
+            right_extents[note.from] = right_extents[note.from].max(extent);
+        } else {
+            constraints[note.from.max(note.to)].push((note.from.min(note.to), label_width));
+        }
+    }
+    let mut messages = Vec::with_capacity(diagram.messages.len());
+    let mut notes = Vec::with_capacity(diagram.notes.len());
+    let mut next_y = 20.0 + header_height + 24.0;
+    let mut pending_notes = diagram.notes.iter().peekable();
+    for index in 0..=diagram.messages.len() {
+        while let Some(note) = pending_notes.next_if(|note| note.before_message == index) {
+            let height = note.label.split('\n').count() as f32 * 20.0 + 20.0;
+            notes.push(SequenceNoteLayout {
+                x: 0.0,
+                y: next_y,
+                width: 0.0,
+                height,
+            });
+            next_y += height + 24.0;
+        }
+        let Some(message) = diagram.messages.get(index) else {
+            break;
+        };
+        let label_width = sequence_text_width(&message.label);
+        let loop_width = if message.from == message.to {
+            let width = (label_width + 32.0).max(72.0);
+            right_extents[message.from] = right_extents[message.from].max(width);
+            width
+        } else {
+            let left = message.from.min(message.to);
+            let right = message.from.max(message.to);
+            constraints[right].push((left, label_width + 32.0));
+            0.0
+        };
+        let y = next_y + message.label.split('\n').count() as f32 * 20.0 + 8.0;
+        messages.push(SequenceMessageLayout {
+            label_y: next_y + 14.0,
+            y,
+            loop_width,
+        });
+        next_y = y + if loop_width > 0.0 { 48.0 } else { 24.0 };
     }
 
-    let width = 640.0;
-    let lane_gap = if participants.len() <= 1 {
-        0.0
-    } else {
-        480.0 / (participants.len() - 1) as f32
+    // All constraints point right, so one forward pass satisfies both adjacent
+    // header spacing and labels spanning any number of participants.
+    for index in 0..lanes.len() {
+        let mut x = if index == 0 {
+            24.0 + left_extents[index]
+        } else {
+            let gap = right_extents[index - 1] + left_extents[index] + 40.0;
+            lanes[index - 1].x + gap
+        };
+        for &(left, gap) in &constraints[index] {
+            x = x.max(lanes[left].x + gap);
+        }
+        lanes[index].x = x;
+    }
+    for (note, position) in diagram.notes.iter().zip(&mut notes) {
+        let from_x = lanes[note.from].x;
+        let to_x = lanes[note.to].x;
+        position.width = ((from_x - to_x).abs() + 32.0)
+            .max(sequence_text_width(&note.label) + 32.0)
+            .max(120.0);
+        position.x = (from_x + to_x) / 2.0 - position.width / 2.0;
+    }
+    let width = lanes
+        .iter()
+        .zip(right_extents)
+        .map(|(lane, extent)| lane.x + extent + 24.0)
+        .fold(0.0, f32::max)
+        .ceil();
+    SequenceLayout {
+        width,
+        height: (next_y + 24.0).ceil(),
+        header_height,
+        lanes,
+        messages,
+        notes,
+    }
+}
+
+fn write_sequence_text(
+    output: &mut impl fmt::Write,
+    class: &str,
+    label: &str,
+    x: f32,
+    y: f32,
+) -> fmt::Result {
+    write!(output, "<text class=\"{class}\" x=\"{x:.1}\" y=\"{y:.1}\" fill=\"currentColor\" font-family=\"sans-serif\" font-size=\"14\" text-anchor=\"middle\">")?;
+    for (index, line) in label.split('\n').enumerate() {
+        write!(
+            output,
+            "<tspan x=\"{x:.1}\" y=\"{:.1}\">{}</tspan>",
+            y + index as f32 * 20.0,
+            Escaped(line)
+        )?;
+    }
+    output.write_str("</text>")
+}
+
+enum SequenceStyle {
+    Mermaid,
+    ZenUml,
+}
+
+fn render_sequence_diagram(
+    source: &str,
+    diagram: &SequenceDiagram,
+    style: SequenceStyle,
+    output: &mut impl fmt::Write,
+) -> fmt::Result {
+    let (kind, title, lane_class, message_class, line_class, label_class) = match style {
+        SequenceStyle::Mermaid => (
+            "sequence",
+            "sequence",
+            "dm-sequence-lane",
+            "dm-sequence-message",
+            "",
+            "",
+        ),
+        SequenceStyle::ZenUml => (
+            "zenuml",
+            "ZenUML",
+            "dm-zenuml-participant",
+            "dm-zenuml-exchange",
+            "dm-zenuml-message",
+            "dm-zenuml-message-label",
+        ),
     };
-    let height = 110 + messages.len() as i32 * 42;
+    let layout = layout_sequence(diagram);
     let marker_id = mermaid_marker_id(source);
-    let svg_start = MermaidSvg(width, height as f32);
+    let svg_start = MermaidSvg(layout.width, layout.height);
     let svg = output;
     write!(svg,
-        "<div class=\"dm-mermaid-chart dm-mermaid-sequence\" role=\"img\" aria-label=\"Rendered Mermaid sequence diagram\"><div class=\"dm-mermaid-chart-title\">Mermaid sequence diagram</div>{svg_start}<defs><marker id=\"{marker_id}\" markerWidth=\"10\" markerHeight=\"10\" refX=\"8\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L9,3 z\" class=\"dm-mermaid-arrow\" /></marker></defs>"
+        "<div class=\"dm-mermaid-chart dm-mermaid-{kind}\" role=\"img\" aria-label=\"Rendered Mermaid {title} diagram\"><div class=\"dm-mermaid-chart-title\">Mermaid {title} diagram</div>{svg_start}<defs><marker id=\"{marker_id}\" markerWidth=\"10\" markerHeight=\"10\" refX=\"8\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L9,3 z\" class=\"dm-mermaid-arrow\" /></marker></defs>"
     )?;
 
-    for (index, participant) in participants.iter().enumerate() {
-        let x = 80.0 + lane_gap * index as f32;
+    for (participant, lane) in diagram.participants.iter().zip(&layout.lanes) {
+        let x = lane.x;
         write!(svg,
-            "<g class=\"dm-sequence-lane\"><rect x=\"{:.1}\" y=\"18\" width=\"118\" height=\"34\" rx=\"8\" /><text x=\"{:.1}\" y=\"40\" text-anchor=\"middle\">{}</text><line x1=\"{:.1}\" y1=\"54\" x2=\"{:.1}\" y2=\"{}\" /></g>",
-            x - 59.0,
+            "<g class=\"{lane_class}\"><rect x=\"{:.1}\" y=\"20\" width=\"{:.1}\" height=\"{:.1}\" rx=\"8\" />",
+            x - lane.width / 2.0, lane.width, layout.header_height
+        )?;
+        let label_height = participant.label.split('\n').count() as f32 * 20.0;
+        write_sequence_text(
+            svg,
+            "",
+            &participant.label,
             x,
-            Escaped(participant),
-            x,
-            x,
-            height - 20
+            20.0 + (layout.header_height - label_height) / 2.0 + 14.0,
+        )?;
+        write!(
+            svg,
+            "<line x1=\"{x:.1}\" y1=\"{:.1}\" x2=\"{x:.1}\" y2=\"{:.1}\" /></g>",
+            20.0 + layout.header_height,
+            layout.height - 20.0
         )?;
     }
 
-    for (index, (from, to, label)) in messages.iter().enumerate() {
-        let Some(from_index) = participants
-            .iter()
-            .position(|participant| participant == from)
-        else {
-            continue;
+    for (message, position) in diagram.messages.iter().zip(&layout.messages) {
+        let from_x = layout.lanes[message.from].x;
+        let to_x = layout.lanes[message.to].x;
+        let y = position.y;
+        write!(svg, "<g class=\"{message_class}\">")?;
+        let label_x = if position.loop_width > 0.0 {
+            write!(svg,
+                "<path class=\"{line_class} dm-sequence-self-call\" d=\"M {from_x:.1} {y:.1} H {:.1} V {:.1} H {from_x:.1}\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"",
+                from_x + position.loop_width, y + 24.0)?;
+            from_x + position.loop_width / 2.0
+        } else {
+            write!(svg,
+                "<line class=\"{line_class}\" x1=\"{from_x:.1}\" y1=\"{y:.1}\" x2=\"{to_x:.1}\" y2=\"{y:.1}\"")?;
+            (from_x + to_x) / 2.0
         };
-        let Some(to_index) = participants
-            .iter()
-            .position(|participant| participant == to)
-        else {
-            continue;
-        };
-        let y = 84.0 + index as f32 * 42.0;
-        let from_x = 80.0 + lane_gap * from_index as f32;
-        let to_x = 80.0 + lane_gap * to_index as f32;
-        let label_x = (from_x + to_x) / 2.0;
-        write!(svg,
-            "<g class=\"dm-sequence-message\"><line x1=\"{from_x:.1}\" y1=\"{y:.1}\" x2=\"{to_x:.1}\" y2=\"{y:.1}\" marker-end=\"url(#{marker_id})\" /><text x=\"{label_x:.1}\" y=\"{:.1}\" text-anchor=\"middle\">{}</text></g>",
-            y - 8.0,
-            Escaped(label)
-        )?;
+        if message.dashed {
+            svg.write_str(" stroke-dasharray=\"6 4\"")?;
+        }
+        if message.arrow {
+            write!(svg, " marker-end=\"url(#{marker_id})\"")?;
+        }
+        svg.write_str(" />")?;
+        write_sequence_text(svg, label_class, &message.label, label_x, position.label_y)?;
+        svg.write_str("</g>")?;
     }
 
-    svg.write_str("</svg></div>")?;
-    Ok(())
+    for (note, position) in diagram.notes.iter().zip(&layout.notes) {
+        write!(svg,
+            "<g class=\"dm-sequence-note\"><rect x=\"{:.1}\" y=\"{:.1}\" width=\"{:.1}\" height=\"{:.1}\" rx=\"4\" fill=\"none\" stroke=\"currentColor\" />",
+            position.x, position.y, position.width, position.height)?;
+        write_sequence_text(
+            svg,
+            "",
+            &note.label,
+            position.x + position.width / 2.0,
+            position.y + 24.0,
+        )?;
+        svg.write_str("</g>")?;
+    }
+
+    svg.write_str("</svg></div>")
+}
+
+fn render_mermaid_sequence(source: &str, output: &mut impl fmt::Write) -> fmt::Result {
+    let diagram = parse_mermaid_sequence(source);
+    if diagram.participants.is_empty() {
+        return render_mermaid_summary("Sequence diagram", "sequence", source, output);
+    }
+    render_sequence_diagram(source, &diagram, SequenceStyle::Mermaid, output)
 }
 
 fn render_mermaid_pie(source: &str, output: &mut impl fmt::Write) -> fmt::Result {
@@ -3622,8 +3933,7 @@ struct ZenUmlMessage {
 }
 
 fn render_mermaid_zenuml(source: &str, output: &mut impl fmt::Write) -> fmt::Result {
-    let mut participants = Vec::new();
-    let mut messages = Vec::new();
+    let mut diagram = SequenceDiagram::default();
 
     for line in source.lines().map(str::trim) {
         if line.is_empty() || line.starts_with("%%") || line == "zenuml" {
@@ -3631,83 +3941,22 @@ fn render_mermaid_zenuml(source: &str, output: &mut impl fmt::Write) -> fmt::Res
         }
 
         if let Some(message) = parse_zenuml_message(line) {
-            upsert_text(&mut participants, message.from.clone());
-            upsert_text(&mut participants, message.to.clone());
-            messages.push(message);
+            let from = upsert_sequence_participant(&mut diagram.participants, &message.from, None);
+            let to = upsert_sequence_participant(&mut diagram.participants, &message.to, None);
+            diagram.messages.push(SequenceMessage {
+                from,
+                to,
+                label: sequence_label(&message.label),
+                dashed: false,
+                arrow: true,
+            });
         }
     }
 
-    if messages.is_empty() || participants.is_empty() {
+    if diagram.messages.is_empty() {
         return render_mermaid_summary("ZenUML diagram", "zenuml", source, output);
     }
-
-    let width: f32 = 760.0;
-    let lane_top: f32 = 42.0;
-    let row_gap: f32 = 52.0;
-    let height = 112.0 + messages.len() as f32 * row_gap;
-    let marker_id = mermaid_marker_id(source);
-    let svg_start = MermaidSvg(width, height);
-    let svg = output;
-    write!(svg,
-        "<div class=\"dm-mermaid-chart dm-mermaid-zenuml\" role=\"img\" aria-label=\"Rendered Mermaid ZenUML diagram\"><div class=\"dm-mermaid-chart-title\">Mermaid ZenUML diagram</div>{svg_start}<defs><marker id=\"{marker_id}\" markerWidth=\"10\" markerHeight=\"10\" refX=\"8\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L9,3 z\" class=\"dm-mermaid-arrow\" /></marker></defs>"
-    )?;
-
-    let lane_step = if participants.len() == 1 {
-        0.0
-    } else {
-        560.0 / (participants.len() - 1) as f32
-    };
-    let positions = participants
-        .iter()
-        .enumerate()
-        .map(|(index, participant)| {
-            let x = if participants.len() == 1 {
-                width / 2.0
-            } else {
-                100.0 + index as f32 * lane_step
-            };
-            (participant.as_str(), x)
-        })
-        .collect::<Vec<_>>();
-
-    for (participant, x) in &positions {
-        write!(svg,
-            "<g class=\"dm-zenuml-participant\"><rect x=\"{:.1}\" y=\"{lane_top:.1}\" width=\"128\" height=\"38\" rx=\"6\" /><text x=\"{x:.1}\" y=\"{:.1}\" text-anchor=\"middle\">{}</text><line x1=\"{x:.1}\" y1=\"{:.1}\" x2=\"{x:.1}\" y2=\"{:.1}\" /></g>",
-            x - 64.0,
-            lane_top + 24.0,
-            Escaped(participant),
-            lane_top + 38.0,
-            height - 24.0
-        )?;
-    }
-
-    for (index, message) in messages.iter().enumerate() {
-        let y = 116.0 + index as f32 * row_gap;
-        let Some((_, from_x)) = positions
-            .iter()
-            .find(|(participant, _)| *participant == message.from)
-        else {
-            continue;
-        };
-        let Some((_, to_x)) = positions
-            .iter()
-            .find(|(participant, _)| *participant == message.to)
-        else {
-            continue;
-        };
-        let direction = if from_x <= to_x { 1.0 } else { -1.0 };
-        write!(svg,
-            "<line class=\"dm-zenuml-message\" x1=\"{:.1}\" y1=\"{y:.1}\" x2=\"{:.1}\" y2=\"{y:.1}\" marker-end=\"url(#{marker_id})\" /><text class=\"dm-zenuml-message-label\" x=\"{:.1}\" y=\"{:.1}\" text-anchor=\"middle\">{}</text>",
-            from_x + direction * 64.0,
-            to_x - direction * 64.0,
-            (from_x + to_x) / 2.0,
-            y - 8.0,
-            Escaped(&message.label)
-        )?;
-    }
-
-    svg.write_str("</svg></div>")?;
-    Ok(())
+    render_sequence_diagram(source, &diagram, SequenceStyle::ZenUml, output)
 }
 
 fn parse_zenuml_message(line: &str) -> Option<ZenUmlMessage> {
@@ -6551,10 +6800,12 @@ fn url_scheme_end(url: &str) -> Option<usize> {
 #[cfg(test)]
 mod tests {
     use super::{
-        layout_mermaid_flowchart, layout_mindmap_nodes, parse_css_color, parse_mermaid_flowchart,
-        render_color_chip, render_markdown_to_html_with_limits,
-        render_markdown_to_html_with_options as render_unbounded_with_options, split_front_matter,
-        DmMarkdownLimits, DmMarkdownOptions, DmMarkdownRenderError, FrontMatterMode, MindmapNode,
+        layout_mermaid_flowchart, layout_mindmap_nodes, layout_sequence, parse_css_color,
+        parse_mermaid_flowchart, parse_mermaid_sequence, render_color_chip,
+        render_markdown_to_html_with_limits,
+        render_markdown_to_html_with_options as render_unbounded_with_options, sequence_text_width,
+        split_front_matter, DmMarkdownLimits, DmMarkdownOptions, DmMarkdownRenderError,
+        FrontMatterMode, MindmapNode,
     };
 
     #[test]
@@ -8295,6 +8546,236 @@ mod tests {
         assert!(treeview.contains("dm-treeview-connector"));
         assert!(treeview.contains("markdown"));
         assert!(!treeview.contains("dm-mermaid-summary-treeview"));
+    }
+
+    #[test]
+    fn sequence_aliases_keep_participant_identity() {
+        let html = render_markdown_to_html(
+            "```mermaid\nsequenceDiagram\nparticipant U as 用户\nparticipant C as 内容管理服务\nactor R as 审核员\nU->>C: 提交文章\nC-->>U: 已保存\nC->>R: 请求审核\n```",
+        );
+        assert_eq!(html.matches("class=\"dm-sequence-lane\"").count(), 3);
+        for label in ["用户", "内容管理服务", "审核员"] {
+            assert!(html.contains(label));
+        }
+    }
+
+    #[test]
+    fn sequence_certificate_request_preserves_four_lanes_nine_messages_and_note() {
+        let source = "sequenceDiagram
+  participant U as 用户
+  participant C as CLM现有证书创建
+  participant A as AD设备
+  participant CA as 已接入CA
+  U->>C: CSR填充方式选择从服务商创建，再选择AD设备
+  C->>A: 创建证书请求
+  Note over A: 设备内生成并保留私钥
+  A-->>C: 请求对象及CSR（必要时再查询）
+  C->>C: 保存来源、验签并冻结CSR
+  C->>CA: 按现有流程提交CSR
+  CA-->>C: 签发证书与链
+  C->>C: 校验证书与CSR公钥一致
+  C->>A: 现有部署中向原请求仅回装证书与链
+  C->>A: 回读验证并处理既有策略关联";
+        let diagram = parse_mermaid_sequence(source);
+        let layout = layout_sequence(&diagram);
+        assert_eq!(diagram.participants.len(), 4);
+        assert_eq!(diagram.messages.len(), 9);
+        assert_eq!(diagram.notes.len(), 1);
+        assert_eq!(diagram.notes[0].before_message, 2);
+        assert_eq!(diagram.notes[0].label, "设备内生成并保留私钥");
+        assert!(layout.width > 1000.0);
+        let note = &layout.notes[0];
+        assert!(note.y > layout.messages[1].y);
+        assert!(note.y + note.height + 14.0 < layout.messages[2].label_y);
+        assert!(note.x >= 20.0 && note.x + note.width <= layout.width - 20.0);
+        let html = render_markdown_to_html(&format!("```mermaid\n{source}\n```"));
+        assert_eq!(html.matches("class=\"dm-sequence-lane\"").count(), 4);
+        assert_eq!(html.matches("class=\"dm-sequence-message\"").count(), 9);
+        assert_eq!(html.matches("class=\"dm-sequence-note\"").count(), 1);
+        assert_eq!(html.matches("dm-sequence-self-call").count(), 2);
+        assert_eq!(html.matches("stroke-dasharray=\"6 4\"").count(), 2);
+        assert_eq!(
+            assert_mermaid_intrinsic_dimensions(&html),
+            (layout.width, layout.height)
+        );
+    }
+
+    #[test]
+    fn sequence_notes_reserve_bounds_and_keep_their_source_order() {
+        let source = format!("sequenceDiagram\nNote over A: {}\nNote over B,A: Shared<br/>note\nA->>B: Request\nnote over B: Final & <script>note</script>", "很长的中文说明".repeat(8));
+        let diagram = parse_mermaid_sequence(&source);
+        let layout = layout_sequence(&diagram);
+        assert_eq!(diagram.notes.len(), 3);
+        for note in &layout.notes {
+            assert!(note.x >= 20.0);
+            assert!(note.x + note.width <= layout.width - 20.0);
+            assert!(note.y + note.height + 20.0 <= layout.height);
+        }
+        assert!(layout.notes[0].y + layout.notes[0].height < layout.notes[1].y);
+        assert!(layout.notes[1].height >= 60.0);
+        assert!(layout.notes[1].y + layout.notes[1].height < layout.messages[0].label_y);
+        assert!(layout.messages[0].y < layout.notes[2].y);
+        let html = render_markdown_to_html(&format!("```mermaid\n{source}\n```"));
+        assert!(html.contains("Final &amp; &lt;script&gt;note&lt;/script&gt;"));
+        assert!(!html.contains("<script>"));
+    }
+
+    #[test]
+    fn sequence_self_calls_have_visible_return_paths() {
+        let html = render_markdown_to_html(
+            "```mermaid\nsequenceDiagram\nparticipant A as 内容服务\nA->>A: 校验文章并保存版本\nA-->>A: 返回校验结果\n```",
+        );
+        assert!(html.contains("dm-sequence-self-call"));
+        assert!(html.contains("stroke-dasharray=\"6 4\""));
+    }
+
+    #[test]
+    fn sequence_messages_resolve_late_aliases_and_activation_suffixes() {
+        let source = "sequenceDiagram\n%% Hidden->>Ghost: comment\nA->>+B: Request\nB-->>-A: Reply\nactor\tA\tas 同名角色\nparticipant B as 同名角色\nparticipant B";
+        let diagram = parse_mermaid_sequence(source);
+        assert_eq!(diagram.participants.len(), 2);
+        assert_eq!(diagram.messages.len(), 2);
+        assert_eq!(diagram.participants[0].id, "A");
+        assert_eq!(diagram.participants[1].id, "B");
+        for participant in &diagram.participants {
+            assert_eq!(participant.label, "同名角色");
+        }
+        assert_eq!((diagram.messages[0].from, diagram.messages[0].to), (0, 1));
+        assert_eq!((diagram.messages[1].from, diagram.messages[1].to), (1, 0));
+    }
+
+    #[test]
+    fn sequence_arrows_preserve_solid_dashed_and_unheaded_lines() {
+        let html = render_markdown_to_html(
+            "```mermaid\nsequenceDiagram\nA->>B: Request\nB-->>A: Reply\nA->B: Solid line\nB-->A: Dashed line\n```",
+        );
+        let messages = html
+            .split("<g class=\"dm-sequence-message\">")
+            .skip(1)
+            .map(|part| part.split_once("</g>").unwrap().0)
+            .collect::<Vec<_>>();
+        assert_eq!(messages.len(), 4);
+        for (index, message) in messages.iter().enumerate() {
+            assert_eq!(message.contains("marker-end="), index < 2);
+            assert_eq!(message.contains("stroke-dasharray="), index % 2 == 1);
+        }
+        let attribute = |markup: &str, name: &str| -> f32 {
+            markup
+                .split_once(&format!("{name}=\""))
+                .unwrap()
+                .1
+                .split('"')
+                .next()
+                .unwrap()
+                .parse()
+                .unwrap()
+        };
+        assert!(attribute(messages[0], "x1") < attribute(messages[0], "x2"));
+        assert!(attribute(messages[1], "x1") > attribute(messages[1], "x2"));
+    }
+
+    #[test]
+    fn sequence_layout_reserves_space_for_headers_messages_and_self_calls() {
+        let source = "sequenceDiagram\nparticipant U as 编辑用户\nparticipant C as 内容管理与版本服务\nparticipant R as 编辑审核工作台\nparticipant P as 已接入的发布平台\nU->>C: 选择内容来源并提交需要审核的文章草稿\nC->>R: 创建审核任务并附上最新文章版本\nR-->>C: 返回审核记录与修改建议（必要时补充说明）\nC->>C: 校验文章来源并冻结当前审核版本\nC->>P: 按照既有发布流程提交审核通过的内容\nP-->>C: 返回发布地址与可追踪的版本编号\nP->>P: 校验发布记录与远端内容一致";
+        let diagram = parse_mermaid_sequence(source);
+        let layout = layout_sequence(&diagram);
+        assert_eq!(layout.lanes.len(), 4);
+        assert_eq!(layout.messages.len(), 7);
+        assert!(layout.width > 1000.0);
+        for pair in layout.lanes.windows(2) {
+            assert!(pair[0].x + pair[0].width / 2.0 + 24.0 < pair[1].x - pair[1].width / 2.0);
+        }
+        for (participant, lane) in diagram.participants.iter().zip(&layout.lanes) {
+            assert!(sequence_text_width(&participant.label) + 24.0 <= lane.width);
+            assert!(lane.x - lane.width / 2.0 >= 20.0);
+            assert!(lane.x + lane.width / 2.0 <= layout.width - 20.0);
+        }
+        for (index, (message, position)) in
+            diagram.messages.iter().zip(&layout.messages).enumerate()
+        {
+            let from_x = layout.lanes[message.from].x;
+            let to_x = layout.lanes[message.to].x;
+            let label_width = sequence_text_width(&message.label);
+            let label_x = if message.from == message.to {
+                assert!(position.loop_width >= label_width + 24.0);
+                assert!(from_x + position.loop_width <= layout.width - 20.0);
+                if let Some(next) = layout.lanes.get(message.from + 1) {
+                    assert!(from_x + position.loop_width + 24.0 <= next.x);
+                }
+                from_x + position.loop_width / 2.0
+            } else {
+                assert!((from_x - to_x).abs() >= label_width + 24.0);
+                (from_x + to_x) / 2.0
+            };
+            assert!(label_x - label_width / 2.0 >= 20.0);
+            assert!(label_x + label_width / 2.0 <= layout.width - 20.0);
+            let bottom = position.y + if position.loop_width > 0.0 { 24.0 } else { 0.0 };
+            assert!(bottom + 20.0 <= layout.height);
+            if let Some(next) = layout.messages.get(index + 1) {
+                assert!(bottom + 20.0 <= next.label_y);
+            }
+        }
+        let html = render_markdown_to_html(&format!("```mermaid\n{source}\n```"));
+        assert_eq!(
+            assert_mermaid_intrinsic_dimensions(&html),
+            (layout.width, layout.height)
+        );
+    }
+
+    #[test]
+    fn sequence_layout_handles_multiline_labels_single_and_many_participants() {
+        let source = "sequenceDiagram\nparticipant A as 很长的参与者名称<br/>第二行标签\nA->>A: 第一行消息<br>第二行消息<br />第三行消息\nA->>A: Next";
+        let diagram = parse_mermaid_sequence(source);
+        let layout = layout_sequence(&diagram);
+        assert_eq!(diagram.participants[0].label.split('\n').count(), 2);
+        assert_eq!(diagram.messages[0].label.split('\n').count(), 3);
+        assert!(layout.header_height >= 60.0);
+        assert!(layout.messages[0].y - layout.messages[0].label_y >= 50.0);
+        assert!(layout.messages[1].label_y > layout.messages[0].y + 24.0);
+        let html = render_markdown_to_html(&format!("```mermaid\n{source}\n```"));
+        assert!(!html.contains("&lt;br"));
+        assert_eq!(html.matches("<tspan ").count(), 6);
+        assert_mermaid_intrinsic_dimensions(&html);
+
+        let source = format!(
+            "sequenceDiagram\n{}",
+            (0..12)
+                .map(|index| format!("participant P{index} as WWWWWWWW-{index}\n"))
+                .collect::<String>()
+        );
+        let diagram = parse_mermaid_sequence(&source);
+        let layout = layout_sequence(&diagram);
+        assert!(layout.width > 2000.0);
+        for pair in layout.lanes.windows(2) {
+            assert!(pair[0].x + pair[0].width / 2.0 < pair[1].x - pair[1].width / 2.0);
+        }
+    }
+
+    #[test]
+    fn sequence_labels_escape_markup_without_stripping_punctuation() {
+        let html = render_markdown_to_html(
+            "```mermaid\nsequenceDiagram\nparticipant A as \"User & editor\"\nA->>A: [Validate <script>alert(1)</script>]\n```",
+        );
+        assert!(html.contains("User &amp; editor"));
+        assert!(html.contains("[Validate &lt;script&gt;alert(1)&lt;/script&gt;]"));
+        assert!(!html.contains("<script>"));
+    }
+
+    #[test]
+    fn zenuml_uses_dynamic_lanes_and_self_call_paths() {
+        let source = format!(
+            "zenuml\n{}\nE->E: {}",
+            ["A->B", "B->C", "C->D", "D->E"]
+                .map(|arrow| format!("{arrow}: Deliver the complete document for editorial review"))
+                .join("\n"),
+            "检查内容并记录版本".repeat(4)
+        );
+        let html = render_markdown_to_html(&format!("```mermaid\n{source}\n```"));
+        let (width, _) = assert_mermaid_intrinsic_dimensions(&html);
+        assert!(width > 2000.0);
+        assert_eq!(html.matches("class=\"dm-zenuml-participant\"").count(), 5);
+        assert_eq!(html.matches("class=\"dm-zenuml-exchange\"").count(), 5);
+        assert!(html.contains("dm-sequence-self-call"));
     }
 
     #[test]
