@@ -1,11 +1,13 @@
+use wasm_bindgen::JsCast;
 use yew::prelude::*;
+use yew_hooks::use_event_with_window;
 use yewdux::prelude::*;
 
 use crate::states::config::ConfigStore;
 
 use yew_duskmoon::button::ButtonType;
 use yew_duskmoon::typography::TypographyLevel;
-use yew_duskmoon::{AppHeader, Button, Link, ThemeController, Typography};
+use yew_duskmoon::{AppHeader, Button, Dropdown, Link, ThemeController, Typography};
 
 use crate::routes::AppRoute;
 
@@ -35,6 +37,16 @@ fn apply_theme_mode(mode: &str) {
     let _ = root.set_attribute("data-theme-mode", mode);
 }
 
+fn close_navigation() {
+    if let Some(panel) = web_sys::window()
+        .and_then(|window| window.document())
+        .and_then(|document| document.get_element_by_id("site-navigation"))
+        .and_then(|element| element.dyn_into::<web_sys::HtmlElement>().ok())
+    {
+        let _ = panel.hide_popover();
+    }
+}
+
 /// Header component
 #[function_component(Header)]
 pub fn header() -> Html {
@@ -60,6 +72,55 @@ pub fn header() -> Html {
         });
     }
 
+    use_event_with_window("resize", |_: Event| {
+        let toggle = web_sys::window()
+            .and_then(|window| window.document())
+            .and_then(|document| document.query_selector(".site-menu-toggle").ok().flatten());
+        if toggle.is_some_and(|toggle| toggle.client_width() == 0) {
+            close_navigation();
+        }
+    });
+
+    let navigation = html! {
+        <>
+            <Link<AppRoute> to={AppRoute::Home} classes="site-nav-link">
+                <span class="nav-index">{ "01" }</span>
+                { "Home" }
+            </Link<AppRoute>>
+            <Link<AppRoute> to={AppRoute::ComponentsRoot} classes="site-nav-link">
+                <span class="nav-index">{ "02" }</span>
+                { "Components" }
+            </Link<AppRoute>>
+            <Link<AppRoute> to={AppRoute::About} classes="site-nav-link">
+                <span class="nav-index">{ "03" }</span>
+                { "About" }
+            </Link<AppRoute>>
+        </>
+    };
+
+    let theme_switch = |name: &'static str| {
+        html! {
+            <ThemeController class={classes!("appbar-theme-switch", "theme-controller-sm")}>
+                { for [
+                    ("auto", "Auto", select_auto.clone()),
+                    ("sunshine", "Light", select_sunshine.clone()),
+                    ("duskmoon", "Dark", select_duskmoon.clone()),
+                ].into_iter().map(|(mode, label, onclick)| html! {
+                    <label class="theme-choice">
+                        <input
+                            class="theme-controller-item"
+                            type="radio"
+                            name={name}
+                            checked={theme_mode == mode}
+                            {onclick}
+                        />
+                        <span class="theme-controller-label">{ label }</span>
+                    </label>
+                }) }
+            </ThemeController>
+        }
+    };
+
     html! {
       <AppHeader
         classes={classes!("site-header", text_transform_class)}
@@ -79,68 +140,34 @@ pub fn header() -> Html {
             </Link<AppRoute>>
           }
         }
-        menu={
-          html! {
-            <>
-              <Link<AppRoute>
-                to={AppRoute::Home}
-                classes="site-nav-link"
-              >
-                <span class="nav-index">{ "01" }</span>
-                { "Home" }
-              </Link<AppRoute>>
-              <Link<AppRoute>
-                to={AppRoute::ComponentsRoot}
-                classes="site-nav-link"
-              >
-                <span class="nav-index">{ "02" }</span>
-                { "Components" }
-              </Link<AppRoute>>
-              <Link<AppRoute>
-                to={AppRoute::About}
-                classes="site-nav-link"
-              >
-                <span class="nav-index">{ "03" }</span>
-                { "About" }
-              </Link<AppRoute>>
-            </>
-          }
-        }
+        menu={navigation.clone()}
         info={
           html! {
             <div class="appbar-actions">
-              <ThemeController class={classes!("appbar-theme-switch", "theme-controller-sm")}>
-                <label class="theme-choice">
-                  <input
-                    class="theme-controller-item"
-                    type="radio"
-                    name="app-theme"
-                    checked={theme_mode == "auto"}
-                    onclick={select_auto}
-                  />
-                  <span class="theme-controller-label">{ "Auto" }</span>
-                </label>
-                <label class="theme-choice">
-                  <input
-                    class="theme-controller-item"
-                    type="radio"
-                    name="app-theme"
-                    checked={theme_mode == "sunshine"}
-                    onclick={select_sunshine}
-                  />
-                  <span class="theme-controller-label">{ "Light" }</span>
-                </label>
-                <label class="theme-choice">
-                  <input
-                    class="theme-controller-item"
-                    type="radio"
-                    name="app-theme"
-                    checked={theme_mode == "duskmoon"}
-                    onclick={select_duskmoon}
-                  />
-                  <span class="theme-controller-label">{ "Dark" }</span>
-                </label>
-              </ThemeController>
+              { theme_switch("app-theme") }
+
+              <Dropdown
+                id="site-navigation"
+                trigger_label="Menu"
+                class="site-navigation-dropdown"
+                trigger_class="btn site-menu-toggle"
+                content_class="site-navigation-panel"
+              >
+                <div class="site-navigation-links" onclick={Callback::from(|_: MouseEvent| close_navigation())}>
+                  { navigation }
+                  <a
+                    class="site-nav-link site-navigation-source"
+                    href="https://github.com/gsmlg-dev/yew-duskmoon-ui"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    { "Source" }
+                  </a>
+                </div>
+                <div class="site-navigation-theme">
+                  { theme_switch("menu-theme") }
+                </div>
+              </Dropdown>
 
               <Button
                 r#type={ButtonType::Link}

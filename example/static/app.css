@@ -113,8 +113,10 @@ svg {
     z-index: 30;
     display: flex;
     justify-content: space-between;
-    height: 72px !important;
-    padding: 0 32px !important;
+    gap: 24px;
+    height: auto !important;
+    min-height: 72px;
+    padding: 10px 32px !important;
     border-bottom: 1px solid color-mix(in oklch, var(--color-primary-content) 24%, transparent);
     color: var(--color-primary-content);
     background: var(--color-primary) !important;
@@ -127,7 +129,22 @@ svg {
 .navbar.site-header .logo,
 .navbar.site-header .menu,
 .navbar.site-header .info {
-    height: 100%;
+    height: auto;
+}
+
+.navbar.site-header .navbar-start {
+    flex: 1 1 auto;
+}
+
+.navbar.site-header .navbar-end,
+.navbar.site-header .logo,
+.navbar.site-header .menu {
+    flex: 0 0 auto;
+}
+
+.navbar.site-header .menu {
+    flex-wrap: nowrap;
+    padding: 0;
 }
 
 .brand-anchor {
@@ -137,10 +154,12 @@ svg {
     padding: 0 !important;
     color: var(--color-primary-content) !important;
     text-decoration: none !important;
+    white-space: nowrap;
 }
 
 .brand-mark {
     display: inline-grid;
+    flex: 0 0 auto;
     place-items: center;
     width: 42px;
     height: 42px;
@@ -189,6 +208,8 @@ svg {
 }
 
 .site-nav-link {
+    display: inline-flex;
+    align-items: center;
     gap: 7px;
     min-height: 38px;
     padding: 0 10px !important;
@@ -196,6 +217,8 @@ svg {
     border-radius: 999px;
     color: color-mix(in oklch, var(--color-primary-content) 84%, transparent) !important;
     font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
 .site-nav-link:hover {
@@ -209,6 +232,7 @@ svg {
 }
 
 .repo-button,
+.site-menu-toggle,
 .hero-link {
     min-height: 42px;
     border-radius: 999px !important;
@@ -216,7 +240,8 @@ svg {
     text-decoration: none !important;
 }
 
-.repo-button {
+.repo-button,
+.site-menu-toggle {
     gap: 8px;
     padding: 0 14px !important;
     border: 1px solid color-mix(in oklch, var(--color-primary-content) 30%, transparent) !important;
@@ -224,7 +249,8 @@ svg {
     background: color-mix(in oklch, var(--color-primary-content) 11%, transparent) !important;
 }
 
-.repo-button:hover {
+.repo-button:hover,
+.site-menu-toggle:hover {
     border-color: color-mix(in oklch, var(--color-primary-content) 48%, transparent) !important;
     background: color-mix(in oklch, var(--color-primary-content) 18%, transparent) !important;
 }
@@ -238,6 +264,39 @@ svg {
     display: inline-flex;
     align-items: center;
     gap: 10px;
+}
+
+.site-navigation-dropdown,
+.site-navigation-theme,
+.site-navigation-source {
+    display: none;
+}
+
+.site-navigation-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.site-navigation-panel .site-nav-link {
+    min-height: 42px;
+    border-radius: 8px;
+    color: var(--dm-paper) !important;
+}
+
+.site-navigation-panel .site-nav-link:hover {
+    border-color: var(--dm-line-strong);
+    background: var(--dm-panel);
+}
+
+.navbar.site-header .site-navigation-panel .nav-index {
+    color: var(--dm-copper);
+}
+
+.site-navigation-theme {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--dm-line);
 }
 
 .appbar-theme-switch {
@@ -3088,6 +3147,21 @@ textarea {
     align-items: center;
 }
 
+@media (max-width: 1024px) {
+    .navbar.site-header {
+        gap: 8px;
+        padding: 10px 16px !important;
+    }
+
+    .navbar.site-header .menu {
+        display: none;
+    }
+
+    .site-navigation-dropdown {
+        display: inline-block;
+    }
+}
+
 @media (max-width: 980px) {
     .hero-stage,
     .catalog-hero,
@@ -3130,51 +3204,17 @@ textarea {
 }
 
 @media (max-width: 760px) {
-    .navbar.site-header {
-        position: sticky;
-        flex-wrap: wrap;
-        gap: 8px;
-        height: auto !important;
-        min-height: 72px;
-        padding: 10px 190px 10px 16px !important;
-    }
-
-    .navbar.site-header .navbar-start,
-    .navbar.site-header .navbar-end,
-    .navbar.site-header .logo,
-    .navbar.site-header .menu,
-    .navbar.site-header .info {
-        height: auto;
-    }
-
-    .navbar.site-header .navbar-start {
-        flex: 1 1 auto;
-        flex-wrap: wrap;
-        width: 100%;
-        gap: 12px;
-    }
-
-    .navbar.site-header .navbar-end {
-        position: absolute;
-        top: 14px;
-        right: 16px;
-    }
-
-    .navbar.site-header .menu {
-        order: 3;
-        flex-basis: 100%;
-        justify-content: space-between;
-        gap: 4px;
-        margin-top: 8px;
-    }
-
     .brand-caption,
     .nav-index {
         display: none;
     }
 
-    .repo-button {
+    .appbar-actions > .repo-button {
         display: none !important;
+    }
+
+    .site-navigation-source {
+        display: inline-flex;
     }
 
     .appbar-theme-switch .theme-controller-label {
@@ -3271,11 +3311,19 @@ textarea {
 
 @media (max-width: 520px) {
     .navbar.site-header {
-        padding-right: 172px !important;
+        padding-inline: 14px !important;
     }
 
     .brand-title {
         font-size: 1rem;
+    }
+
+    .appbar-actions > .appbar-theme-switch {
+        display: none;
+    }
+
+    .site-navigation-theme {
+        display: block;
     }
 
     .hero-title {
