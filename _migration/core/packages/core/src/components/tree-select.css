@@ -1,0 +1,541 @@
+/**
+ * Tree Select Component Styles
+ * DuskMoonUI - Hierarchical dropdown selection component
+ */
+
+@layer components {
+  /* Base Tree Select */
+  .tree-select {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* Tree Select Trigger */
+  .tree-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: var(--color-on-surface);
+    background-color: var(--color-surface);
+    border: 1px solid currentColor;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: border-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
+  }
+
+  .tree-select-trigger:hover:not(:disabled) {
+    background-color: var(--color-surface-container);
+  }
+
+  .tree-select-trigger:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+
+  .tree-select-trigger:disabled,
+  .tree-select-trigger[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: var(--color-surface-container);
+  }
+
+  /* Support for div-based trigger (when using clear button) */
+  div.tree-select-trigger {
+    user-select: none;
+  }
+
+  div.tree-select-trigger:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+
+  /* Value Display */
+  .tree-select-value {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-on-surface-variant);
+  }
+
+  .tree-select-value-selected {
+    color: var(--color-on-surface);
+  }
+
+  /* Path Breadcrumb Display */
+  .tree-select-path {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Dropdown Arrow */
+  .tree-select-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--color-on-surface-variant);
+    flex-shrink: 0;
+    transition: transform 150ms ease-in-out;
+  }
+
+  .tree-select-open .tree-select-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Clear Button */
+  .tree-select-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    color: var(--color-on-surface-variant);
+    background-color: transparent;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 150ms ease-in-out;
+  }
+
+  .tree-select-clear:hover {
+    background-color: var(--color-surface-container-high);
+  }
+
+  .tree-select-clear svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* Tree Select Dropdown */
+  .tree-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: none;
+    max-height: 20rem;
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-outline-variant);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    overflow-y: auto;
+  }
+
+  .tree-select-open .tree-select-dropdown {
+    display: block;
+  }
+
+  /* Popover API Support */
+  .tree-select-dropdown[popover] {
+    /* Reset browser defaults for proper positioning */
+    position: fixed;
+    inset: auto 0.5rem 0.5rem auto;
+    max-inline-size: calc(100dvw - 1rem);
+    max-block-size: min(20rem, calc(100dvh - 1rem));
+    margin: 0;
+    border: 1px solid var(--color-outline-variant);
+  }
+
+  .tree-select-dropdown[popover]:popover-open {
+    display: block;
+  }
+
+  /* The popovertarget invoker is the implicit anchor for its own dropdown. */
+  @supports (position-area: block-end) {
+    .tree-select-dropdown[popover] {
+      inset: auto;
+      inline-size: anchor-size(width);
+      margin-block: 0.25rem;
+      margin-inline: 0;
+      position-area: block-end span-inline-end;
+      position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    }
+  }
+
+  /* Search Input in Dropdown */
+  .tree-select-search {
+    display: flex;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-outline-variant);
+  }
+
+  .tree-select-search-input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-on-surface);
+    background-color: var(--color-surface-container);
+    border: none;
+    border-radius: var(--radius-xs);
+    outline: none;
+  }
+
+  .tree-select-search-input:focus {
+    background-color: var(--color-surface-container-high);
+  }
+
+  /* Options Container */
+  .tree-select-options {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Tree Node */
+  .tree-select-node {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-on-surface);
+    background-color: transparent;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: background-color 150ms ease-in-out;
+  }
+
+  .tree-select-node:hover {
+    background-color: var(--color-surface-container);
+  }
+
+  .tree-select-node-selected {
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+  }
+
+  .tree-select-node-selected:hover {
+    background-color: color-mix(in oklch, var(--color-primary-container), black 5%);
+  }
+
+  /* Leaf Node (no children) */
+  .tree-select-node-leaf {
+    padding-left: 2rem;
+  }
+
+  /* Expand/Collapse Toggle */
+  .tree-select-node-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    color: var(--color-on-surface-variant);
+    background-color: transparent;
+    border: none;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 150ms ease-in-out;
+  }
+
+  .tree-select-node-toggle:hover {
+    background-color: var(--color-surface-container-high);
+  }
+
+  .tree-select-node-expanded .tree-select-node-toggle,
+  .tree-select-node-expanded > .tree-select-node-toggle {
+    transform: rotate(90deg);
+  }
+
+  /* Toggle Icon */
+  .tree-select-node-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* Node Label */
+  .tree-select-node-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Custom Node Icon */
+  .tree-select-node-custom-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--color-on-surface-variant);
+    flex-shrink: 0;
+  }
+
+  /* Children Container */
+  .tree-select-children {
+    display: none;
+    padding-left: 1.5rem;
+  }
+
+  .tree-select-node-expanded + .tree-select-children {
+    display: block;
+  }
+
+  /* Checkbox for Multi-Select */
+  .tree-select-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .tree-select-checkbox-input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+
+  .tree-select-checkbox-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    background-color: transparent;
+    border: 2px solid var(--color-on-surface-variant);
+    border-radius: var(--radius-xs);
+    transition: background-color 150ms ease-in-out, border-color 150ms ease-in-out;
+  }
+
+  .tree-select-checkbox-input:checked + .tree-select-checkbox-box {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .tree-select-checkbox-input:checked + .tree-select-checkbox-box::after {
+    content: '';
+    display: block;
+    width: 0.375rem;
+    height: 0.625rem;
+    border: 2px solid var(--color-primary-content);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translateY(-1px);
+  }
+
+  /* Empty State */
+  .tree-select-empty {
+    padding: 1rem;
+    text-align: center;
+    color: var(--color-on-surface-variant);
+    font-size: 0.875rem;
+  }
+
+  /* Size Variants */
+  .tree-select-sm .tree-select-trigger {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: var(--radius-xs);
+  }
+
+  .tree-select-lg .tree-select-trigger {
+    padding: 1rem 1.25rem;
+    font-size: 1.125rem;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Outlined Variant (Default) */
+  .tree-select-outlined .tree-select-trigger {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-outline);
+  }
+
+  /* Filled Variant */
+  .tree-select-filled .tree-select-trigger {
+    background-color: var(--color-surface-container);
+    border: none;
+    border-bottom: 2px solid var(--color-outline);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+
+  .tree-select-filled .tree-select-trigger:focus {
+    border-bottom-color: currentColor;
+    box-shadow: none;
+  }
+
+  /* Multiple Selection Mode */
+  .tree-select-multiple .tree-select-value {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  /* Color Variants */
+  .tree-select-primary .tree-select-trigger {
+    color: var(--color-on-primary-container);
+  }
+  .tree-select-primary .tree-select-trigger:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-primary) 10%, transparent);
+  }
+
+  .tree-select-secondary .tree-select-trigger {
+    color: var(--color-on-secondary-container);
+  }
+  .tree-select-secondary .tree-select-trigger:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-secondary) 10%, transparent);
+  }
+
+  .tree-select-tertiary .tree-select-trigger {
+    color: var(--color-on-tertiary-container);
+  }
+  .tree-select-tertiary .tree-select-trigger:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-tertiary) 10%, transparent);
+  }
+
+  .tree-select-info .tree-select-trigger {
+    color: var(--color-on-info-container);
+  }
+  .tree-select-info .tree-select-trigger:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-info) 10%, transparent);
+  }
+
+  .tree-select-success .tree-select-trigger {
+    color: var(--color-on-success-container);
+  }
+  .tree-select-success .tree-select-trigger:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-success) 10%, transparent);
+  }
+
+  .tree-select-warning .tree-select-trigger {
+    color: var(--color-on-warning-container);
+  }
+  .tree-select-warning .tree-select-trigger:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-warning) 10%, transparent);
+  }
+
+  .tree-select-error .tree-select-trigger {
+    color: var(--color-on-error-container);
+  }
+  .tree-select-error .tree-select-trigger:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-error) 10%, transparent);
+  }
+
+  .tree-select-accent .tree-select-trigger {
+    color: light-dark(var(--color-accent-content), var(--color-accent));
+  }
+  .tree-select-accent .tree-select-trigger:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-accent) 10%, transparent);
+  }
+
+  .tree-select-neutral .tree-select-trigger {
+    color: var(--color-neutral);
+  }
+  .tree-select-neutral .tree-select-trigger:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-neutral) 10%, transparent);
+  }
+
+  .tree-select-base .tree-select-trigger {
+    color: var(--color-base-content);
+  }
+  .tree-select-base .tree-select-trigger:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-base-content) 10%, transparent);
+  }
+
+  /* Ghost Variant */
+  .tree-select-ghost .tree-select-trigger {
+    background-color: transparent;
+    border-color: transparent;
+  }
+  .tree-select-ghost .tree-select-trigger:focus {
+    background-color: var(--color-surface-container);
+    border-color: transparent;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+
+  /* Disabled State */
+  .tree-select-disabled .tree-select-trigger {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: var(--color-surface-container);
+  }
+
+  /* Loading State */
+  .tree-select-loading .tree-select-trigger {
+    cursor: wait;
+  }
+
+  .tree-select-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--color-outline);
+    border-top-color: var(--color-primary);
+    border-radius: var(--radius-full);
+    animation: tree-select-spin 0.8s linear infinite;
+  }
+
+  @keyframes tree-select-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Multi-select Tags */
+  .tree-select-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    flex: 1;
+  }
+
+  .tree-select-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+    border-radius: var(--radius-lg);
+  }
+
+  .tree-select-tag-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.875rem;
+    height: 0.875rem;
+    padding: 0;
+    color: inherit;
+    background-color: transparent;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    opacity: 0.7;
+  }
+
+  .tree-select-tag-remove:hover {
+    opacity: 1;
+    background-color: color-mix(in oklch, currentColor 10%, transparent);
+  }
+
+  /* Reduce Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .tree-select-trigger,
+    .tree-select-arrow,
+    .tree-select-node-toggle,
+    .tree-select-node,
+    .tree-select-checkbox-box {
+      transition: none;
+    }
+    .tree-select-spinner {
+      animation: none;
+    }
+  }
+}

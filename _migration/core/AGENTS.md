@@ -1,0 +1,154 @@
+# AGENTS.md
+
+This file provides guidance to agent when working with code in this repository.
+
+## Project Overview
+
+DuskMoonUI is a CSS-only component library built as a Tailwind CSS v4 plugin. It implements Material Design 3's extended color system with 65+ color tokens in OKLCH format and provides 50+ pre-styled components across 5 themes.
+
+## Commands
+
+```bash
+# Build core package (CSS bundle + TypeScript declarations + ESM/CJS plugin)
+bun run build:core
+
+# Watch mode for development (rebuilds on file change)
+bun run dev:core
+
+# Run unit tests (~360 tests)
+cd packages/core && bun test tests/unit
+
+# Run a single test file
+cd packages/core && bun test tests/unit/button.test.ts
+
+# Visual regression tests (Playwright)
+cd packages/core && bun run test:visual
+
+# Integration tests (Playwright)
+cd packages/core && bun run test:integration
+
+# Accessibility tests (axe-core + Playwright)
+cd packages/core && bun run test:a11y
+
+# Type checking (core + docs)
+bun run typecheck
+
+# Run docs site locally (hot-reloads core CSS changes)
+bun run dev
+
+# Build docs site (includes astro check + pagefind indexing)
+bun run build:docs
+```
+
+## Architecture
+
+### Monorepo Layout
+
+- `packages/core/` — `@duskmoon-dev/core`, the published library
+- `packages/css-art/` — `@duskmoon-dev/css-art`, pure CSS decorative illustrations (no JS)
+- `packages/docs/` — `@duskmoon-dev/docs`, Astro-based docs site (MDX content, i18n: en/fr/es, base path `/duskmoonui/`)
+- `examples/` — Starter apps (Astro, Next.js)
+- `.specify/` — speckit workflow: feature spec pipeline (spec → plan → tasks → implement)
+
+### Build Pipeline
+
+`packages/core/scripts/build-css.ts` is a custom build script (no PostCSS/LightningCSS) that:
+1. Reads `src/index.css` and recursively inlines all `@import` statements into a single `dist/index.css` (~415 KB)
+2. Copies individual theme CSS files to `dist/themes/`
+3. Copies individual component CSS files to `dist/components/` and generates ESM modules (wrapping CSS in `CSSStyleSheet` for web component adoption)
+4. Bundles `src/tailwind-plugin.ts` into ESM + CJS via Bun.build
+
+The `css-art` package has its own parallel build: `bun run build:css-art` / `bun run dev:css-art`.
+
+### CSS Layering
+
+All component styles are wrapped in `@layer components { }`. Color tokens are registered via Tailwind CSS v4's `@theme` directive in `base/colors.css` (declarations set to `initial`, actual values provided by theme CSS files).
+
+### Color System
+
+Colors use **OKLCH format** (`oklch(L% C H)`). Key conventions:
+- Brand colors (primary/secondary/tertiary) each have 4 tokens: `{color}`, `{color}-content`, `{color}-container`, `on-{color}-container`
+- Surface elevation uses 5 container levels: `surface-container-{lowest,low,default,high,highest}`
+- Focus/hover states use `color-mix()` rather than separate tokens: `color-mix(in oklch, var(--color-primary), black 10%)`
+- **OKLCH chroma (C) pitfall**: C controls saturation. Neutral backgrounds need C ≤ 0.01. A C of 0.1+ produces vivid saturated colors — use only for accent colors, never for base/surface tokens.
+
+### Theme System
+
+5 themes: `sunshine` (light), `moonlight` (dark), `ocean`, `forest`, `sunset`. Applied via `data-theme` attribute.
+
+Each theme has two source files:
+- **`.css` file** (e.g., `sunshine.css`) — OKLCH values, the browser's source of truth. Contains two blocks that **must be kept in sync**: `[data-theme="sunshine"] { ... }` and `:root { ... }` (default fallback, used for SSR/no-JS initial paint on GitHub Pages)
+- **`.ts` file** (e.g., `sunshine.ts`) — HSL values for the Tailwind plugin API. These are a legacy interface; the CSS files are authoritative.
+
+### Component Pattern
+
+Each component has:
+- A CSS file in `src/components/` using `@layer components` — defines base class + variant modifiers (e.g., `.btn`, `.btn-primary`, `.btn-outline`, `.btn-sm`)
+- An ESM module auto-generated at build time (wraps CSS in `CSSStyleSheet` for web component use via `duskmoon-elements`)
+- Unit tests in `tests/unit/` that read source CSS and assert on class names and property patterns
+
+### Docs Site
+
+**Constitution**: The docs site is strictly a consumer of `@duskmoon-dev/core`. All visual styling and components must come from core. If a component is missing, request it as a feature in core — never create custom component styles in docs. See `packages/docs/CLAUDE.md` for full rules.
+
+Astro 5 with MDX content collections. Key patterns:
+- In dev mode, Vite aliases `@duskmoon-dev/core` to the core source directory for hot reload
+- `ComponentShowcase.astro` renders live previews with code tabs
+- Component docs live in `packages/docs/src/content/docs/en/components/*.mdx`
+- **ID collision risk**: Markdown headings auto-generate IDs that can shadow element IDs used by `popovertarget` — prefix demo element IDs with `demo-` to avoid collisions
+
+### Skills
+
+When developing components or pages for this project, use the `frontend-design` skill to produce high-quality, production-grade UI.
+
+### Component Color System
+
+DuskMoonUI follows Material Design 3's color role system with semantic extensions. MD3 defines primary, secondary, tertiary, and error as core color roles. DuskMoonUI extends this with info, success, and warning as additional semantic colors — a common pattern in design systems (Bootstrap, DaisyUI, MUI) but not part of the official MD3 spec.
+
+#### Default & Variant Rules
+
+- **Default color**: `color: var(--color-on-surface)` — every component's base text color, per MD3's surface color role.
+- **Minimum color variants**: Every component must provide at least these 7:
+  `{element}-primary`, `{element}-secondary`, `{element}-tertiary`, `{element}-info`, `{element}-success`, `{element}-warning`, `{element}-error`.
+  Components may define additional variants beyond these 7 where appropriate.
+- **Ghost variant** (`{element}-ghost`): Required for components that have a visible border in their default state (e.g., input, select, textarea, button). Sets `border-color: transparent`. Components without a default border (e.g., badge) do not need a ghost variant.
+
+#### Border & Color Inheritance (Form Elements + Interactive Controls)
+
+Form elements (input, select, textarea) and interactive controls (button, chip, switch, toggle) use the `currentColor` border pattern:
+
+- **Default border**: `border: 1px solid currentColor` — the border matches the element's text color. Do **not** use `var(--color-outline)` or `transparent` for the base border.
+- **Surface foregrounds** (e.g., `input-primary`, outlined/text buttons): use `var(--color-on-{variant}-container)` for readable colored text. Accent has no container role; use `light-dark(var(--color-accent-content), var(--color-accent))`. The border inherits via `currentColor`. Filled components keep the `{variant}` background and its matching `{variant}-content` foreground.
+- **Focus ring**: `box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent)`.
+
+Layout/container components (alert, card) may use `var(--color-outline)` or other border strategies as appropriate for their role.
+
+### Docs Site URL Structure
+
+The docs dev server runs on `localhost:4321` with base path `/duskmoonui/`. Component doc pages are at:
+```
+http://localhost:4321/duskmoonui/docs/en/components/{name}/
+```
+(Astro i18n uses `prefixDefaultLocale: false`, so English content under `content/docs/en/` is served without the `/en/` prefix in the `pages/` routes — but the content collection slug still includes `en/`, making the effective URL `/duskmoonui/docs/en/components/{name}/`.)
+
+### Native Overlay Design Principles
+
+- **Tooltip uses only the HTML Popover API.** Render `.tooltip[popover="hint"]` with `role="tooltip"`, connect the trigger with `interestfor` and `aria-describedby`, and let `:popover-open` control visibility. Do not implement wrapper, pseudo-element, `:hover`/`:focus`, or `.tooltip-open` visibility APIs. Compatibility code may call `showPopover()` / `hidePopover()` on the same native element.
+- **Modal and Dialog use only HTML `<dialog>`.** Render `<dialog class="modal">` or `<dialog class="dialog">`. Open modal interactions with `command="show-modal"` + `commandfor`, or `showModal()`; close with `command="close"`, `close()`, or a `method="dialog"` form. The browser owns modality, background inertness, focus containment/restoration, Escape dismissal, and `::backdrop`.
+- Do not create modal/dialog overlays from ordinary elements, checkbox state, URL `:target`, `.modal-open`, custom backdrop elements, or custom focus traps. Setting `open` directly does not create modal behavior. These rules apply to component CSS, plugin styles, docs, examples, and tests.
+
+### CSS Anchor Positioning
+
+Tooltip and popover use CSS Anchor Positioning with `anchor-name` / `position-anchor` / `position-area` / `position-try-fallbacks` (not `anchor()` inset functions). Notes:
+- Prefer Chrome 130+ for `position-area` on HiDPI; older Chromium had DSF double-application bugs that are largely fixed
+- Residual risk: nested scroll containers combined with ancestor `transform` / `will-change` compositing layers
+- Tooltip is Popover API only (`interestfor` + `popover="hint"`) — no wrapper / `:hover` fallback
+- Prefix demo element IDs with `demo-` to avoid collisions with markdown heading IDs used by `popovertarget` / `interestfor`
+- `ComponentShowcase.astro` has a JS positioning fallback when `position-area` / `anchor()` is unsupported
+
+## Agent note
+
+After we add new feature, change architecture or fix issues we write agent note.
+When save note to agent-note, should add labels:
+- `project: duskmoon`
+- `variant: tailwind`

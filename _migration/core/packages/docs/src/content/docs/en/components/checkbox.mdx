@@ -1,0 +1,426 @@
+---
+title: Checkbox
+description: Material Design 3 checkbox component with multiple variants, sizes, and states
+category: components
+order: 33
+published: true
+tags: ['checkbox', 'components', 'material-design', 'forms', 'input']
+---
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Checkbox
+
+## Native Contract And Imports
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/checkbox.css";
+@import "@duskmoon-dev/core/components/form-group.css";
+@import "@duskmoon-dev/core/components/button.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+Aggregate: `@duskmoon-dev/core` with Tailwind v4; no-Tailwind:
+`@duskmoon-dev/core/standalone.css`. Individual:
+`@duskmoon-dev/core/components/checkbox.css` plus base/theme and
+`form-group.css` for associated labels/help. Extensionless `components/checkbox`
+exports generated `css` and constructable `styles`, not a behavior runtime.
+
+Use native inputs for values, selection, constraints, submission and reset.
+Actual `disabled` or `fieldset disabled` owns semantic disabling.
+Use `.validator` for native interaction-based errors and add
+`.validator-success` for native success. Explicit `aria-invalid="true"`
+wins over those states and color modifiers, including focus.
+Supply described error text as well as color. See
+[Validator](/duskmoonui/docs/en/components/validator/) and
+[Field composition](/duskmoonui/docs/en/components/form-group/).
+
+Checked state and reset are native. Indeterminate is an application-set DOM property,
+not an HTML attribute or a submitted third value. Resynchronize it after reset if needed.
+
+Checkboxes allow users to select one or more items from a set or toggle a single option. @duskmoon-dev/core provides a complete set of Material Design 3 checkbox variants with support for checked, indeterminate, and disabled states.
+
+## Basic Usage
+
+Simply add the `.checkbox` class to an `<input type="checkbox">`:
+
+<ComponentShowcase title="Basic Checkbox" code={`<input type="checkbox" class="checkbox" aria-label="Basic checkbox" />`} />
+
+## With Label
+
+Wrap the checkbox in a label for better UX:
+
+<ComponentShowcase title="Checkbox with Label" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox" />
+  <span>Accept terms and conditions</span>
+</label>`} />
+
+## Checked State
+
+<ComponentShowcase title="Checked Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox" checked />
+  <span>I agree</span>
+</label>`} />
+
+## Sizes
+
+Five sizes are available:
+
+<ComponentShowcase title="Checkbox Sizes" code={`<div class="checkbox-group checkbox-group-horizontal">
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox checkbox-xs" checked />
+    <span>Extra Small</span>
+  </label>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox checkbox-sm" checked />
+    <span>Small</span>
+  </label>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox checkbox-md" checked />
+    <span>Medium</span>
+  </label>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox checkbox-lg" checked />
+    <span>Large</span>
+  </label>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox checkbox-xl" checked />
+    <span>Extra Large</span>
+  </label>
+</div>`} />
+
+## Color Variants
+
+### Primary (Default)
+
+<ComponentShowcase title="Primary Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox checkbox-primary" checked />
+  <span>Primary</span>
+</label>`} />
+
+### Secondary
+
+<ComponentShowcase title="Secondary Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox checkbox-secondary" checked />
+  <span>Secondary</span>
+</label>`} />
+
+### Tertiary
+
+<ComponentShowcase title="Tertiary Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox checkbox-tertiary" checked />
+  <span>Tertiary</span>
+</label>`} />
+
+### Success
+
+<ComponentShowcase title="Success Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox checkbox-success" checked />
+  <span>Success</span>
+</label>`} />
+
+### Warning
+
+<ComponentShowcase title="Warning Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox checkbox-warning" checked />
+  <span>Warning</span>
+</label>`} />
+
+### Error
+
+<ComponentShowcase title="Error Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox checkbox-error" checked />
+  <span>Error</span>
+</label>`} />
+
+### Info
+
+<ComponentShowcase title="Info Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox checkbox-info" checked />
+  <span>Info</span>
+</label>`} />
+
+## All Colors Comparison
+
+<ComponentShowcase title="All Color Variants" code={`<div class="checkbox-group checkbox-group-horizontal">
+  <input type="checkbox" class="checkbox checkbox-primary" checked aria-label="Primary checkbox" />
+  <input type="checkbox" class="checkbox checkbox-secondary" checked aria-label="Secondary checkbox" />
+  <input type="checkbox" class="checkbox checkbox-tertiary" checked aria-label="Tertiary checkbox" />
+  <input type="checkbox" class="checkbox checkbox-success" checked aria-label="Success checkbox" />
+  <input type="checkbox" class="checkbox checkbox-warning" checked aria-label="Warning checkbox" />
+  <input type="checkbox" class="checkbox checkbox-error" checked aria-label="Error checkbox" />
+  <input type="checkbox" class="checkbox checkbox-info" checked aria-label="Info checkbox" />
+</div>`} />
+
+## States
+
+### Indeterminate
+
+The indeterminate (mixed) state represents a partially selected state, commonly used in "select all" scenarios. Set it via JavaScript:
+
+<ComponentShowcase title="Indeterminate Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox" id="indeterminate-demo" />
+  <span>Indeterminate state</span>
+</label>
+
+<script>
+  document.getElementById('indeterminate-demo').indeterminate = true;
+</script>`} />
+
+### Indeterminate Color Variants
+
+All color variants support the indeterminate state:
+
+<ComponentShowcase title="Indeterminate Colors" code={`<div class="checkbox-group checkbox-group-horizontal">
+  <input type="checkbox" class="checkbox checkbox-primary" id="ind-primary" aria-label="Mixed primary checkbox" />
+  <input type="checkbox" class="checkbox checkbox-secondary" id="ind-secondary" aria-label="Mixed secondary checkbox" />
+  <input type="checkbox" class="checkbox checkbox-tertiary" id="ind-tertiary" aria-label="Mixed tertiary checkbox" />
+  <input type="checkbox" class="checkbox checkbox-success" id="ind-success" aria-label="Mixed success checkbox" />
+  <input type="checkbox" class="checkbox checkbox-warning" id="ind-warning" aria-label="Mixed warning checkbox" />
+  <input type="checkbox" class="checkbox checkbox-error" id="ind-error" aria-label="Mixed error checkbox" />
+  <input type="checkbox" class="checkbox checkbox-info" id="ind-info" aria-label="Mixed info checkbox" />
+</div>
+
+<script>
+  ['ind-primary', 'ind-secondary', 'ind-tertiary', 'ind-success', 'ind-warning', 'ind-error', 'ind-info']
+    .forEach(id => document.getElementById(id).indeterminate = true);
+</script>`} />
+
+### Select All Pattern
+
+A common use case for the indeterminate state is "select all" checkboxes:
+
+<ComponentShowcase title="Select All Example" code={`<form class="checkbox-group" id="demo-checkbox-items">
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox" id="demo-checkbox-select-all" />
+    <span>Select All</span>
+  </label>
+
+  <div class="checkbox-group">
+    <label class="checkbox-label">
+      <input type="checkbox" class="checkbox" data-demo-item name="item" value="1" checked />
+      <span>Item 1</span>
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" class="checkbox" data-demo-item name="item" value="2" checked />
+      <span>Item 2</span>
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" class="checkbox" data-demo-item name="item" value="3" />
+      <span>Item 3</span>
+    </label>
+  </div>
+  <button class="btn" type="reset">Reset items</button>
+</form>
+
+<script>
+  const form = document.getElementById('demo-checkbox-items');
+  const selectAll = document.getElementById('demo-checkbox-select-all');
+  const items = form.querySelectorAll('[data-demo-item]');
+
+  function updateSelectAll() {
+    const checkedCount = [...items].filter(item => item.checked).length;
+    selectAll.checked = checkedCount === items.length;
+    selectAll.indeterminate = checkedCount > 0 && checkedCount < items.length;
+  }
+
+  selectAll.addEventListener('change', () => {
+    items.forEach(item => item.checked = selectAll.checked);
+  });
+
+  items.forEach(item => item.addEventListener('change', updateSelectAll));
+  form.addEventListener('reset', () => requestAnimationFrame(updateSelectAll));
+  updateSelectAll();
+</script>`} />
+
+The local demo script owns aggregate checked/indeterminate state and reset synchronization.
+Only the named item controls are submitted; the select-all control is not another value.
+
+### Disabled
+
+<ComponentShowcase title="Disabled Checkboxes" code={`<div class="checkbox-group checkbox-group-horizontal">
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox" disabled />
+    <span>Disabled unchecked</span>
+  </label>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox" checked disabled />
+    <span>Disabled checked</span>
+  </label>
+</div>`} />
+
+## Checkbox Groups
+
+### Vertical Group
+
+<ComponentShowcase title="Vertical Checkbox Group" code={`<div class="checkbox-group">
+  <span class="checkbox-group-label">Select your interests</span>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox" name="interests" value="design" />
+    <span>Design</span>
+  </label>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox" name="interests" value="development" checked />
+    <span>Development</span>
+  </label>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox" name="interests" value="marketing" />
+    <span>Marketing</span>
+  </label>
+</div>`} />
+
+### Horizontal Group
+
+<ComponentShowcase title="Horizontal Checkbox Group" code={`<div class="checkbox-group checkbox-group-horizontal">
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox" name="options" value="a" checked />
+    <span>Option A</span>
+  </label>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox" name="options" value="b" />
+    <span>Option B</span>
+  </label>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox" name="options" value="c" />
+    <span>Option C</span>
+  </label>
+</div>`} />
+
+## Form Integration
+
+<ComponentShowcase title="Checkbox in Form" code={`<form>
+  <div class="checkbox-group">
+    <span class="checkbox-group-label">Notification Preferences</span>
+
+    <label class="checkbox-label">
+      <input type="checkbox" class="checkbox" name="email" checked />
+      <span>Email notifications</span>
+    </label>
+
+    <label class="checkbox-label">
+      <input type="checkbox" class="checkbox" name="sms" />
+      <span>SMS notifications</span>
+    </label>
+
+    <label class="checkbox-label">
+      <input type="checkbox" class="checkbox" name="push" checked />
+      <span>Push notifications</span>
+    </label>
+  </div>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="checkbox checkbox-primary" required />
+    <span>I agree to the terms and conditions *</span>
+  </label>
+</form>`} />
+
+## Best Practices
+
+### Accessibility
+
+- Use semantic `<label>` elements to associate labels with checkboxes
+- Provide clear, descriptive labels
+- Use `fieldset` and `legend` for checkbox groups
+- Ensure sufficient color contrast
+
+### Touch Targets
+
+The checkbox provides adequate touch targets. For mobile-first designs, use larger sizes:
+
+<ComponentShowcase title="Mobile-Friendly Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox checkbox-lg" />
+  <span>Mobile-friendly option</span>
+</label>`} />
+
+## API Reference
+
+### Class Names
+
+| Class | Description |
+|-------|-------------|
+| `.checkbox` | Base checkbox styling (required, on input element) |
+| `.checkbox-xs` | Extra small size (14px) |
+| `.checkbox-sm` | Small size (16px) |
+| `.checkbox-md` | Medium size (20px, default) |
+| `.checkbox-lg` | Large size (24px) |
+| `.checkbox-xl` | Extra large size (28px) |
+| `.checkbox-primary` | Primary color variant (default) |
+| `.checkbox-secondary` | Secondary color variant |
+| `.checkbox-tertiary` | Tertiary color variant |
+| `.checkbox-success` | Success color variant |
+| `.checkbox-warning` | Warning color variant |
+| `.checkbox-error` | Error color variant |
+| `.checkbox-info` | Info color variant |
+| `.checkbox-label` | Label wrapper for checkbox + text |
+| `.checkbox-group` | Container for vertical checkbox group |
+| `.checkbox-group-horizontal` | Horizontal layout modifier |
+| `.checkbox-group-label` | Group label text |
+
+### HTML Structure
+
+Simple checkbox:
+```html
+<input type="checkbox" class="checkbox" aria-label="Example checkbox" />
+```
+
+With label:
+```html
+<label class="checkbox-label">
+  <input type="checkbox" class="checkbox" />
+  <span>Label text</span>
+</label>
+```
+
+### States
+
+| State | How to Apply |
+|-------|--------------|
+| Checked | `checked` attribute |
+| Disabled | `disabled` attribute |
+| Indeterminate | `element.indeterminate = true` (JavaScript) |
+| Focus | Automatic via `:focus-visible` |
+
+## Ghost Variant
+
+The ghost variant removes the visible border when unchecked — useful for minimal UI contexts.
+
+<ComponentShowcase title="Ghost Checkbox" code={`<label class="checkbox-label">
+  <input type="checkbox" class="checkbox checkbox-ghost" />
+  <span>Ghost (no border unchecked)</span>
+</label>
+<label class="checkbox-label">
+  <input type="checkbox" class="checkbox checkbox-ghost" checked />
+  <span>Ghost checked (color appears)</span>
+</label>`}>
+  <div class="checkbox-group">
+    <label class="checkbox-label">
+      <input type="checkbox" class="checkbox checkbox-ghost" />
+      <span>Ghost (no border unchecked)</span>
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" class="checkbox checkbox-ghost" checked />
+      <span>Ghost checked (color appears)</span>
+    </label>
+  </div>
+</ComponentShowcase>
+
+## Related Components
+
+- [Radio](/duskmoonui/docs/en/components/radio/) - Single selection input
+- [Switch](/duskmoonui/docs/en/components/switch/) - Toggle control
+- [Input](/duskmoonui/docs/en/components/input/) - Text input fields

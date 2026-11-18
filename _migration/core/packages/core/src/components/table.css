@@ -1,0 +1,259 @@
+/**
+ * Table Component Styles
+ * DuskMoonUI - Material Design 3 inspired table system
+ */
+
+@layer components {
+  /* Base Table */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 0.875rem;
+    color: var(--color-on-surface);
+  }
+
+  /* Surface Variant */
+  .table-surface {
+    background-color: var(--color-surface);
+  }
+
+  /* Table Head */
+  .table thead,
+  .table-header {
+    background-color: var(--color-surface-container);
+  }
+
+  .table th,
+  .table-header-cell {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    text-align: left;
+    color: var(--color-on-surface);
+    border-bottom: 2px solid var(--color-outline);
+  }
+
+  /* Table Body */
+  .table tbody,
+  .table-body {
+    background-color: var(--color-surface);
+  }
+
+  .table td,
+  .table-cell {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-outline-variant);
+    vertical-align: middle;
+  }
+
+  .table tr:last-child td,
+  .table-row:last-child .table-cell {
+    border-bottom: none;
+  }
+
+  /* Table Footer */
+  .table tfoot,
+  .table-footer {
+    background-color: var(--color-surface-container);
+    font-weight: 500;
+  }
+
+  .table tfoot td {
+    border-top: 2px solid var(--color-outline);
+    border-bottom: none;
+  }
+
+  /* Zebra Striping */
+  .table-zebra tbody tr:nth-child(even),
+  .table-zebra .table-row:nth-child(even),
+  .table-striped tbody tr:nth-child(even),
+  .table-striped .table-row:nth-child(even) {
+    background-color: var(--color-surface-container-low);
+  }
+
+  /* Hover Effect */
+  .table-hover tbody tr:hover,
+  .table-hover .table-row:hover {
+    background-color: var(--color-surface-container);
+  }
+
+  /* Bordered Table */
+  .table-bordered {
+    border: 1px solid var(--color-outline);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .table-bordered th,
+  .table-bordered td {
+    border: 1px solid var(--color-outline-variant);
+  }
+
+  /* Borderless Table */
+  .table-borderless,
+  .table-borderless th,
+  .table-borderless td,
+  .table-borderless tfoot td,
+  .table-borderless .table-header-cell,
+  .table-borderless .table-cell {
+    border: none;
+  }
+
+  /* Compact Table */
+  .table-compact th,
+  .table-compact td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  /* Comfortable Table */
+  .table-comfortable th,
+  .table-comfortable td {
+    padding: 1rem 1.25rem;
+  }
+
+  /* Fixed Layout */
+  .table-fixed {
+    table-layout: fixed;
+  }
+
+  /* Sticky Header */
+  .table-sticky thead,
+  .table-sticky .table-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--color-surface-container);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .table-sticky th,
+  .table-sticky thead th,
+  .table-sticky .table-header-cell {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--color-surface-container);
+    box-shadow: var(--shadow-xs);
+  }
+
+  /* Sortable Header */
+  .table-sortable th {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .table-sortable th:hover {
+    background-color: var(--color-surface-container-high);
+  }
+
+  .table-sort-asc::after {
+    content: ' ↑';
+    opacity: 0.7;
+  }
+
+  .table-sort-desc::after {
+    content: ' ↓';
+    opacity: 0.7;
+  }
+
+  /* Selectable Rows */
+  .table-selectable tbody tr,
+  .table-selectable .table-row {
+    cursor: pointer;
+  }
+
+  .table-selectable tbody tr:hover,
+  .table-selectable .table-row:hover {
+    background-color: color-mix(in oklch, var(--color-on-surface) 8%, transparent);
+  }
+
+  /* Selected Row */
+  .table-row-selected,
+  .table tr.selected,
+  .table-hover tbody tr:is(.selected, .table-row-selected),
+  .table-hover .table-row:is(.selected, .table-row-selected),
+  .table-selectable tbody tr.table-row-selected,
+  .table-selectable .table-row.table-row-selected,
+  .table-selectable tbody tr.selected,
+  .table-selectable .table-row.selected {
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+  }
+
+  .table-numeric { text-align: end; font-variant-numeric: tabular-nums; }
+  .table-center { text-align: center; }
+  .table-actions { white-space: nowrap; text-align: end; }
+  .table-checkbox { inline-size: 1%; }
+  .table-sort-icon { display: inline-block; margin-inline-start: 0.25rem; }
+
+  /* Clickable Row */
+  .table-row-clickable,
+  .table tbody tr[data-href] {
+    cursor: pointer;
+  }
+
+  /* Responsive Table */
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive .table {
+    min-width: 100%;
+  }
+
+  /* Table Caption */
+  .table caption,
+  .table-caption {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-on-surface-variant);
+    text-align: left;
+    caption-side: bottom;
+  }
+
+  /* Empty State */
+  .table-empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--color-on-surface-variant);
+  }
+
+  /* Loading State */
+  .table-loading {
+    position: relative;
+  }
+
+  .table-loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-surface);
+    opacity: 0.7;
+  }
+
+  /* Pinned Columns */
+  .table-pin-left {
+    position: sticky;
+    left: 0;
+    background-color: inherit;
+    z-index: 1;
+  }
+
+  .table-pin-right {
+    position: sticky;
+    right: 0;
+    background-color: inherit;
+    z-index: 1;
+  }
+
+  /* Focus State for Interactive Tables */
+  .table tr:focus-visible,
+  .table-row:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+}

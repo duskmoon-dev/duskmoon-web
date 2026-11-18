@@ -1,0 +1,324 @@
+/**
+ * Progress Component Styles
+ * DuskMoonUI - Material Design 3 inspired progress system
+ */
+
+@layer components {
+  /* Base Progress (Linear) */
+  .progress {
+    position: relative;
+    width: 100%;
+    height: 0.5rem;
+    background-color: var(--color-surface-container-highest);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  /* Native progress keeps the platform's accessible value/max contract. */
+  progress.progress {
+    appearance: none;
+    border: 0;
+    display: block;
+  }
+
+  progress.progress::-webkit-progress-bar {
+    background: var(--color-surface-container-highest);
+    border-radius: var(--radius-full);
+  }
+
+  progress.progress::-webkit-progress-value {
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width 300ms ease-in-out;
+  }
+
+  progress.progress::-moz-progress-bar {
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width 300ms ease-in-out;
+  }
+
+  progress.progress:indeterminate::-webkit-progress-value,
+  progress.progress:indeterminate::-moz-progress-bar {
+    width: 30%;
+    animation: progress-indeterminate 1.5s infinite ease-in-out;
+  }
+
+  /* Progress Bar */
+  .progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width 300ms ease-in-out;
+  }
+
+  /* Color Variants */
+  .progress-primary .progress-bar {
+    background-color: var(--color-primary);
+  }
+
+  .progress-secondary .progress-bar {
+    background-color: var(--color-secondary);
+  }
+
+  .progress-tertiary .progress-bar {
+    background-color: var(--color-tertiary);
+  }
+
+  .progress-info .progress-bar {
+    background-color: var(--color-info);
+  }
+
+  .progress-success .progress-bar {
+    background-color: var(--color-success);
+  }
+
+  .progress-warning .progress-bar {
+    background-color: var(--color-warning);
+  }
+
+  .progress-error .progress-bar {
+    background-color: var(--color-error);
+  }
+
+  .progress-accent .progress-bar {
+    background-color: var(--color-accent);
+  }
+
+  .progress-neutral .progress-bar {
+    background-color: var(--color-neutral);
+  }
+
+  .progress-base .progress-bar {
+    background-color: var(--color-base-content);
+  }
+
+  progress.progress-primary::-webkit-progress-value,
+  progress.progress-primary::-moz-progress-bar { background: var(--color-primary); }
+  progress.progress-secondary::-webkit-progress-value,
+  progress.progress-secondary::-moz-progress-bar { background: var(--color-secondary); }
+  progress.progress-tertiary::-webkit-progress-value,
+  progress.progress-tertiary::-moz-progress-bar { background: var(--color-tertiary); }
+  progress.progress-info::-webkit-progress-value,
+  progress.progress-info::-moz-progress-bar { background: var(--color-info); }
+  progress.progress-success::-webkit-progress-value,
+  progress.progress-success::-moz-progress-bar { background: var(--color-success); }
+  progress.progress-warning::-webkit-progress-value,
+  progress.progress-warning::-moz-progress-bar { background: var(--color-warning); }
+  progress.progress-error::-webkit-progress-value,
+  progress.progress-error::-moz-progress-bar { background: var(--color-error); }
+
+  /* Size Variants */
+  .progress-xs {
+    height: 0.25rem;
+  }
+
+  .progress-sm {
+    height: 0.375rem;
+  }
+
+  .progress-lg {
+    height: 0.75rem;
+  }
+
+  .progress-xl {
+    height: 1rem;
+  }
+
+  /* Indeterminate Animation */
+  .progress-indeterminate .progress-bar {
+    width: 30%;
+    animation: progress-indeterminate 1.5s infinite ease-in-out;
+  }
+
+  @keyframes progress-indeterminate {
+    0% {
+      left: -30%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  /* Progress with Label */
+  .progress-labeled {
+    position: relative;
+  }
+
+  .progress-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--color-on-surface);
+  }
+
+  /* Striped Progress */
+  .progress-striped .progress-bar {
+    background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-size: 1rem 1rem;
+  }
+
+  .progress-striped.progress-animated .progress-bar {
+    animation: progress-striped 1s linear infinite;
+  }
+
+  @keyframes progress-striped {
+    from {
+      background-position: 1rem 0;
+    }
+    to {
+      background-position: 0 0;
+    }
+  }
+
+  /* Buffer tracks belong to custom markup, not native <progress>. */
+  .progress-buffer {
+    position: relative;
+  }
+
+  .progress-buffer-bar {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 0;
+    background: color-mix(in oklch, var(--color-primary) 30%, transparent);
+    border-radius: var(--radius-full);
+    transition: width 300ms ease-in-out;
+  }
+
+  .progress-buffer .progress-bar {
+    z-index: 1;
+  }
+
+  /* Circular Progress */
+  .progress-circular {
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .progress-circular svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .progress-circular-track {
+    fill: none;
+    stroke: var(--color-surface-container-highest);
+    stroke-width: 4;
+  }
+
+  .progress-circular-bar {
+    fill: none;
+    stroke: var(--color-primary);
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 300ms ease-in-out;
+  }
+
+  .progress-circular-label {
+    position: absolute;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-on-surface);
+  }
+
+  /* Circular Size Variants */
+  .progress-circular-sm {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .progress-circular-sm .progress-circular-label {
+    font-size: 0.5rem;
+  }
+
+  .progress-circular-lg {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .progress-circular-lg .progress-circular-label {
+    font-size: 1rem;
+  }
+
+  .progress-circular-xl {
+    width: 6rem;
+    height: 6rem;
+  }
+
+  .progress-circular-xl .progress-circular-label {
+    font-size: 1.25rem;
+  }
+
+  /* Circular Indeterminate */
+  .progress-circular-indeterminate svg {
+    animation: progress-circular-rotate 2s linear infinite;
+  }
+
+  .progress-circular-indeterminate .progress-circular-bar {
+    stroke-dasharray: 80, 200;
+    stroke-dashoffset: 0;
+    animation: progress-circular-dash 1.5s ease-in-out infinite;
+  }
+
+  @keyframes progress-circular-rotate {
+    100% {
+      transform: rotate(270deg);
+    }
+  }
+
+  @keyframes progress-circular-dash {
+    0% {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 100, 200;
+      stroke-dashoffset: -15;
+    }
+    100% {
+      stroke-dasharray: 100, 200;
+      stroke-dashoffset: -125;
+    }
+  }
+
+  /* Reduce Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .progress-bar,
+    progress.progress::-webkit-progress-value,
+    progress.progress::-moz-progress-bar,
+    .progress-circular-bar,
+    .progress-buffer-bar {
+      transition: none;
+    }
+
+    .progress-indeterminate .progress-bar,
+    progress.progress:indeterminate::-webkit-progress-value,
+    progress.progress:indeterminate::-moz-progress-bar,
+    .progress-striped.progress-animated .progress-bar,
+    .progress-circular-indeterminate svg,
+    .progress-circular-indeterminate .progress-circular-bar {
+      animation: none;
+    }
+  }
+}

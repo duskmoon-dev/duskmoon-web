@@ -1,0 +1,117 @@
+---
+title: Calendar and Datepicker
+description: Native date input and existing inline/popup calendar styling with explicit behavior boundaries
+category: components
+order: 21
+published: true
+tags: ['calendar', 'datepicker', 'form', 'components']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Calendar and Datepicker
+
+Calendar is an inline date surface. Datepicker composes an input, trigger and popup.
+Both reuse `datepicker.css`; there is no duplicate Calendar stylesheet or mandatory
+date runtime. Native date input is the simplest functional path.
+
+## Imports
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/datepicker.css";
+@import "@duskmoon-dev/core/components/form-group.css";
+@import "@duskmoon-dev/core/components/button.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+Aggregate: `@duskmoon-dev/core`; no-Tailwind: `@duskmoon-dev/core/standalone.css`.
+Individual: `@duskmoon-dev/core/components/datepicker.css` plus a theme/reset;
+`form-group.css` for field composition. Extensionless `components/datepicker`
+exports generated `css` and constructable `styles`.
+
+## Native Date Input
+
+<ComponentShowcase title="Native date picker" code={`<form>
+  <div class="form-group">
+    <label class="form-label" for="demo-date-native">Appointment date</label>
+    <input id="demo-date-native" name="appointment" type="date" class="datepicker-input validator" min="2026-01-01" max="2026-12-31" value="2026-09-18" required aria-describedby="demo-date-help demo-date-error">
+    <p id="demo-date-help" class="helper-text">Choose a date in 2026.</p>
+    <p id="demo-date-error" class="validator-error">Error: choose a valid date in the allowed year.</p>
+  </div>
+  <button class="btn" type="reset">Reset date</button>
+</form>`} />
+
+The browser owns date values, picker interaction, constraints and localized display.
+FormData uses the native ISO date value. Do not use the custom
+`.datepicker-input-container` wrapper here: it hides the WebKit native picker
+indicator for integrations that supply a working custom trigger.
+
+## Inline Calendar
+
+This is a **presentation sample**, not a complete accessible calendar widget.
+Non-interactive spans show a fixed week and selected/today/other-month/disabled
+presentation. They do not claim keyboard navigation or date selection.
+
+<ComponentShowcase title="Inline calendar styling only" code={`<div class="datepicker datepicker-inline">
+  <div class="datepicker-dropdown" role="img" aria-label="Calendar styling sample: September 2026, Friday 18 selected, 19 unavailable">
+    <div class="datepicker-header"><span class="datepicker-title">September 2026</span></div>
+    <div class="datepicker-calendar" aria-hidden="true">
+      <div class="datepicker-weekdays">
+        <span class="datepicker-weekday">Mon</span><span class="datepicker-weekday">Tue</span><span class="datepicker-weekday">Wed</span><span class="datepicker-weekday">Thu</span><span class="datepicker-weekday">Fri</span><span class="datepicker-weekday">Sat</span><span class="datepicker-weekday">Sun</span>
+      </div>
+      <div class="datepicker-days">
+        <span class="datepicker-day">14</span><span class="datepicker-day">15</span><span class="datepicker-day">16</span><span class="datepicker-day">17</span><span class="datepicker-day datepicker-day-today datepicker-day-selected">18</span><span class="datepicker-day datepicker-day-disabled">19</span><span class="datepicker-day">20</span>
+      </div>
+    </div>
+  </div>
+</div>`} />
+
+The nested weekday/day grids span the full calendar width. `.datepicker-inline`
+keeps the surface visible without open classes. In a working adapter, use actual buttons,
+native disabled state and truthful selected state, not interactive roles on decorative spans.
+
+## Datepicker Composition
+
+A custom Datepicker uses `.datepicker`, `.datepicker-input-container`,
+`.datepicker-input`, `.datepicker-trigger`, `.datepicker-dropdown` and the
+same Calendar classes. A trigger may use native `popovertarget` with a unique
+`demo-`-prefixed ID and a popup with `popover="auto"`. Native Popover handles
+visibility and light-dismiss, **not** date semantics, calendar focus or positioning.
+
+A non-popover popup uses application-owned `.datepicker-open`,
+`.datepicker-dropdown-open` or legacy `.show` state. Closing must also remove hidden
+controls from keyboard access, restore appropriate focus and synchronize ARIA.
+Do not copy a decorative popup with inert day buttons as a functioning picker.
+
+| Responsibility | Owner |
+| --- | --- |
+| Colors, grid, today/selected/range/disabled presentation | Core CSS |
+| Month length, leap years, parsing, min/max, locale and week start | Application/adapter date engine |
+| Selected value and submitted ISO date, clear and reset synchronization | Application/adapter |
+| Arrow/Home/End/Page key navigation, roving focus and announcements | Application/adapter |
+| Trigger state, focus entering/leaving popup, escape/light-dismiss integration | Application/adapter with native Popover |
+| Popup anchor coordinates, overflow/collision and scroll repositioning | Application/adapter |
+
+## Retained Classes And States
+
+`.datepicker-day`, `datepicker-day-today/selected/other-month/disabled`,
+`datepicker-day-in-range/range-start/range-end` present adapter state.
+Colors: `.datepicker-primary/secondary/tertiary/info/success/warning/error`;
+sizes: `datepicker-sm/lg`; `datepicker-ghost` and explicit `datepicker-error` remain.
+Use actual `disabled` on an interactive day; a visual disabled class alone cannot
+disable keyboard/click behavior. Native inputs follow the
+[Validator contract](/duskmoonui/docs/en/components/validator/).
+
+Existing month/year pickers, footer/presets, dual calendars, datetime and date/time
+range presentation APIs remain in `datepicker.css`. They require appropriate adapter
+behavior and are not completed engines. Full third-party adapters and advanced range
+selection are deliberately follow-up work, with no mandatory dependency in Core.
+
+[Form composition](/duskmoonui/docs/en/components/form-group/) ·
+[Input](/duskmoonui/docs/en/components/input/)

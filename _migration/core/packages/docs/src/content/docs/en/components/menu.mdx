@@ -1,0 +1,93 @@
+---
+title: Menu
+description: Inline navigation lists and native anchored popover menus
+category: components
+order: 18
+published: true
+tags: ['menu', 'dropdown', 'components', 'material-design']
+---
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Menu
+
+`menu` is a visual composition primitive. Ordinary site navigation should use `nav`, lists, and links without `menu`/`menuitem` roles. Application-style ARIA menus require a complete roving-focus and keyboard interaction implementation, which core CSS does not provide.
+
+Use `.menu` for a list of links or actions. Add `popover="auto"` for a temporary surface controlled by the browser, and `.menu-vertical` for a vertical list.
+
+## Native Popover Menu
+
+Use `command="toggle-popover"` and `commandfor` on a button. Give each example a unique ID and anchor name. Explicit `anchor-name` and `position-anchor` connect the floating surface to its trigger.
+
+<ComponentShowcase title="Native Menu" code={`<button type="button" class="btn btn-primary"
+  command="toggle-popover" commandfor="demo-menu-actions"
+  style="anchor-name: --demo-menu-actions">Actions</button>
+<ul id="demo-menu-actions" class="menu menu-vertical" popover="auto"
+  aria-label="Actions" style="position-anchor: --demo-menu-actions">
+  <li><button type="button" class="menu-item" autofocus
+    command="hide-popover" commandfor="demo-menu-actions">Done</button></li>
+  <li><button type="button" class="menu-item" disabled>Unavailable</button></li>
+  <li><button type="button" class="menu-item"
+    command="hide-popover" commandfor="demo-menu-actions">Cancel</button></li>
+</ul>`} />
+
+The browser owns open state through `:popover-open`. Escape and clicking outside dismiss an auto popover. `autofocus` moves focus to the first action when opened; Escape restores focus to the invoking button. Popovers are non-modal: focus is not trapped and the background stays interactive. Their backdrop is transparent.
+
+Use `show-popover` to open without toggling and `hide-popover` to dismiss. An item does not automatically close the surface; use a hide command or call `hidePopover()` after your application action. Do not toggle `menu-show` or maintain a parallel open-state class.
+
+## Positioning
+
+Menus open below their anchor by default. Use `.menu-top`, `.menu-bottom`, `.menu-left`, or `.menu-right` to request another side. CSS anchor positioning can flip the menu when it approaches a viewport edge. These modifiers apply only to native `[popover]` surfaces.
+
+<ComponentShowcase title="Menu Above Trigger" code={`<button type="button" class="btn"
+  command="show-popover" commandfor="demo-menu-above"
+  style="anchor-name: --demo-menu-above">Open above</button>
+<ul id="demo-menu-above" class="menu menu-vertical menu-top menu-compact"
+  popover="auto" aria-label="Options" style="position-anchor: --demo-menu-above">
+  <li><button type="button" class="menu-item" autofocus
+    command="hide-popover" commandfor="demo-menu-above">Close</button></li>
+</ul>`} />
+
+The surface fades and scales on entry and exit, including discrete `display` and `overlay` transitions so it remains in the top layer during exit. `prefers-reduced-motion: reduce` disables these transitions.
+
+## Inline Navigation
+
+Without `popover`, `.menu` remains an ordinary visible flex list. Existing inline menus keep their layout and behavior. Use `.menu-horizontal` or `.menu-vertical` to choose direction and `.menu-compact` to reduce item padding.
+
+<ComponentShowcase title="Inline Menu" code={`<nav aria-label="Example navigation">
+  <ul class="menu menu-horizontal">
+    <li><a href="#native-popover-menu" aria-current="page">Actions</a></li>
+    <li><a href="#positioning">Positioning</a></li>
+    <li><a href="#accessibility">Accessibility</a></li>
+  </ul>
+</nav>`} />
+
+## Accessibility
+
+- Use real buttons for actions and links for navigation. Set `type="button"` on command buttons inside forms.
+- Label the surface with `aria-label` or `aria-labelledby`.
+- Use `disabled` on unavailable buttons and `aria-current="page"` on the current navigation link.
+- These examples use ordinary list semantics and Tab navigation. The Popover API does not implement arrow-key navigation, roving focus, or typeahead. Add those behaviors before assigning ARIA `menu` and `menuitem` roles.
+- Use `popover="auto"` for Escape and light-dismiss behavior. Manual popovers require explicit dismissal.
+
+Invoker Commands and CSS anchor positioning require browser support. `popovertarget` with `popovertargetaction="toggle"`, `"show"`, or `"hide"` is an alternative trigger contract for browsers that support Popover but lack Invoker Commands. Explicit anchor names also work with those triggers; unsupported anchor positioning requires an application positioning fallback.
+
+## API Reference
+
+| Class or attribute | Description |
+|--------------------|-------------|
+| `.menu` | Base visible flex list; native floating surface when combined with `[popover]` |
+| `.menu-item` | Styles a link or button; direct `li > a` and `li > button` are also styled |
+| `.menu-horizontal` | Horizontal list |
+| `.menu-vertical` | Vertical list with full-width items |
+| `.menu-compact` | Smaller item padding and text |
+| `.menu-title` | Section title |
+| `.active` / `[aria-current="page"]` | Selected item styling |
+| `.menu-top`, `.menu-bottom`, `.menu-left`, `.menu-right` | Preferred anchor side for native popovers |
+| `popover="auto"` | Browser-managed non-modal surface with light dismissal |
+| `command` / `commandfor` | Native open, toggle, and close commands |
+
+## Related Components
+
+- [Button](/duskmoonui/docs/en/components/button/) — Trigger elements
+- [Popover](/duskmoonui/docs/en/components/popover/) — General floating content
+- [Navigation](/duskmoonui/docs/en/components/navigation/) — Navigation patterns

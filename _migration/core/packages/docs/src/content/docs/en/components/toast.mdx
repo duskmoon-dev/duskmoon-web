@@ -1,0 +1,320 @@
+---
+title: Toast
+description: Material Design 3 toast notification component with native command triggers, positions, variants, and actions
+category: components
+order: 41
+published: true
+tags: ['toast', 'notification', 'snackbar', 'components', 'material-design']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Toast
+
+Toasts provide brief, non-blocking feedback about an application process. In DuskMoonUI, `.toast-container` owns fixed positioning and stacking while `.toast` is the individual notification. This meaning is intentionally different from daisyUI and remains backward compatible.
+
+For static HTML, make the container a manual popover and connect buttons with native `command` and `commandfor`. The browser owns open/closed rendering; DuskMoonUI supplies presentation only. Timers, queues, action execution, request state, and auto-dismiss policy remain consumer-owned.
+
+## Basic Usage
+
+Every example on this page starts closed and is opened by a button click.
+
+<ComponentShowcase title="Basic Toast" code={`<button type="button" class="btn btn-primary"
+  command="show-popover" commandfor="demo-toast-basic">
+  Show toast
+</button>
+
+<div id="demo-toast-basic"
+  class="toast-container toast-container-top-end"
+  popover="manual">
+  <div class="toast" role="status" aria-live="polite">
+    <div class="toast-content">
+      <div class="toast-message">This is a simple toast notification</div>
+    </div>
+    <button type="button" class="toast-close" aria-label="Dismiss notification"
+      command="hide-popover" commandfor="demo-toast-basic">×</button>
+  </div>
+</div>`} />
+
+`popover="manual"` avoids unrelated outside clicks dismissing a notification. Always provide an explicit close command, or use `command="toggle-popover"` on the trigger when the same control should both open and close it.
+
+## Container Positions
+
+Physical left/right classes preserve their existing meaning. Prefer logical start/end classes when placement should follow text direction.
+
+### Top Positions
+
+<ComponentShowcase title="Top Positions" code={`<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-top-start">Top start</button>
+<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-top-center">Top center</button>
+<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-top-end">Top end</button>
+
+<div id="demo-toast-top-start" class="toast-container toast-container-top-start" popover="manual">
+  <div class="toast toast-info" role="status">
+    <div class="toast-content"><div class="toast-message">Top start notification</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-top-start">×</button>
+  </div>
+</div>
+<div id="demo-toast-top-center" class="toast-container toast-container-top-center" popover="manual">
+  <div class="toast toast-info" role="status">
+    <div class="toast-content"><div class="toast-message">Top center notification</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-top-center">×</button>
+  </div>
+</div>
+<div id="demo-toast-top-end" class="toast-container toast-container-top-end" popover="manual">
+  <div class="toast toast-info" role="status">
+    <div class="toast-content"><div class="toast-message">Top end notification</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-top-end">×</button>
+  </div>
+</div>`} />
+
+### Bottom Positions
+
+<ComponentShowcase title="Bottom Positions" code={`<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-bottom-start">Bottom start</button>
+<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-bottom-center">Bottom center</button>
+<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-bottom-end">Bottom end</button>
+
+<div id="demo-toast-bottom-start" class="toast-container toast-container-bottom-start" popover="manual">
+  <div class="toast toast-success" role="status">
+    <div class="toast-content"><div class="toast-message">Bottom start notification</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-bottom-start">×</button>
+  </div>
+</div>
+<div id="demo-toast-bottom-center" class="toast-container toast-container-bottom-center" popover="manual">
+  <div class="toast toast-success" role="status">
+    <div class="toast-content"><div class="toast-message">Bottom center notification</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-bottom-center">×</button>
+  </div>
+</div>
+<div id="demo-toast-bottom-end" class="toast-container toast-container-bottom-end" popover="manual">
+  <div class="toast toast-success" role="status">
+    <div class="toast-content"><div class="toast-message">Bottom end notification</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-bottom-end">×</button>
+  </div>
+</div>`} />
+
+## Semantic Variants
+
+Use semantic color together with clear text or an icon; color must not be the only indicator.
+
+<ComponentShowcase title="Toast Variants" code={`<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-info">Info</button>
+<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-success">Success</button>
+<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-warning">Warning</button>
+<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-error">Error</button>
+
+<div id="demo-toast-info" class="toast-container toast-container-top-end" popover="manual">
+  <div class="toast toast-info" role="status">
+    <span class="toast-icon" aria-hidden="true">ℹ</span>
+    <div class="toast-content"><div class="toast-title">Information</div><div class="toast-message">New features are available</div></div>
+    <button class="toast-close" aria-label="Dismiss information" command="hide-popover" commandfor="demo-toast-info">×</button>
+  </div>
+</div>
+<div id="demo-toast-success" class="toast-container toast-container-top-end" popover="manual">
+  <div class="toast toast-success" role="status">
+    <span class="toast-icon" aria-hidden="true">✓</span>
+    <div class="toast-content"><div class="toast-title">Success</div><div class="toast-message">Profile updated successfully</div></div>
+    <button class="toast-close" aria-label="Dismiss success" command="hide-popover" commandfor="demo-toast-success">×</button>
+  </div>
+</div>
+<div id="demo-toast-warning" class="toast-container toast-container-top-end" popover="manual">
+  <div class="toast toast-warning" role="status">
+    <span class="toast-icon" aria-hidden="true">⚠</span>
+    <div class="toast-content"><div class="toast-title">Warning</div><div class="toast-message">Your session will expire soon</div></div>
+    <button class="toast-close" aria-label="Dismiss warning" command="hide-popover" commandfor="demo-toast-warning">×</button>
+  </div>
+</div>
+<div id="demo-toast-error" class="toast-container toast-container-top-end" popover="manual">
+  <div class="toast toast-error" role="alert">
+    <span class="toast-icon" aria-hidden="true">✕</span>
+    <div class="toast-content"><div class="toast-title">Error</div><div class="toast-message">Failed to save changes</div></div>
+    <button class="toast-close" aria-label="Dismiss error" command="hide-popover" commandfor="demo-toast-error">×</button>
+  </div>
+</div>`} />
+
+Filled variants use the selected DuskMoon role color as the background with its matching content color. For example, `.toast-filled.toast-primary` uses `--color-primary` and `--color-primary-content`.
+
+<ComponentShowcase title="Filled Toast" code={`<button type="button" class="btn btn-primary"
+  command="show-popover" commandfor="demo-toast-filled">Show filled toast</button>
+
+<div id="demo-toast-filled" class="toast-container toast-container-bottom-end" popover="manual">
+  <div class="toast toast-filled toast-primary" role="status">
+    <div class="toast-content"><div class="toast-title">Published</div><div class="toast-message">Your changes are now live</div></div>
+    <button class="toast-close" aria-label="Dismiss notification" command="hide-popover" commandfor="demo-toast-filled">×</button>
+  </div>
+</div>`} />
+
+## Actions
+
+Application code still owns the action. The native hide command below only closes the popover after the user chooses the documented action.
+
+<ComponentShowcase title="Toast with Action" code={`<button type="button" class="btn btn-primary"
+  command="show-popover" commandfor="demo-toast-action">Show update</button>
+
+<div id="demo-toast-action" class="toast-container toast-container-bottom-end" popover="manual">
+  <div class="toast toast-info" role="status">
+    <div class="toast-content">
+      <div class="toast-title">Update available</div>
+      <div class="toast-message">A new version is ready to install.</div>
+      <div class="toast-actions">
+        <button type="button" class="toast-action"
+          command="hide-popover" commandfor="demo-toast-action">Update now</button>
+      </div>
+    </div>
+    <button type="button" class="toast-close" aria-label="Dismiss update"
+      command="hide-popover" commandfor="demo-toast-action">×</button>
+  </div>
+</div>`} />
+
+## Size and Density
+
+<ComponentShowcase title="Toast Sizes" code={`<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-small">Small</button>
+<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-default-size">Default</button>
+<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-large">Large</button>
+
+<div id="demo-toast-small" class="toast-container toast-container-bottom-end" popover="manual">
+  <div class="toast toast-sm" role="status">
+    <div class="toast-content"><div class="toast-message">Small notification</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-small">×</button>
+  </div>
+</div>
+<div id="demo-toast-default-size" class="toast-container toast-container-bottom-end" popover="manual">
+  <div class="toast" role="status">
+    <div class="toast-content"><div class="toast-message">Default notification</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-default-size">×</button>
+  </div>
+</div>
+<div id="demo-toast-large" class="toast-container toast-container-bottom-end" popover="manual">
+  <div class="toast toast-lg" role="status">
+    <div class="toast-content"><div class="toast-title">Large notification</div><div class="toast-message">More room for important context</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-large">×</button>
+  </div>
+</div>`} />
+
+<ComponentShowcase title="Compact Toast" code={`<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-compact">Show compact toast</button>
+
+<div id="demo-toast-compact" class="toast-container toast-container-bottom-end" popover="manual">
+  <div class="toast toast-compact toast-success" role="status">
+    <span class="toast-icon" aria-hidden="true">✓</span>
+    <div class="toast-content"><div class="toast-title">Saved</div><div class="toast-message">Compact notification style</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-compact">×</button>
+  </div>
+</div>`} />
+
+## Accent and Stacking
+
+Combine `.toast-accent` with a semantic or brand color to add a thicker logical-start edge in that color. The semantic or brand class takes precedence, so the example remains a success toast instead of switching to the standalone accent color role.
+
+<ComponentShowcase title="Accent Toast" code={`<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-accent">Show accent toast</button>
+
+<div id="demo-toast-accent" class="toast-container toast-container-top-end" popover="manual">
+  <div class="toast toast-success toast-accent" role="status">
+    <div class="toast-content"><div class="toast-title">Success</div><div class="toast-message">The logical start edge carries the accent</div></div>
+    <button class="toast-close" aria-label="Dismiss" command="hide-popover" commandfor="demo-toast-accent">×</button>
+  </div>
+</div>`} />
+
+<ComponentShowcase title="Stacked Toasts" code={`<button type="button" class="btn btn-primary"
+  command="show-popover" commandfor="demo-toast-stack">Show notification stack</button>
+
+<div id="demo-toast-stack"
+  class="toast-container toast-container-stacked toast-container-top-end"
+  popover="manual">
+  <div class="toast"><div class="toast-content"><div class="toast-message">First notification</div></div></div>
+  <div class="toast"><div class="toast-content"><div class="toast-message">Second notification</div></div></div>
+  <div class="toast">
+    <div class="toast-content"><div class="toast-message">Third notification</div></div>
+    <button class="toast-close" aria-label="Dismiss notification stack"
+      command="hide-popover" commandfor="demo-toast-stack">×</button>
+  </div>
+</div>`} />
+
+## Progress Indicator
+
+The progress bar is visual only. CSS cannot update ARIA values or dismiss the toast when the animation ends. Consumers must keep timing, announcements, and removal synchronized.
+
+<ComponentShowcase title="Toast with Progress" code={`<button type="button" class="btn btn-outlined"
+  command="show-popover" commandfor="demo-toast-progress">Show timed toast</button>
+
+<div id="demo-toast-progress" class="toast-container toast-container-bottom-end" popover="manual">
+  <div class="toast" role="status">
+    <div class="toast-content"><div class="toast-message">Syncing your changes</div></div>
+    <button class="toast-close" aria-label="Dismiss"
+      command="hide-popover" commandfor="demo-toast-progress">×</button>
+    <div class="toast-progress" style="animation-duration: 5s;"></div>
+  </div>
+</div>`} />
+
+## Accessibility and Lifecycle
+
+- Use `role="status"` or `aria-live="polite"` for ordinary confirmations and background updates.
+- Reserve `role="alert"` for urgent failures that require immediate attention.
+- Give every close button an accessible name.
+- Showing a pre-rendered live region may vary by assistive technology. For critical application flows, insert or update the message when the event occurs and test with the supported screen readers.
+- Native popover commands control visibility only. They do not manage queues, timers, asynchronous state, or action execution.
+- When using the legacy class API, remove closed notifications from the DOM or apply `hidden`/`inert`; opacity and transforms alone are not complete dismissal.
+- Command Invokers require browser support for `command` and `commandfor`. Consumers supporting older browsers can call `showPopover()`/`hidePopover()` from an explicit adapter without changing the markup structure.
+
+## Legacy Open-State API
+
+Existing `.toast-open`, `.show`, and `.toast-show` classes remain supported for framework-managed state. Native command examples do not need these classes because `.toast-container[popover]:popover-open` supplies the visible state.
+
+```html
+<div class="toast-container toast-container-top-end">
+  <div class="toast toast-show" role="status">Framework-managed notification</div>
+</div>
+```
+
+## API Reference
+
+### Native Attributes
+
+| Attribute | Element | Purpose |
+|---|---|---|
+| `popover="manual"` | `.toast-container` | Keeps the fixed notification surface closed until invoked |
+| `command="show-popover"` | Trigger button | Opens the target container |
+| `command="hide-popover"` | Close or action button | Closes the target container |
+| `commandfor="demo-toast-*"` | Button | References the unique container ID |
+
+### Container Classes
+
+| Class | Description |
+|---|---|
+| `.toast-container` | Fixed positioning and stacking container |
+| `.toast-container-top-right`, `.toast-container-top-left` | Preserved physical positioning |
+| `.toast-container-bottom-right`, `.toast-container-bottom-left` | Preserved physical positioning |
+| `.toast-container-top-start`, `.toast-container-top-end` | RTL-aware top positioning |
+| `.toast-container-bottom-start`, `.toast-container-bottom-end` | RTL-aware bottom positioning |
+| `.toast-container-top-center`, `.toast-container-bottom-center` | Center positioning |
+| `.toast-container-stacked` | Layered presentation for multiple notifications |
+
+### Toast Classes
+
+| Class | Description |
+|---|---|
+| `.toast` | Individual notification item |
+| `.toast-open`, `.show`, `.toast-show` | Preserved framework-managed visible states |
+| `.toast-primary`, `.toast-secondary`, `.toast-tertiary` | DuskMoon brand colors |
+| `.toast-info`, `.toast-success`, `.toast-warning`, `.toast-error` | Semantic colors |
+| `.toast-filled`, `.toast-ghost` | Surface variants |
+| `.toast-sm`, `.toast-lg`, `.toast-compact` | Size and density variants |
+| `.toast-accent` | Logical-start accent edge |
+
+## Related Components
+
+- [Alert](/duskmoonui/docs/en/components/alert/) — persistent inline feedback
+- [Snackbar](/duskmoonui/docs/en/components/snackbar/) — action-oriented transient messaging with its existing API
+- [Popover](/duskmoonui/docs/en/components/popover/) — general-purpose interactive overlay content

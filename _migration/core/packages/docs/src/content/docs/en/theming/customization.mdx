@@ -1,0 +1,59 @@
+---
+title: Theme Customization
+description: Adjust sunshine and moonlight token values for your brand
+category: theming
+order: 3
+published: true
+tags: ['theming', 'customization', 'colors', 'branding']
+---
+
+# Theme Customization
+
+DuskMoonUI ships with two official themes: **sunshine** (light) and **moonlight** (dark). To customize the look, override the theme variables for these two themes in your own CSS after importing the core styles.
+
+## Override Theme Tokens
+
+```css
+@import "@duskmoon-dev/core";
+
+[data-theme="sunshine"] {
+  --color-primary: oklch(72% 0.17 75);
+  --color-primary-container: oklch(95% 0.035 95.91);
+  --color-base-100: oklch(100% 0.005 255);
+}
+
+[data-theme="moonlight"] {
+  --color-primary: oklch(85.45% 0 0);
+  --color-primary-container: oklch(25% 0.01 0);
+  --color-base-100: oklch(22% 0.019 237.69);
+}
+```
+
+## Base Scale Adjustments
+
+If you need to tune the neutral scale, update the base range while shifting lightness:
+
+```css
+[data-theme="sunshine"] {
+  --color-base-100: oklch(100% 0.005 255);
+  --color-base-200: oklch(95% 0.008 255);
+  --color-base-300: oklch(90% 0.01 255);
+  --color-base-400: oklch(55% 0.06 255);
+  --color-base-500: oklch(45% 0.05 255);
+  --color-base-600: oklch(35% 0.04 255);
+  --color-base-700: oklch(25% 0.03 255);
+  --color-base-800: oklch(18% 0.02 255);
+  --color-base-900: oklch(12% 0.01 255);
+}
+```
+
+## Guidelines
+
+- Keep container colors lighter (light theme) or darker (dark theme) than their base colors.
+- Preserve accessible contrast between `--color-*-content` and its background token.
+- Apply overrides after `@duskmoon-dev/core` so your values win.
+
+## Next Steps
+
+- [Themes](/duskmoonui/docs/en/theming/themes/) - Full token values for sunshine and moonlight
+- [Color Tokens](/duskmoonui/docs/en/theming/colors/) - Token usage overview

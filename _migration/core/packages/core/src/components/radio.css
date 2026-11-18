@@ -1,0 +1,209 @@
+@import "./validator.css";
+
+/**
+ * Radio Component Styles
+ * DuskMoonUI - Material Design 3 inspired radio button
+ *
+ * Usage: <input type="radio" name="group" class="radio" />
+ * With label: <label class="radio-label"><input type="radio" name="group" class="radio" /><span>Option</span></label>
+ */
+
+@layer components {
+  :where(.radio) { box-sizing: border-box; }
+
+  /* Base Radio - applied directly to input[type="radio"] */
+  .radio {
+    --radio-size: 1.25rem;
+    --radio-color: var(--color-primary);
+    --radio-border-color: var(--color-on-surface-variant);
+    color: var(--color-on-surface);
+
+    position: relative;
+    display: inline-grid;
+    place-content: center;
+    width: var(--radio-size);
+    height: var(--radio-size);
+    margin: 0;
+    cursor: pointer;
+    appearance: none;
+    background-color: transparent;
+    border: 2px solid var(--radio-border-color);
+    border-radius: var(--radius-full, 9999px);
+    transition: border-color 150ms ease-in-out;
+  }
+
+  /* Inner dot using ::before pseudo-element */
+  .radio::before {
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: var(--radius-full, 9999px);
+    background-color: var(--radio-color);
+    transform: scale(0);
+    transition: transform 150ms ease-in-out;
+  }
+
+  /* Checked State */
+  .radio:checked {
+    border-color: var(--radio-color);
+  }
+
+  .radio:checked::before {
+    transform: scale(1);
+  }
+
+  /* Hover State */
+  .radio:hover:not(:disabled):not(:checked) {
+    border-color: var(--color-on-surface);
+  }
+
+  .radio:checked:hover:not(:disabled) {
+    border-color: color-mix(in oklch, var(--radio-color), black 10%);
+  }
+
+  .radio:checked:hover:not(:disabled)::before {
+    background-color: color-mix(in oklch, var(--radio-color), black 10%);
+  }
+
+  /* Focus State */
+  .radio:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--radio-color) 20%, transparent);
+  }
+
+  /* Disabled State */
+  .radio:disabled {
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
+
+  /* ========================================
+   * Size Variants
+   * ======================================== */
+
+  .radio-xs {
+    --radio-size: 0.875rem;
+  }
+
+  .radio-sm {
+    --radio-size: 1rem;
+  }
+
+  .radio-md {
+    --radio-size: 1.25rem;
+  }
+
+  .radio-lg {
+    --radio-size: 1.5rem;
+  }
+
+  .radio-xl {
+    --radio-size: 1.75rem;
+  }
+
+  /* ========================================
+   * Color Variants
+   * ======================================== */
+
+  .radio-primary {
+    --radio-color: var(--color-primary);
+  }
+
+  .radio-secondary {
+    --radio-color: var(--color-secondary);
+  }
+
+  .radio-tertiary {
+    --radio-color: var(--color-tertiary);
+  }
+
+  .radio-success {
+    --radio-color: var(--color-success);
+  }
+
+  .radio-warning {
+    --radio-color: var(--color-warning);
+  }
+
+  .radio-error {
+    --radio-color: var(--color-error);
+  }
+
+  .radio-info {
+    --radio-color: var(--color-info);
+  }
+
+  .radio-accent {
+    --radio-color: var(--color-accent);
+  }
+
+  .radio-neutral {
+    --radio-color: var(--color-neutral);
+  }
+
+  .radio-base {
+    --radio-color: var(--color-base-content);
+  }
+
+  /* Ghost Variant — borderless unchecked state */
+  .radio-ghost {
+    --radio-border-color: transparent;
+  }
+
+  .radio-ghost:hover:not(:disabled):not(:checked) {
+    border-color: transparent;
+  }
+
+  /* ========================================
+   * Radio with Label (wrapper pattern)
+   * ======================================== */
+
+  .radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.875rem;
+    color: var(--color-on-surface);
+  }
+
+  .radio-label:has(.radio:disabled) {
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
+
+  /* ========================================
+   * Radio Group
+   * ======================================== */
+
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .radio-group-horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .radio-group-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-on-surface);
+    margin-bottom: 0.5rem;
+  }
+
+  /* ========================================
+   * Reduce Motion
+   * ======================================== */
+
+  @media (prefers-reduced-motion: reduce) {
+    .radio,
+    .radio::before {
+      transition: none;
+    }
+  }
+}

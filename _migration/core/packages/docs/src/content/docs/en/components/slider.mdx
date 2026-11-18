@@ -1,0 +1,73 @@
+---
+title: Slider
+description: Native Range for basic controls; preserved custom track/thumb presentation for adapters
+category: components
+order: 19
+published: true
+tags: ['slider', 'range', 'form', 'components']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Slider
+
+For a basic slider, use [native Range](/duskmoonui/docs/en/components/range/).
+Apply `.range`, not `.slider`, to `input[type="range"]`. Native controls already
+handle keyboard, pointer, min/max/step, submission and reset.
+
+## Recommended Native Control
+
+<ComponentShowcase title="Native range" code={`<form>
+  <label class="form-label" for="demo-slider-native">Brightness</label>
+  <input id="demo-slider-native" name="brightness" type="range" class="range range-primary" min="0" max="100" step="10" value="50">
+  <button type="reset" class="btn">Reset brightness</button>
+</form>`} />
+
+Use `components/range.css` plus theme/reset and `form-group.css` for individual
+imports. No static fill, output text or ARIA current value is needed.
+
+## Custom Slider Boundary
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/slider.css";
+@import "@duskmoon-dev/core/components/range.css";
+@import "@duskmoon-dev/core/components/form-group.css";
+@import "@duskmoon-dev/core/components/button.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+The advanced `.slider` structure is retained. Core styles the tracks/thumbs;
+it does not create a slider engine. Import `@duskmoon-dev/core/components/slider.css`
+plus a theme/reset, or the aggregate/standalone package. Extensionless
+`components/slider` exports generated `css` and `styles`.
+
+This is explicitly a **styling sample**, not an accessible interactive slider:
+
+<ComponentShowcase title="Custom track/thumb styling only" code={`<div class="slider slider-primary" role="img" aria-label="Custom slider styling at a fixed midpoint">
+  <div class="slider-track"><div class="slider-track-filled" style="width:50%"></div></div>
+  <div class="slider-thumb" style="left:50%" aria-hidden="true"></div>
+</div>`} />
+
+An application controller must implement dragging, keyboard navigation, bounds, stepping,
+thumb values/positions, orientation, focus, `role="slider"` and its ARIA attributes,
+submitted values and reset synchronization. Range selection, vertical/custom thumbs,
+value labels and number-input integration remain adapter-owned. Do not present a static
+fill/value label next to an editable native input.
+
+## Retained Presentation APIs
+
+Base: `.slider`, `.slider-track`, `.slider-track-filled`, `.slider-thumb`.
+Sizes: `.slider-sm/lg`; colors: primary/secondary/tertiary/info/success/warning/error,
+accent/neutral/base. Existing outlined/filled, thumb labels, tick marks, range, vertical,
+disabled and input-integration classes remain supported by their existing CSS.
+Visual `.slider-disabled` does not set native disabled or prevent keyboard interaction
+in a controller. See the source `slider.css` for the full advanced presentation API.
+
+[Range](/duskmoonui/docs/en/components/range/) ·
+[Form composition](/duskmoonui/docs/en/components/form-group/)

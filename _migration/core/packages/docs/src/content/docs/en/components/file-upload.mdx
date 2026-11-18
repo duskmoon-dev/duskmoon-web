@@ -1,0 +1,108 @@
+---
+title: File Upload
+description: Application-controlled upload composition, separate from native File Input
+category: components
+order: 22
+published: true
+tags: ['file', 'upload', 'form', 'components']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# File Upload
+
+For basic file selection use [native File Input](/duskmoonui/docs/en/components/file-input/).
+File Upload provides richer dropzone, list, preview and progress **presentation**.
+CSS does not implement drag/drop, previews, file validation or upload transport.
+
+## Imports
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/file-upload.css";
+@import "@duskmoon-dev/core/components/file-input.css";
+@import "@duskmoon-dev/core/components/form-group.css";
+@import "@duskmoon-dev/core/components/button.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+Aggregate: `@duskmoon-dev/core`; no-Tailwind: `@duskmoon-dev/core/standalone.css`.
+Individual: `@duskmoon-dev/core/components/file-upload.css` plus theme/reset.
+Extensionless `components/file-upload` exports generated `css` and `styles`.
+Use `file-input.css` for the separate native input view and `form-group.css`
+for its label/help.
+
+## Drop Section View
+
+The drop section is a presentation surface for an application-owned drag-and-drop
+interaction. It intentionally contains no file input and does not claim to accept
+drops by itself.
+
+<ComponentShowcase title="Drop section presentation" code={`<div class="file-upload">
+  <div class="file-upload-dropzone" role="img" aria-label="Document drop section presentation">
+    <span class="file-upload-icon" aria-hidden="true">⇧</span>
+    <div class="file-upload-text" aria-hidden="true">
+      <p class="file-upload-title">Drop documents here</p>
+      <p class="file-upload-subtitle">PDF, DOCX, or TXT up to 10 MB</p>
+    </div>
+  </div>
+</div>`} />
+
+An application may add drag listeners and toggle `.dragging`, but it must also
+provide an equivalent keyboard-operable file selection path. Do not make the
+drop section a focusable `div` that pretends to be a native control.
+
+## Input View
+
+Use a visible native file input when the browser file picker is the interaction.
+This view is independent of the drop section.
+
+<ComponentShowcase title="Native file input" code={`<form class="file-upload" enctype="multipart/form-data">
+  <div class="form-group">
+    <label class="form-label" for="demo-upload-native">Select attachments</label>
+    <input id="demo-upload-native" name="attachments" type="file" class="file-input" multiple aria-describedby="demo-upload-help">
+    <p id="demo-upload-help" class="helper-text">Selected files remain local until an application uploads them.</p>
+  </div>
+  <button type="reset" class="btn btn-ghost">Clear selected files</button>
+</form>`} />
+
+## Progress Styling Sample
+
+This fixed-state sample is non-interactive and does not claim upload activity:
+
+<ComponentShowcase title="Upload status styling only" code={`<div class="file-upload" role="img" aria-label="Upload presentation sample, report.pdf at 50 percent">
+  <div class="file-upload-list" aria-hidden="true">
+    <div class="file-upload-item uploading">
+      <div class="file-upload-item-info">
+        <span class="file-upload-item-name">report.pdf</span>
+        <span class="file-upload-item-size">240 KB</span>
+        <div class="file-upload-progress"><div class="file-upload-progress-bar" style="width:50%"></div></div>
+      </div>
+    </div>
+  </div>
+</div>`} />
+
+In an application, give progress truthful values and suitable announcements. Implement
+file removal using a real labeled button, and synchronize it with the submission source.
+Reset must clear native files, generated object URLs, previews, progress and application
+queues. Native reset alone does not clear those additional states.
+
+## Retained APIs And Ownership
+
+`.file-upload`, `file-upload-dropzone`, `file-upload-input` (legacy hidden input),
+`file-upload-icon/text/title/subtitle/browse`, `file-upload-list/item`,
+`file-upload-item-icon/info/name/size/remove`, `file-upload-progress/bar`,
+`file-upload-preview/item/image/remove`, `file-upload-button` and
+`file-upload-compact` remain supported. Color variants are primary/secondary/tertiary/
+info/success/warning/error/accent/neutral/base.
+
+Legacy `.dragging`, `.disabled`, `.uploading`, `.success`, `.error` classes
+present state supplied by an application. A disabled surface class does not disable
+native descendants; use actual `disabled` or `fieldset disabled`.
+Applications own drag events, dropped files, file-size/content validation, object-URL
+lifecycles, transport, cancellation, progress and accessible announcements.

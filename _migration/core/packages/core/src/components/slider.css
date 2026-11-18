@@ -1,0 +1,517 @@
+/**
+ * Slider Component Styles
+ * DuskMoonUI - Material Design 3 inspired slider system
+ */
+
+@layer components {
+  /* Base Slider */
+  .slider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 2.5rem;
+    touch-action: none;
+    user-select: none;
+    color: var(--color-on-surface);
+  }
+
+  /* Slider Track */
+  .slider-track {
+    position: relative;
+    width: 100%;
+    height: 0.25rem;
+    background-color: var(--color-surface-container-highest);
+    border-radius: var(--radius-full);
+  }
+
+  /* Slider Track Filled (Progress) */
+  .slider-track-filled {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--color-primary);
+    border-radius: var(--radius-full);
+  }
+
+  /* Slider Thumb */
+  .slider-thumb {
+    position: absolute;
+    top: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--radius-full);
+    box-shadow: 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    transition: box-shadow 150ms ease-in-out, transform 150ms ease-in-out;
+  }
+
+  .slider-thumb:hover {
+    box-shadow: 0 0 0 8px var(--color-primary-container), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-thumb:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 8px var(--color-primary-container), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-thumb:active {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  /* Slider Thumb Label (Value tooltip) */
+  .slider-thumb-label {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-primary-content);
+    background-color: var(--color-primary);
+    border-radius: var(--radius-xs);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 150ms ease-out, visibility 150ms ease-out;
+  }
+
+  .slider-thumb-label::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 0.25rem solid transparent;
+    border-top-color: var(--color-primary);
+  }
+
+  .slider-thumb:hover .slider-thumb-label,
+  .slider-thumb:focus-visible .slider-thumb-label,
+  .slider-thumb:active .slider-thumb-label {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Always Show Labels Variant */
+  .slider-labels-always .slider-thumb-label {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Marks Container */
+  .slider-marks {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  /* Individual Mark */
+  .slider-mark {
+    position: relative;
+    width: 0.125rem;
+    height: 0.5rem;
+    background-color: var(--color-outline);
+    border-radius: var(--radius-full);
+  }
+
+  .slider-mark-active {
+    background-color: var(--color-primary-content);
+  }
+
+  /* Mark Label */
+  .slider-mark-label {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: var(--color-on-surface-variant);
+    white-space: nowrap;
+  }
+
+  /* Min/Max Labels Container */
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--color-on-surface-variant);
+  }
+
+  /* Size Variants */
+  .slider-sm {
+    height: 2rem;
+  }
+
+  .slider-sm .slider-track {
+    height: 0.125rem;
+  }
+
+  .slider-sm .slider-thumb {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .slider-lg {
+    height: 3rem;
+  }
+
+  .slider-lg .slider-track {
+    height: 0.375rem;
+  }
+
+  .slider-lg .slider-thumb {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  /* Color Variants */
+  .slider-primary .slider-track-filled,
+  .slider-primary .slider-thumb {
+    background-color: var(--color-primary);
+  }
+
+  .slider-primary .slider-mark-active   { background-color: var(--color-primary-content); }
+
+  .slider-primary .slider-thumb:hover,
+  .slider-primary .slider-thumb:focus-visible {
+    box-shadow: 0 0 0 8px var(--color-primary-container), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-primary .slider-thumb-label {
+    background-color: var(--color-primary);
+    color: var(--color-primary-content);
+  }
+
+  .slider-primary .slider-thumb-label::after {
+    border-top-color: var(--color-primary);
+  }
+
+  .slider-secondary .slider-track-filled,
+  .slider-secondary .slider-thumb {
+    background-color: var(--color-secondary);
+  }
+
+  .slider-secondary .slider-thumb:hover,
+  .slider-secondary .slider-thumb:focus-visible {
+    box-shadow: 0 0 0 8px var(--color-secondary-container), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-secondary .slider-mark-active { background-color: var(--color-secondary-content); }
+
+  .slider-secondary .slider-thumb-label {
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-content);
+  }
+
+  .slider-secondary .slider-thumb-label::after {
+    border-top-color: var(--color-secondary);
+  }
+
+  .slider-tertiary .slider-track-filled,
+  .slider-tertiary .slider-thumb {
+    background-color: var(--color-tertiary);
+  }
+
+  .slider-tertiary .slider-thumb:hover,
+  .slider-tertiary .slider-thumb:focus-visible {
+    box-shadow: 0 0 0 8px var(--color-tertiary-container), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-tertiary .slider-mark-active { background-color: var(--color-tertiary-content); }
+
+  .slider-tertiary .slider-thumb-label {
+    background-color: var(--color-tertiary);
+    color: var(--color-tertiary-content);
+  }
+
+  .slider-tertiary .slider-thumb-label::after {
+    border-top-color: var(--color-tertiary);
+  }
+
+  /* Info */
+  .slider-info .slider-track-filled,
+  .slider-info .slider-thumb {
+    background-color: var(--color-info);
+  }
+
+  .slider-info .slider-thumb:hover,
+  .slider-info .slider-thumb:focus-visible {
+    box-shadow: 0 0 0 8px var(--color-info-container), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-info .slider-mark-active { background-color: var(--color-info-content); }
+
+  .slider-info .slider-thumb-label {
+    background-color: var(--color-info);
+    color: var(--color-info-content);
+  }
+
+  .slider-info .slider-thumb-label::after {
+    border-top-color: var(--color-info);
+  }
+
+  /* Success */
+  .slider-success .slider-track-filled,
+  .slider-success .slider-thumb {
+    background-color: var(--color-success);
+  }
+
+  .slider-success .slider-thumb:hover,
+  .slider-success .slider-thumb:focus-visible {
+    box-shadow: 0 0 0 8px var(--color-success-container), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-success .slider-mark-active { background-color: var(--color-success-content); }
+
+  .slider-success .slider-thumb-label {
+    background-color: var(--color-success);
+    color: var(--color-success-content);
+  }
+
+  .slider-success .slider-thumb-label::after {
+    border-top-color: var(--color-success);
+  }
+
+  /* Warning */
+  .slider-warning .slider-track-filled,
+  .slider-warning .slider-thumb {
+    background-color: var(--color-warning);
+  }
+
+  .slider-warning .slider-thumb:hover,
+  .slider-warning .slider-thumb:focus-visible {
+    box-shadow: 0 0 0 8px var(--color-warning-container), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-warning .slider-mark-active { background-color: var(--color-warning-content); }
+
+  .slider-warning .slider-thumb-label {
+    background-color: var(--color-warning);
+    color: var(--color-warning-content);
+  }
+
+  .slider-warning .slider-thumb-label::after {
+    border-top-color: var(--color-warning);
+  }
+
+  /* Error */
+  .slider-error .slider-track-filled,
+  .slider-error .slider-thumb {
+    background-color: var(--color-error);
+  }
+
+  .slider-error .slider-thumb:hover,
+  .slider-error .slider-thumb:focus-visible {
+    box-shadow: 0 0 0 8px var(--color-error-container), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-error .slider-mark-active { background-color: var(--color-error-content); }
+
+  .slider-error .slider-thumb-label {
+    background-color: var(--color-error);
+    color: var(--color-error-content);
+  }
+
+  .slider-error .slider-thumb-label::after {
+    border-top-color: var(--color-error);
+  }
+
+  .slider-accent .slider-track-filled,
+  .slider-accent .slider-thumb {
+    background-color: var(--color-accent);
+  }
+
+  .slider-accent .slider-thumb:hover,
+  .slider-accent .slider-thumb:focus-visible {
+    box-shadow: 0 0 0 8px color-mix(in oklch, var(--color-accent) 15%, var(--color-surface)), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-accent .slider-mark-active { background-color: var(--color-accent-content); }
+
+  .slider-accent .slider-thumb-label {
+    background-color: var(--color-accent);
+    color: var(--color-accent-content);
+  }
+
+  .slider-accent .slider-thumb-label::after {
+    border-top-color: var(--color-accent);
+  }
+
+  .slider-neutral .slider-track-filled,
+  .slider-neutral .slider-thumb {
+    background-color: var(--color-neutral);
+  }
+
+  .slider-neutral .slider-thumb:hover,
+  .slider-neutral .slider-thumb:focus-visible {
+    box-shadow: 0 0 0 8px color-mix(in oklch, var(--color-neutral) 15%, var(--color-surface)), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-neutral .slider-mark-active { background-color: var(--color-neutral-content); }
+
+  .slider-neutral .slider-thumb-label {
+    background-color: var(--color-neutral);
+    color: var(--color-neutral-content);
+  }
+
+  .slider-neutral .slider-thumb-label::after {
+    border-top-color: var(--color-neutral);
+  }
+
+  .slider-base .slider-track-filled,
+  .slider-base .slider-thumb {
+    background-color: var(--color-base-100);
+  }
+
+  .slider-base .slider-thumb:hover,
+  .slider-base .slider-thumb:focus-visible {
+    box-shadow: 0 0 0 8px var(--color-base-200), 0 2px 4px color-mix(in srgb, var(--color-shadow) 20%, transparent);
+  }
+
+  .slider-base .slider-mark-active { background-color: var(--color-base-content); }
+
+  .slider-base .slider-thumb-label {
+    background-color: var(--color-base-100);
+    color: var(--color-base-content);
+  }
+
+  .slider-base .slider-thumb-label::after {
+    border-top-color: var(--color-base-100);
+  }
+
+  /* Disabled State */
+  .slider-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .slider-disabled .slider-thumb {
+    cursor: not-allowed;
+  }
+
+  /* Range Slider */
+  .slider-range .slider-track-filled {
+    left: var(--slider-start, 0%);
+    width: var(--slider-range, 100%);
+  }
+
+  /* Vertical Slider */
+  .slider-vertical {
+    flex-direction: column;
+    width: 2.5rem;
+    height: 12rem;
+  }
+
+  .slider-vertical .slider-track {
+    width: 0.25rem;
+    height: 100%;
+  }
+
+  .slider-vertical .slider-track-filled {
+    width: 100%;
+    height: auto;
+    bottom: 0;
+    top: auto;
+  }
+
+  .slider-vertical .slider-thumb {
+    left: 50%;
+    top: auto;
+    transform: translate(-50%, 50%);
+  }
+
+  .slider-vertical .slider-thumb-label {
+    bottom: auto;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 0.5rem;
+    margin-bottom: 0;
+  }
+
+  .slider-vertical .slider-thumb-label::after {
+    top: 50%;
+    left: auto;
+    right: 100%;
+    transform: translateY(-50%);
+    border-top-color: transparent;
+    border-right-color: var(--color-primary); /* overridden per-variant below */
+  }
+
+  /* Variant-specific vertical arrow colors (border-right-color cannot use currentColor
+     since it must match the label background, not the text color) */
+  .slider-secondary.slider-vertical .slider-thumb-label::after { border-right-color: var(--color-secondary); }
+  .slider-tertiary.slider-vertical .slider-thumb-label::after  { border-right-color: var(--color-tertiary); }
+  .slider-info.slider-vertical .slider-thumb-label::after      { border-right-color: var(--color-info); }
+  .slider-success.slider-vertical .slider-thumb-label::after   { border-right-color: var(--color-success); }
+  .slider-warning.slider-vertical .slider-thumb-label::after   { border-right-color: var(--color-warning); }
+  .slider-error.slider-vertical .slider-thumb-label::after     { border-right-color: var(--color-error); }
+  .slider-accent.slider-vertical .slider-thumb-label::after    { border-right-color: var(--color-accent); }
+  .slider-neutral.slider-vertical .slider-thumb-label::after   { border-right-color: var(--color-neutral); }
+  .slider-base.slider-vertical .slider-thumb-label::after      { border-right-color: var(--color-base-100); }
+
+  .slider-vertical .slider-marks {
+    flex-direction: column;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+
+  .slider-vertical .slider-mark-label {
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+  }
+
+  /* Input Integration */
+  .slider-with-input {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .slider-with-input .slider {
+    flex: 1;
+  }
+
+  .slider-input {
+    width: 4rem;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    text-align: center;
+    color: var(--color-on-surface);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-outline);
+    border-radius: var(--radius-xs);
+  }
+
+  .slider-input:focus {
+    outline: none;
+    border-color: currentColor;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+
+  /* Reduce Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .slider-thumb,
+    .slider-thumb-label {
+      transition: none;
+    }
+  }
+}

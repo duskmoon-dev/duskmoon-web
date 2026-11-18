@@ -1,0 +1,214 @@
+---
+title: Tooltip
+description: Material Design 3 tooltip component using the Popover API and CSS Anchor Positioning
+category: components
+order: 11
+published: true
+tags: ['tooltip', 'hint', 'components', 'material-design', 'popover']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Tooltip
+
+Tooltips are brief, non-interactive descriptions. The core contract uses native `popover="hint"`, `interestfor`, and CSS anchor positioning; it does not polyfill missing browser capabilities. Keep critical information inline, and move links, buttons, and other actions to [Popover](/duskmoonui/docs/en/components/popover/).
+
+**Design principle:** Every tooltip surface must be an HTML popover. The browser owns visibility through `:popover-open`; use `interestfor` with `popover="hint"` for normal tooltips, or native `showPopover()` / `hidePopover()` when application code needs to control one. Do not implement tooltip visibility with wrapper hover/focus selectors, pseudo-elements, `data-tip`, or open/show classes.
+
+The core intentionally has no arrow: automatic placement may flip at viewport edges, and an arrow tied only to the preferred side would be misleading. Keyboard focus, Escape dismissal, pointer persistence for `.tooltip-interactive`, and viewport fallback are browser-managed when the relevant features are available. On unsupported browsers, use inline help or an explicit disclosure owned by the consumer; a `title` attribute is only a limited fallback, not a complete accessible equivalent.
+
+Tooltips display brief, helpful text when users show interest in an element (hover, focus, or long-press).
+
+> **Breaking change**: Tooltips now use the native Popover API (`popover="hint"`) with Interest Invokers (`interestfor`) and CSS Anchor Positioning. The old wrapper + `.tooltip-content` markup is no longer supported.
+
+## Basic Usage
+
+Pair a trigger (`interestfor` + `anchor-name`) with a tooltip surface (`popover="hint"` + `position-anchor`):
+
+<ComponentShowcase title="Basic Tooltip" code={`<button class="btn btn-primary" interestfor="demo-tip-basic" style="anchor-name: --demo-tip-basic">Hover me</button>
+<div id="demo-tip-basic" popover="hint" class="tooltip" style="position-anchor: --demo-tip-basic">This is a tooltip</div>`} />
+
+## Positions
+
+Preferred placement via `position-area`. The browser may flip with `position-try-fallbacks` when space is tight.
+
+### Top (Default)
+
+<ComponentShowcase title="Top Position" code={`<button class="btn btn-primary" interestfor="demo-tip-top" style="anchor-name: --demo-tip-top">Top</button>
+<div id="demo-tip-top" popover="hint" class="tooltip tooltip-top" style="position-anchor: --demo-tip-top">Tooltip on top</div>`} />
+
+### Bottom
+
+<ComponentShowcase title="Bottom Position" code={`<button class="btn btn-primary" interestfor="demo-tip-bottom" style="anchor-name: --demo-tip-bottom">Bottom</button>
+<div id="demo-tip-bottom" popover="hint" class="tooltip tooltip-bottom" style="position-anchor: --demo-tip-bottom">Tooltip on bottom</div>`} />
+
+### Left
+
+<ComponentShowcase title="Left Position" code={`<button class="btn btn-primary" interestfor="demo-tip-left" style="anchor-name: --demo-tip-left">Left</button>
+<div id="demo-tip-left" popover="hint" class="tooltip tooltip-left" style="position-anchor: --demo-tip-left">Tooltip on left</div>`} />
+
+### Right
+
+<ComponentShowcase title="Right Position" code={`<button class="btn btn-primary" interestfor="demo-tip-right" style="anchor-name: --demo-tip-right">Right</button>
+<div id="demo-tip-right" popover="hint" class="tooltip tooltip-right" style="position-anchor: --demo-tip-right">Tooltip on right</div>`} />
+
+## Color Variants
+
+<ComponentShowcase title="Primary Tooltip" code={`<button class="btn btn-primary" interestfor="demo-tip-primary" style="anchor-name: --demo-tip-primary">Primary</button>
+<div id="demo-tip-primary" popover="hint" class="tooltip tooltip-primary" style="position-anchor: --demo-tip-primary">Primary colored tooltip</div>`} />
+
+<ComponentShowcase title="Secondary Tooltip" code={`<button class="btn btn-secondary" interestfor="demo-tip-secondary" style="anchor-name: --demo-tip-secondary">Secondary</button>
+<div id="demo-tip-secondary" popover="hint" class="tooltip tooltip-secondary" style="position-anchor: --demo-tip-secondary">Secondary colored tooltip</div>`} />
+
+<ComponentShowcase title="Error Tooltip" code={`<button class="btn btn-error" interestfor="demo-tip-error" style="anchor-name: --demo-tip-error">Error</button>
+<div id="demo-tip-error" popover="hint" class="tooltip tooltip-error" style="position-anchor: --demo-tip-error">Error colored tooltip</div>`} />
+
+<ComponentShowcase title="Light Tooltip" code={`<button class="btn" interestfor="demo-tip-light" style="anchor-name: --demo-tip-light">Light</button>
+<div id="demo-tip-light" popover="hint" class="tooltip tooltip-light" style="position-anchor: --demo-tip-light">Light themed tooltip</div>`} />
+
+## Multi-line Tooltip
+
+<ComponentShowcase title="Multi-line Tooltip" code={`<button class="btn btn-primary" interestfor="demo-tip-multi" style="anchor-name: --demo-tip-multi">Multi-line</button>
+<div id="demo-tip-multi" popover="hint" class="tooltip tooltip-multiline" style="position-anchor: --demo-tip-multi">This is a longer tooltip message that wraps to multiple lines for better readability.</div>`} />
+
+## Rich Tooltip
+
+<ComponentShowcase title="Rich Tooltip" code={`<button class="btn btn-primary" interestfor="demo-tip-rich" style="anchor-name: --demo-tip-rich">Rich Content</button>
+<div id="demo-tip-rich" popover="hint" class="tooltip tooltip-rich" style="position-anchor: --demo-tip-rich">
+  <div class="tooltip-rich-title">Keyboard Shortcut</div>
+  <div class="tooltip-rich-description">Press Ctrl+S to save your work</div>
+</div>`} />
+
+## Delay Variants
+
+Apply delay utilities on the **trigger** (`interest-delay`):
+
+<ComponentShowcase title="Delayed Tooltips" code={`<button class="btn tooltip-delay" interestfor="demo-tip-delay" style="anchor-name: --demo-tip-delay">Short Delay (300ms)</button>
+<div id="demo-tip-delay" popover="hint" class="tooltip" style="position-anchor: --demo-tip-delay">Appears after 300ms</div>
+
+<button class="btn tooltip-delay-long" interestfor="demo-tip-delay-long" style="anchor-name: --demo-tip-delay-long">Long Delay (500ms)</button>
+<div id="demo-tip-delay-long" popover="hint" class="tooltip" style="position-anchor: --demo-tip-delay-long">Appears after 500ms</div>`} />
+
+## Interactive Tooltip
+
+Use `.tooltip-interactive` so the surface accepts pointer events. Increase `interest-delay-end` on the trigger so users can move into the tooltip:
+
+<ComponentShowcase title="Interactive Tooltip" code={`<button class="btn btn-primary" interestfor="demo-tip-interactive" style="anchor-name: --demo-tip-interactive; interest-delay: 0.2s 0.5s">Interactive</button>
+<div id="demo-tip-interactive" popover="hint" class="tooltip tooltip-interactive tooltip-rich" style="position-anchor: --demo-tip-interactive">
+  <div class="tooltip-rich-title">Learn More</div>
+  <div class="tooltip-rich-description">
+    Documentation is available inline in the surrounding page.
+  </div>
+</div>`} />
+
+## Always Open (For Demo)
+
+Call `showPopover()` once to keep a tooltip open for screenshots/demos:
+
+<ComponentShowcase title="Always Open" code={`<button class="btn btn-primary" interestfor="demo-tip-open" style="anchor-name: --demo-tip-open">Always visible</button>
+<div id="demo-tip-open" popover="manual" class="tooltip" style="position-anchor: --demo-tip-open" data-popover-open>Top tooltip always visible</div>`} />
+
+## Browser Support
+
+| Capability | Core requirement | Verification |
+|---|---|---|
+| Popover API and `popover="hint"` | Browser support for the Popover API | Chromium, Firefox, and WebKit are configured in the integration suite; this checkout's system Chromium supports Popover but not Interest Invokers |
+| Interest Invokers (`interestfor`) | Browser support for the experimental Interest Invokers feature | Skip when feature detection fails; no runtime polyfill is included |
+| CSS anchor positioning and `position-area` | Browser support for the relevant CSS Anchor Positioning features | Use `@supports` or an application fallback when unavailable |
+
+See [MDN Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API), [Using interest invokers](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using_interest_invokers), and [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning) for current compatibility tables. On unsupported browsers, use inline help or an explicit consumer-owned disclosure; `title` alone is not a complete accessible fallback.
+
+## React Example
+
+```tsx
+type TooltipProps = {
+  id: string;
+  content: string;
+  position?: 'top' | 'bottom' | 'left' | 'right';
+  children: React.ReactElement;
+};
+
+export function Tooltip({ id, content, position = 'top', children }: TooltipProps) {
+  const anchor = `--${id}`;
+  return (
+    <>
+      {React.cloneElement(children, {
+        interestFor: id,
+        style: { ...(children.props.style || {}), anchorName: anchor },
+      })}
+      <div
+        id={id}
+        popover="hint"
+        className={`tooltip tooltip-${position}`}
+        style={{ positionAnchor: anchor }}
+      >
+        {content}
+      </div>
+    </>
+  );
+}
+```
+
+## API Reference
+
+### Surface classes (on the popover element)
+
+| Class | Description |
+|-------|-------------|
+| `.tooltip` | Base tooltip surface (required with `[popover]`) |
+| `.tooltip-top` | Preferred `position-area: top` (default) |
+| `.tooltip-bottom` | Preferred `position-area: bottom` |
+| `.tooltip-left` | Preferred `position-area: left` |
+| `.tooltip-right` | Preferred `position-area: right` |
+| `.tooltip-primary` / `.tooltip-secondary` / `.tooltip-tertiary` / `.tooltip-info` / `.tooltip-success` / `.tooltip-warning` / `.tooltip-error` / `.tooltip-light` | Color variants |
+| `.tooltip-multiline` | Allow wrapping (max-width: 16rem) |
+| `.tooltip-rich` | Rich content (max-width: 20rem) |
+| `.tooltip-interactive` | Enable pointer events on the surface |
+
+### Trigger utilities
+
+| Class | Description |
+|-------|-------------|
+| `.tooltip-delay` | `interest-delay: 300ms` |
+| `.tooltip-delay-long` | `interest-delay: 500ms` |
+
+### Attributes & CSS
+
+| Name | Where | Description |
+|------|-------|-------------|
+| `interestfor` | Trigger | Links interest to the tooltip id |
+| `popover="hint"` | Surface | Hint popover (does not dismiss `auto` popovers) |
+| `anchor-name` | Trigger | Explicit named anchor |
+| `position-anchor` | Surface | Binds surface to the named anchor |
+| `position-area` / `position-try-fallbacks` | CSS | Preferred placement + flip fallbacks |
+
+### Rich content
+
+| Class | Description |
+|-------|-------------|
+| `.tooltip-rich-title` | Title in rich tooltip |
+| `.tooltip-rich-description` | Description in rich tooltip |
+
+## Accessibility
+
+- Prefer interactive triggers (`button`, links, form controls) so keyboard focus works with interest invokers
+- Use `aria-describedby` pointing at the tooltip id when helpful
+- Keep text brief; do not hide critical information only in a tooltip
+
+```html
+<button interestfor="demo-tip-a11y" aria-describedby="demo-tip-a11y" style="anchor-name: --demo-tip-a11y">Help</button>
+<div id="demo-tip-a11y" popover="hint" class="tooltip" style="position-anchor: --demo-tip-a11y" role="tooltip">
+  Click for assistance
+</div>
+```
+
+## Related Components
+
+- [Popover](/duskmoonui/docs/en/components/popover/) - Richer, interactive overlays
+- [Snackbar](/duskmoonui/docs/en/components/snackbar/) - Brief notification messages
+- [Dialog](/duskmoonui/docs/en/components/dialog/) - Modal interactions
+
+## See Also
+
+- [Using interest invokers (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using_interest_invokers)
+- [Tooltip (Material Design 3)](https://m3.material.io/components/tooltips/)

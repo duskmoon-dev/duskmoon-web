@@ -1,0 +1,307 @@
+/**
+ * Rating Component Styles
+ * DuskMoonUI - Material Design 3 inspired rating system
+ */
+
+@layer components {
+  /* Base Rating */
+  .rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    color: var(--color-on-surface);
+  }
+
+  /* Rating Item */
+  .rating-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-outline);
+    cursor: pointer;
+    transition: color 150ms ease-in-out, transform 150ms ease-in-out;
+  }
+
+  .rating-item:hover {
+    transform: scale(1.1);
+  }
+
+  .rating-item.active {
+    color: var(--color-warning-container);
+  }
+
+  .rating-item.filled {
+    color: var(--color-warning);
+  }
+
+  /* Rating Input (hidden) */
+  .rating-input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  /* Rating Icon */
+  .rating-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  /* Half Rating */
+  .rating-half {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rating-half .rating-icon-empty {
+    color: var(--color-outline);
+  }
+
+  .rating-half .rating-icon-filled {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    overflow: hidden;
+    color: var(--color-warning);
+  }
+
+  /* Size Variants */
+  .rating-xs .rating-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    font-size: 0.875rem;
+  }
+
+  .rating-sm .rating-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 1.25rem;
+  }
+
+  .rating-lg .rating-icon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 2rem;
+  }
+
+  .rating-xl .rating-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 2.5rem;
+  }
+
+  /* Color Variants */
+  .rating-primary .rating-item.filled {
+    color: var(--color-primary);
+  }
+
+  .rating-secondary .rating-item.filled {
+    color: var(--color-secondary);
+  }
+
+  .rating-error .rating-item.filled {
+    color: var(--color-error);
+  }
+
+  .rating-success .rating-item.filled {
+    color: var(--color-success);
+  }
+
+  .rating-tertiary .rating-item.filled {
+    color: var(--color-tertiary);
+  }
+
+  .rating-info .rating-item.filled {
+    color: var(--color-info);
+  }
+
+  /* Note: .rating-warning is explicit even though the default rating filled color is
+     already --color-warning. This allows resetting to warning after applying another
+     color variant (e.g. class="rating rating-primary rating-warning"). */
+  .rating-warning .rating-item.filled {
+    color: var(--color-warning);
+  }
+
+  .rating-accent .rating-item.filled {
+    color: var(--color-accent);
+  }
+
+  .rating-neutral .rating-item.filled {
+    color: var(--color-neutral);
+  }
+
+  .rating-base .rating-item.filled {
+    color: var(--color-base-content);
+  }
+
+  /* Read Only */
+  .rating-readonly .rating-item {
+    cursor: default;
+  }
+
+  .rating-readonly .rating-item:hover {
+    transform: none;
+  }
+
+  /* Disabled */
+  .rating-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* With Label */
+  .rating-labeled {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .rating-label {
+    font-size: 0.875rem;
+    color: var(--color-on-surface-variant);
+  }
+
+  /* With Count */
+  .rating-count {
+    font-size: 0.75rem;
+    color: var(--color-on-surface-variant);
+    margin-left: 0.25rem;
+  }
+
+  /* Hover Preview */
+  .rating:not(.rating-readonly):not(.rating-native) .rating-item:hover ~ .rating-item {
+    color: var(--color-outline);
+  }
+
+  .rating:not(.rating-readonly):not(.rating-native):hover .rating-item {
+    color: var(--color-warning);
+  }
+
+  .rating-primary:not(.rating-readonly):not(.rating-native):hover .rating-item   { color: var(--color-primary); }
+  .rating-secondary:not(.rating-readonly):not(.rating-native):hover .rating-item { color: var(--color-secondary); }
+  .rating-tertiary:not(.rating-readonly):not(.rating-native):hover .rating-item  { color: var(--color-tertiary); }
+  .rating-info:not(.rating-readonly):not(.rating-native):hover .rating-item      { color: var(--color-info); }
+  .rating-success:not(.rating-readonly):not(.rating-native):hover .rating-item   { color: var(--color-success); }
+  .rating-error:not(.rating-readonly):not(.rating-native):hover .rating-item     { color: var(--color-error); }
+  .rating-accent:not(.rating-readonly):not(.rating-native):hover .rating-item    { color: var(--color-accent); }
+  .rating-neutral:not(.rating-readonly):not(.rating-native):hover .rating-item   { color: var(--color-neutral); }
+  .rating-base:not(.rating-readonly):not(.rating-native):hover .rating-item      { color: var(--color-base-content); }
+
+  /* Focus Visible — use warning (the default fill color) for the base ring;
+     per-variant overrides below match the active fill color for each variant. */
+  .rating-item:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-warning) 20%, transparent);
+    border-radius: var(--radius-xs);
+  }
+
+  .rating-primary .rating-item:focus-visible   { box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-primary)   20%, transparent); }
+  .rating-secondary .rating-item:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-secondary) 20%, transparent); }
+  .rating-tertiary .rating-item:focus-visible  { box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-tertiary)  20%, transparent); }
+  .rating-info .rating-item:focus-visible      { box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-info)      20%, transparent); }
+  .rating-success .rating-item:focus-visible   { box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-success)   20%, transparent); }
+  .rating-error .rating-item:focus-visible     { box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-error)     20%, transparent); }
+  .rating-warning .rating-item:focus-visible   { box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-warning)   20%, transparent); }
+  .rating-accent .rating-item:focus-visible    { box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-accent)    20%, transparent); }
+  .rating-neutral .rating-item:focus-visible   { box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-neutral)   20%, transparent); }
+  .rating-base .rating-item:focus-visible      { box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-base-content) 20%, transparent); }
+
+  /* Rating Display (static) */
+  .rating-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .rating-display-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-on-surface);
+  }
+
+  .rating-display-stars {
+    display: flex;
+    gap: 0.0625rem;
+    color: var(--color-warning);
+  }
+
+  .rating-display-max {
+    font-size: 0.75rem;
+    color: var(--color-on-surface-variant);
+  }
+
+  /* Compact Rating */
+  .rating-compact {
+    gap: 0;
+  }
+
+  .rating-compact .rating-item {
+    padding: 0.125rem;
+  }
+
+  /* Animated */
+  .rating-animated .rating-item {
+    transition: color 150ms ease-in-out, transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .rating-animated .rating-item.filled {
+    animation: rating-pop 300ms ease-out;
+  }
+
+  @keyframes rating-pop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.3);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Native radio pattern: selection is authoritative, not .filled/.active. */
+  .rating-native { --rating-color: var(--color-warning); flex-wrap: wrap; max-inline-size: 100%; }
+  .rating-native.rating-primary { --rating-color: var(--color-primary); }
+  .rating-native.rating-secondary { --rating-color: var(--color-secondary); }
+  .rating-native.rating-tertiary { --rating-color: var(--color-tertiary); }
+  .rating-native.rating-info { --rating-color: var(--color-info); }
+  .rating-native.rating-success { --rating-color: var(--color-success); }
+  .rating-native.rating-warning { --rating-color: var(--color-warning); }
+  .rating-native.rating-error { --rating-color: var(--color-error); }
+  .rating-native .rating-item { position: relative; padding: 0.25rem; }
+  .rating-native .rating-input {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: inherit;
+  }
+  .rating-native .rating-item:is(.filled, .active, :hover),
+  .rating-native .rating-item { color: var(--color-outline); transform: none; }
+  .rating-native .rating-item:has(.rating-input:checked),
+  .rating-native .rating-item:not(.rating-none):has(~ .rating-item .rating-input:checked) { color: var(--rating-color); }
+  .rating-native .rating-item:has(.rating-input:focus-visible) { outline: 2px solid currentColor; outline-offset: 2px; border-radius: var(--radius-xs); }
+  .rating-native .rating-item:has(.rating-input:disabled) { opacity: 0.38; cursor: not-allowed; }
+  .rating-native .rating-none { color: var(--color-on-surface); font-size: 0.875rem; }
+  @media (forced-colors: active) {
+    .rating-native .rating-item:has(.rating-input:checked) { outline: 2px solid Highlight; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rating-item,
+    .rating-animated .rating-item {
+      transition: color 0ms;
+    }
+
+    .rating-animated .rating-item.filled {
+      animation: none;
+    }
+  }
+}

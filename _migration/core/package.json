@@ -1,0 +1,36 @@
+{
+  "name": "@duskmoon-dev/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "test": "bun run --filter @duskmoon-dev/core test",
+    "dev": "bun run --filter @duskmoon-dev/docs dev",
+    "dev:core": "bun run --filter @duskmoon-dev/core dev",
+    "dev:css-art": "bun run --filter @duskmoon-dev/css-art dev",
+    "docs": "bun run --filter @duskmoon-dev/docs dev",
+    "build": "bun run build:core && bun run build:css-art && bun run build:docs",
+    "build:core": "bun run --filter @duskmoon-dev/core build",
+    "build:css-art": "bun run --filter @duskmoon-dev/css-art build",
+    "build:docs": "bun run --filter @duskmoon-dev/docs build",
+    "preview": "bun run --filter @duskmoon-dev/docs preview",
+    "typecheck": "bun run --filter @duskmoon-dev/core typecheck && bun run --filter @duskmoon-dev/docs astro check"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "6.0.3",
+    "postcss": "8.5.29",
+    "postcss-js": "5.1.0",
+    "postcss-selector-parser": "7.1.6",
+    "autoprefixer": "10.6.1",
+    "playwright-core": "1.64.0"
+  },
+  "resolutions": {
+    "postcss": "^8.4.47",
+    "postcss-selector-parser": "^7.0.0"
+  }
+}

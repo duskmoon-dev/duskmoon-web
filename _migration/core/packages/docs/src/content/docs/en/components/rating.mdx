@@ -1,0 +1,110 @@
+---
+title: Rating
+description: Native radio-backed editable rating and separate static/half-rating display
+category: components
+order: 20
+published: true
+tags: ['rating', 'form', 'components']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Rating
+
+Use native radio inputs for editable ratings. Static display is a different pattern:
+do not use a CSS readonly class to disable a radio group.
+
+## Imports
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/rating.css";
+@import "@duskmoon-dev/core/components/form-group.css";
+@import "@duskmoon-dev/core/components/button.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+Aggregate: `@duskmoon-dev/core`; no-Tailwind: `@duskmoon-dev/core/standalone.css`.
+Individual: `@duskmoon-dev/core/components/rating.css` plus theme/reset;
+`form-group.css` supplies fieldset composition. Extensionless `components/rating`
+exports generated `css` and constructable `styles`.
+
+## Editable Native Rating
+
+<ComponentShowcase title="Editable rating with no-rating choice" code={`<form>
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Service rating</legend>
+    <div class="rating rating-native rating-warning">
+      <label class="rating-item rating-none"><input class="rating-input" type="radio" name="rating" value="0" checked>No rating</label>
+      <label class="rating-item"><input class="rating-input" type="radio" name="rating" value="1" aria-label="1 star"><span class="rating-icon" aria-hidden="true">&#9733;</span></label>
+      <label class="rating-item"><input class="rating-input" type="radio" name="rating" value="2" aria-label="2 stars"><span class="rating-icon" aria-hidden="true">&#9733;</span></label>
+      <label class="rating-item"><input class="rating-input" type="radio" name="rating" value="3" aria-label="3 stars"><span class="rating-icon" aria-hidden="true">&#9733;</span></label>
+      <label class="rating-item"><input class="rating-input" type="radio" name="rating" value="4" aria-label="4 stars"><span class="rating-icon" aria-hidden="true">&#9733;</span></label>
+      <label class="rating-item"><input class="rating-input" type="radio" name="rating" value="5" aria-label="5 stars"><span class="rating-icon" aria-hidden="true">&#9733;</span></label>
+    </div>
+  </fieldset>
+  <button class="btn" type="reset">Reset to No rating</button>
+</form>`} />
+
+One shared `name` produces one FormData value. Tab enters the group and arrows change
+selection using native radio behavior. Earlier stars and the checked star fill from actual
+checked state, even if legacy `.filled/.active` classes disagree. Hover does not commit
+or override selection. Omit the no-rating radio for a required-only pattern; use `required`
+on the group radios and useful error text. Reset returns to the initially checked choice;
+an initially unselected optional group resets to no submitted value.
+The native group wraps at narrow widths and enlarged text sizes without changing radio order.
+
+## Disabled Input
+
+<ComponentShowcase title="Genuinely disabled rating" code={`<fieldset class="fieldset" disabled>
+  <legend class="fieldset-legend">Unavailable rating</legend>
+  <div class="rating rating-native rating-primary">
+    <label class="rating-item"><input class="rating-input" type="radio" name="disabled-rating" value="1" checked aria-label="1 star"><span class="rating-icon" aria-hidden="true">&#9733;</span></label>
+    <label class="rating-item"><input class="rating-input" type="radio" name="disabled-rating" value="2" aria-label="2 stars"><span class="rating-icon" aria-hidden="true">&#9733;</span></label>
+  </div>
+</fieldset>`} />
+
+Use actual `disabled` or `fieldset disabled`: these controls are not focusable,
+editable or submitted. Radios have no native readonly attribute. For read-only values,
+render the static display below, optionally preserving a submitted value separately in
+application markup.
+
+## Static Display And Half Rating
+
+<ComponentShowcase title="Static rating" code={`<div class="rating-display" role="img" aria-label="Rating: 3 out of 5">
+  <span class="rating-display-value">3</span>
+  <span class="rating-display-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+  <span class="rating-display-max">/ 5</span>
+</div>
+<div class="rating rating-readonly" role="img" aria-label="Half-star styling sample">
+  <span class="rating-item rating-half" aria-hidden="true">
+    <span class="rating-icon rating-icon-empty">&#9734;</span>
+    <span class="rating-icon rating-icon-filled">&#9733;</span>
+  </span>
+</div>`} />
+
+Half-rating and legacy display APIs remain unchanged. Editable half-step ratings require an
+application integration with appropriately labeled choices; a visual half star does not add
+a half-value radio option.
+
+## API And State Ownership
+
+| Class | Role |
+| --- | --- |
+| `.rating`, `.rating-item`, `.rating-icon` | Wrapper/item/icon visuals |
+| `.rating-native`, `.rating-input` | Preferred semantic radio pattern |
+| `.rating-none` | Optional visible no-rating choice |
+| `.rating-xs/sm/lg/xl`, `.rating-compact` | Sizing |
+| `.rating-primary/secondary/tertiary/info/success/warning/error` | Native and legacy selection colors |
+| `.filled`, `.active`, `.rating-readonly`, `.rating-disabled` | Legacy display presentation; not semantic state |
+| `.rating-half`, `.rating-icon-empty/filled` | Half display |
+| `.rating-display`, `rating-display-value/stars/max` | Static summary |
+| `.rating-labeled`, `.rating-label/count`, `.rating-animated` | Existing display composition |
+
+Core styles checked, focus, disabled and forced-colors presentation. Applications own async
+saving, review counts, live output text, custom precision and error announcements.

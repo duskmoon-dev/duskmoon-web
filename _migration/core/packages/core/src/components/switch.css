@@ -1,0 +1,279 @@
+@import "./validator.css";
+
+/**
+ * Switch Component Styles
+ * DuskMoonUI - Material Design 3 inspired switch/toggle
+ *
+ * Usage: <input type="checkbox" class="switch" />
+ * With label: <label class="switch-label"><input type="checkbox" class="switch" /><span>Label</span></label>
+ */
+
+@layer components {
+  :where(.switch) { box-sizing: border-box; }
+
+  /* Base Switch - applied directly to input[type="checkbox"] */
+  .switch {
+    --switch-width: 3.25rem;
+    --switch-height: 2rem;
+    color: var(--color-on-surface);
+    --switch-thumb-size: 1rem;
+    --switch-color: var(--color-primary);
+    --switch-content-color: var(--color-primary-content);
+    --switch-container-color: var(--color-primary-container);
+    --switch-track-color: var(--color-surface-container-highest);
+    --switch-border-color: var(--color-outline);
+    --switch-thumb-color: var(--color-outline);
+
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: 0fr 1fr 1fr;
+    align-items: center;
+    width: var(--switch-width);
+    height: var(--switch-height);
+    margin: 0;
+    padding: 0.25rem;
+    cursor: pointer;
+    appearance: none;
+    background-color: var(--switch-track-color);
+    border: 2px solid var(--switch-border-color);
+    border-radius: var(--switch-height);
+    /* Use !important to override global * { transition } rules from layers */
+    transition: background-color 200ms ease-in-out,
+      border-color 200ms ease-in-out,
+      grid-template-columns 200ms ease-in-out !important;
+  }
+
+  /* Thumb using ::before pseudo-element */
+  .switch::before {
+    content: "";
+    grid-column: 2;
+    width: var(--switch-thumb-size);
+    height: var(--switch-thumb-size);
+    background-color: var(--switch-thumb-color);
+    border-radius: var(--radius-full);
+    /* Use !important to override global * { transition } rules */
+    transition: background-color 200ms ease-in-out,
+      width 200ms ease-in-out,
+      margin 200ms ease-in-out !important;
+  }
+
+  /* Checked State */
+  .switch:checked {
+    grid-template-columns: 1fr 1fr 0fr;
+    background-color: var(--switch-color);
+    border-color: var(--switch-color);
+  }
+
+  .switch:checked::before {
+    background-color: var(--switch-content-color);
+  }
+
+  /* Hover State (unchecked) */
+  .switch:hover:not(:disabled):not(:checked) {
+    background-color: var(--color-surface-container-high);
+  }
+
+  .switch:hover:not(:disabled):not(:checked)::before {
+    background-color: var(--color-on-surface-variant);
+  }
+
+  /* Hover State (checked) */
+  .switch:checked:hover:not(:disabled) {
+    background-color: color-mix(in oklch, var(--switch-color), black 10%);
+    border-color: color-mix(in oklch, var(--switch-color), black 10%);
+  }
+
+  .switch:checked:hover:not(:disabled)::before {
+    background-color: var(--switch-container-color);
+  }
+
+  /* Focus State */
+  .switch:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--switch-color) 20%, transparent);
+  }
+
+  /* Pressed/Active State - expand thumb slightly */
+  .switch:active:not(:disabled)::before {
+    width: calc(var(--switch-thumb-size) + 0.25rem);
+  }
+
+  .switch:checked:active:not(:disabled)::before {
+    margin-left: -0.25rem;
+  }
+
+  /* Disabled State */
+  .switch:disabled {
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
+
+  .switch:disabled:not(:checked) {
+    background-color: color-mix(in oklch, var(--color-surface-container-highest) 12%, transparent);
+    border-color: color-mix(in oklch, var(--color-on-surface) 12%, transparent);
+  }
+
+  .switch:disabled:not(:checked)::before {
+    background-color: color-mix(in oklch, var(--color-on-surface) 38%, transparent);
+  }
+
+  .switch:disabled:checked {
+    background-color: color-mix(in oklch, var(--color-on-surface) 12%, transparent);
+    border-color: transparent;
+  }
+
+  .switch:disabled:checked::before {
+    background-color: var(--color-surface);
+  }
+
+  /* ========================================
+   * Size Variants
+   * Thumb size = height - 4px (border) - 8px (padding/gap)
+   * ======================================== */
+
+  .switch-xs {
+    --switch-width: 2rem;
+    --switch-height: 1.25rem;
+    --switch-thumb-size: 0.5rem;
+  }
+
+  .switch-sm {
+    --switch-width: 2.5rem;
+    --switch-height: 1.5rem;
+    --switch-thumb-size: 0.75rem;
+  }
+
+  .switch-md {
+    --switch-width: 3.25rem;
+    --switch-height: 2rem;
+    --switch-thumb-size: 1rem;
+  }
+
+  .switch-lg {
+    --switch-width: 4rem;
+    --switch-height: 2.5rem;
+    --switch-thumb-size: 1.25rem;
+  }
+
+  .switch-xl {
+    --switch-width: 4.75rem;
+    --switch-height: 3rem;
+    --switch-thumb-size: 1.5rem;
+  }
+
+  /* ========================================
+   * Color Variants
+   * ======================================== */
+
+  .switch-primary {
+    --switch-color: var(--color-primary);
+    --switch-content-color: var(--color-primary-content);
+    --switch-container-color: var(--color-primary-container);
+  }
+
+  .switch-secondary {
+    --switch-color: var(--color-secondary);
+    --switch-content-color: var(--color-secondary-content);
+    --switch-container-color: var(--color-secondary-container);
+  }
+
+  .switch-tertiary {
+    --switch-color: var(--color-tertiary);
+    --switch-content-color: var(--color-tertiary-content);
+    --switch-container-color: var(--color-tertiary-container);
+  }
+
+  .switch-success {
+    --switch-color: var(--color-success);
+    --switch-content-color: var(--color-success-content);
+    --switch-container-color: var(--color-success-container);
+  }
+
+  .switch-warning {
+    --switch-color: var(--color-warning);
+    --switch-content-color: var(--color-warning-content);
+    --switch-container-color: var(--color-warning-container);
+  }
+
+  .switch-error {
+    --switch-color: var(--color-error);
+    --switch-content-color: var(--color-error-content);
+    --switch-container-color: var(--color-error-container);
+  }
+
+  .switch-info {
+    --switch-color: var(--color-info);
+    --switch-content-color: var(--color-info-content);
+    --switch-container-color: var(--color-info-container);
+  }
+
+  .switch-accent {
+    --switch-color: var(--color-accent);
+    --switch-content-color: var(--color-accent-content);
+    --switch-container-color: color-mix(in oklch, var(--color-accent) 20%, var(--color-surface));
+  }
+
+  .switch-neutral {
+    --switch-color: var(--color-neutral);
+    --switch-content-color: var(--color-neutral-content);
+    --switch-container-color: color-mix(in oklch, var(--color-neutral) 20%, var(--color-surface));
+  }
+
+  .switch-base {
+    --switch-color: var(--color-base-100);
+    --switch-content-color: var(--color-base-content);
+    --switch-container-color: color-mix(in oklch, var(--color-base-100) 20%, var(--color-surface));
+  }
+
+  /* Ghost Variant — borderless track */
+  .switch-ghost {
+    --switch-border-color: transparent;
+    --switch-track-color: transparent;
+  }
+
+  /* ========================================
+   * Switch with Label
+   * ======================================== */
+
+  .switch-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.875rem;
+    color: var(--color-on-surface);
+  }
+
+  .switch-label:has(.switch:disabled) {
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
+
+  /* ========================================
+   * Switch Group
+   * ======================================== */
+
+  .switch-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .switch-group-horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  /* ========================================
+   * Reduce Motion
+   * ======================================== */
+
+  @media (prefers-reduced-motion: reduce) {
+    .switch,
+    .switch::before {
+      transition: none !important;
+    }
+  }
+}

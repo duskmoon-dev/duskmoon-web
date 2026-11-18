@@ -1,0 +1,12 @@
+/**
+ * Legacy form entry: native controls and composition reuse canonical CSS.
+ * No control state rules belong in this compatibility wrapper.
+ */
+@import "./input.css";
+@import "./checkbox.css";
+@import "./radio.css";
+@import "./toggle-switch.css";
+@import "./select.css";
+@import "./textarea.css";
+@import "./range.css";
+@import "./form-group.css";

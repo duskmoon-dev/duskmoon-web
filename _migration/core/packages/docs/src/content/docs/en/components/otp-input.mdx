@@ -1,0 +1,299 @@
+---
+title: OTP Input
+description: One native code input with visual character slots, including masked PIN entry
+category: components
+order: 25
+published: true
+tags: ['otp', 'input', 'form', 'components', 'pin']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# OTP Input
+
+OTP and PIN entry use the same component. Like the [DaisyUI OTP pattern](https://daisyui.com/components/otp/),
+visual slots sit behind **one native input**. The browser owns text editing, selection,
+paste, deletion, validation, form submission and reset. There is one accessible label,
+one focus stop and one submitted value; no focus-moving script is needed.
+
+## Imports
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/otp-input.css";
+@import "@duskmoon-dev/core/components/form-group.css";
+@import "@duskmoon-dev/core/components/button.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+Aggregate: `@duskmoon-dev/core` with Tailwind v4; no-Tailwind: `@duskmoon-dev/core/standalone.css`.
+Individual: `@duskmoon-dev/core/components/otp-input.css` plus a theme/reset and
+`form-group.css` for labels/help. Extensionless `components/otp-input`
+exports generated `css` and constructable `styles`, with no interaction runtime.
+
+## Single Native Input
+
+Use a `.otp-input` label containing empty `aria-hidden="true"` spans, followed by
+one `.otp-code` input. Each span defines a visual slot; use one to eight spans and
+match `minlength`, `maxlength` and `pattern` to the code length. The spans are decorative:
+all characters, the caret and the selection belong to the real input.
+
+<ComponentShowcase title="Six-character code" code={`<form>
+  <div class="form-group">
+    <label class="form-label" for="demo-otp-six">Verification code (6 digits)</label>
+    <label class="otp-input">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <input id="demo-otp-six" name="code" type="text" class="otp-code validator validator-success" autocomplete="one-time-code" inputmode="numeric" minlength="6" maxlength="6" pattern="[0-9]{6}" required aria-describedby="demo-otp-six-help demo-otp-six-error">
+    </label>
+    <p id="demo-otp-six-help" class="validator-hint">Enter the complete six-digit code.</p>
+    <p id="demo-otp-six-error" class="validator-error">Error: enter exactly six digits.</p>
+  </div>
+  <button class="btn" type="reset">Reset code</button>
+</form>`} />
+
+<ComponentShowcase title="Four-character code" code={`<form>
+  <label class="form-label" for="demo-otp-four">Verification code (4 digits)</label>
+  <label class="otp-input otp-input-secondary">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input id="demo-otp-four" name="short-code" type="text" class="otp-code otp-code-4 otp-code-secondary validator" autocomplete="one-time-code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" required value="0012">
+  </label>
+  <button class="btn" type="reset">Reset to 0012</button>
+</form>`} />
+
+Use `type="text"` for visible codes: it preserves leading zeros and supports native
+length/pattern constraints. `inputmode="numeric"` suggests a keyboard; the pattern validates
+the characters. For alphanumeric codes, use an appropriate pattern and text input mode.
+The span count changes presentation; it does not replace HTML constraints.
+
+## Joined Slots
+
+<ComponentShowcase title="Joined code" code={`<label class="otp-input otp-input-joined">
+  <span aria-hidden="true"></span>
+  <span aria-hidden="true"></span>
+  <span aria-hidden="true"></span>
+  <span aria-hidden="true"></span>
+  <input type="text" name="joined-code" class="otp-code" aria-label="Joined code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+</label>`} />
+
+## Sizes
+
+Apply `.otp-input-xs`, `.otp-input-sm`, `.otp-input-md` (default), `.otp-input-lg`
+or `.otp-input-xl` to the wrapper.
+
+<ComponentShowcase title="OTP sizes" code={`<div class="form-group">
+  <label class="otp-input otp-input-xs">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="xs-code" class="otp-code" aria-label="XS code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-sm">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="sm-code" class="otp-code" aria-label="SM code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-md">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="md-code" class="otp-code" aria-label="MD code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-lg">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="lg-code" class="otp-code" aria-label="LG code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-xl">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="xl-code" class="otp-code" aria-label="XL code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+</div>`} />
+
+## Colors
+
+The default uses the on-surface color. Seven semantic variants change the wrapper's
+color, which the slot borders inherit.
+
+<ComponentShowcase title="OTP colors" code={`<div class="form-group">
+  <label class="otp-input otp-input-primary">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="primary-code" class="otp-code" aria-label="Primary code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-secondary">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="secondary-code" class="otp-code" aria-label="Secondary code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-tertiary">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="tertiary-code" class="otp-code" aria-label="Tertiary code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-info">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="info-code" class="otp-code" aria-label="Info code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-success">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="success-code" class="otp-code" aria-label="Success code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-warning">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="warning-code" class="otp-code" aria-label="Warning code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-error">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="error-code" class="otp-code" aria-label="Error code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+</div>`} />
+
+## Appearance
+
+<ComponentShowcase title="Ghost, filled and underline" code={`<div class="form-group">
+  <label class="otp-input otp-input-ghost">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="ghost-code" class="otp-code" aria-label="Ghost code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-filled">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="filled-code" class="otp-code" aria-label="Filled code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <label class="otp-input otp-input-underline">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="text" name="underline-code" class="otp-code" aria-label="Underline code" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+</div>`} />
+
+## Masked PIN
+
+Use the same OTP component with `type="password"` to mask a PIN. It still submits
+one complete value, including leading zeros. Choose an autocomplete hint appropriate
+to your application; `one-time-code` is for codes delivered for a single use.
+Masking hides the displayed text and does not replace server-side security checks.
+
+<ComponentShowcase title="Masked PIN" code={`<form>
+  <label class="otp-input">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <input type="password" name="security-pin" autocomplete="current-password" class="otp-code" aria-label="Security PIN" inputmode="numeric" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012">
+  </label>
+  <button class="btn" type="reset">Reset PIN</button>
+</form>`} />
+
+## States
+
+<ComponentShowcase title="Application error and disabled code" code={`<div class="form-grid form-grid-2">
+  <div class="form-group">
+    <label class="form-label" for="demo-otp-error">Verification code</label>
+    <label class="otp-input otp-input-success">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <input id="demo-otp-error" name="rejected-code" type="text" class="otp-code otp-code-success validator validator-success" autocomplete="one-time-code" inputmode="numeric" minlength="6" maxlength="6" pattern="[0-9]{6}" value="001234" required aria-invalid="true" aria-describedby="demo-otp-error-message">
+    </label>
+    <p id="demo-otp-error-message" class="otp-error-message">Error: the code has expired.</p>
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="demo-otp-disabled">Unavailable verification</label>
+    <label class="otp-input">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <input id="demo-otp-disabled" type="text" class="otp-code otp-code-4" name="unavailable-code" minlength="4" maxlength="4" pattern="[0-9]{4}" value="0012" disabled>
+    </label>
+  </div>
+</div>`} />
+
+Set native `disabled` and `aria-invalid` on the input. Native success requires
+`.validator.validator-success`; a success color alone does not prove that a code was
+accepted. Adjacent `.validator-error` text reserves space while hidden so displaying
+feedback does not interrupt a Reset click. Follow the
+[Validator contract](/duskmoonui/docs/en/components/validator/) for explicit error precedence.
+
+## API Reference
+
+<div style={{ overflowX: 'auto' }}>
+
+| Class / markup | Role |
+| --- | --- |
+| `.otp-input` | Label wrapper for decorative slots and one input |
+| `span[aria-hidden="true"]` | One visual slot; use 1–8 before the input |
+| `.otp-code` | The only editable input and submitted value |
+| `.otp-input-joined` | Joined slots |
+| `.otp-input-xs/sm/md/lg/xl` | Slot and character sizes |
+| `.otp-input-primary/secondary/tertiary/info/success/warning/error` | Semantic colors |
+| `.otp-input-ghost/filled/underline` | Appearance variants |
+| `.otp-error-message` | Application error text; associate with `aria-describedby` |
+
+</div>
+
+The standalone `.otp-code` presentation remains available without a wrapper;
+`.otp-code-4` and the `.otp-code-{color}` modifiers retain that compact presentation.
+Migrate old `.otp-input-field` or `.pin-input-field` groups to one `.otp-code` input.
+There is no separate PIN component or per-character input controller.
+
+## Verification Boundary
+
+Automated checks cover text editing, clipboard paste, selection, native constraints,
+FormData, reset and styling. `autocomplete="one-time-code"` requests platform support:
+real SMS delivery, device autofill and mobile keyboard behavior require separate device tests.
+No device-level autofill verification is claimed.
+
+[Input](/duskmoonui/docs/en/components/input/) ·
+[Field composition](/duskmoonui/docs/en/components/form-group/)

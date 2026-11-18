@@ -1,0 +1,567 @@
+/**
+ * Collapse Component Styles
+ * DuskMoonUI - Material Design 3 inspired collapsible content system
+ */
+
+@layer components {
+  /* Base Collapse */
+  .collapse {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    /* Override Tailwind's visibility: collapse utility */
+    visibility: visible !important;
+  }
+
+  /* Collapse Trigger */
+  .collapse-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-on-surface);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background-color 150ms ease-in-out;
+    text-align: start;
+  }
+
+  .collapse-trigger:hover {
+    background-color: var(--color-surface-container);
+  }
+
+  .collapse-trigger:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+
+  /* Collapse Icon */
+  .collapse-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    transition: transform 300ms ease-in-out;
+    flex-shrink: 0;
+  }
+
+  /* Collapse Content - hidden by default */
+  .collapse-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 300ms ease-in-out;
+    overflow: hidden;
+  }
+
+  .collapse-content > * {
+    overflow: hidden;
+    padding: 0 1rem;
+  }
+
+  /* Open State */
+  .collapse:not(details):not(.collapse-closed).collapse-open > .collapse-content,
+  details.collapse[open] > .collapse-content {
+    grid-template-rows: 1fr;
+  }
+
+  .collapse:not(details):not(.collapse-closed).collapse-open > .collapse-content > *,
+  details.collapse[open] > .collapse-content > * {
+    padding: 0 1rem 1rem;
+  }
+
+  .collapse:not(details):not(.collapse-closed).collapse-open > .collapse-trigger > .collapse-icon,
+  details.collapse[open] > .collapse-trigger > .collapse-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Closed State (explicit) */
+  .collapse:not(details).collapse-closed > .collapse-content {
+    grid-template-rows: 0fr;
+  }
+
+  /* Legacy show class for backwards compatibility */
+  .collapse:not(details):not(.collapse-closed).show > .collapse-content {
+    grid-template-rows: 1fr;
+  }
+
+  .collapse:not(details):not(.collapse-closed).show > .collapse-content > * {
+    padding: 0 1rem 1rem;
+  }
+
+  .collapse:not(details):not(.collapse-closed).show > .collapse-trigger > .collapse-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Collapse Inner (for padding) */
+  .collapse-inner {
+    /* Add padding here as needed */
+  }
+
+  /* Collapse with Fade */
+  .collapse-fade {
+    opacity: 0;
+    transition: grid-template-rows 300ms ease-in-out, opacity 200ms ease-in-out;
+  }
+
+  .collapse-fade.show {
+    opacity: 1;
+    transition: grid-template-rows 300ms ease-in-out, opacity 300ms ease-in-out 100ms;
+  }
+
+  /* Collapse Toggle Button */
+  .collapse-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-on-primary-container);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background-color 150ms ease-in-out;
+    border-radius: var(--radius-sm);
+  }
+
+  .collapse-toggle:hover {
+    background-color: var(--color-primary-container);
+  }
+
+  .collapse-toggle:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+
+  /* Toggle Icon */
+  .collapse-toggle-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    transition: transform 200ms ease-in-out;
+  }
+
+  .collapse-toggle[aria-expanded="true"] .collapse-toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Collapse Card Variant */
+  .collapse-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-outline-variant);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .collapse-card .collapse-toggle,
+  .collapse-card .collapse-trigger {
+    width: 100%;
+    justify-content: space-between;
+    padding: 1rem;
+    border-radius: 0;
+    color: var(--color-on-surface);
+  }
+
+  .collapse-card .collapse-toggle:hover,
+  .collapse-card .collapse-trigger:hover {
+    background-color: var(--color-surface-container);
+  }
+
+  .collapse-card .collapse-inner,
+  .collapse-card .collapse-content > * {
+    color: var(--color-on-surface-variant);
+  }
+
+  .collapse-card:not(details):not(.collapse-closed):is(.collapse-open, .show) > .collapse-content > *,
+  details.collapse-card[open] > .collapse-content > * {
+    padding: 0 1rem 1rem;
+  }
+
+  /* Bordered Variant */
+  .collapse-bordered {
+    border: 1px solid var(--color-outline-variant);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Ghost Variant */
+  .collapse-ghost {
+    background-color: transparent;
+  }
+
+  .collapse-ghost .collapse-trigger:hover {
+    background-color: color-mix(in oklch, var(--color-on-surface) 5%, transparent);
+  }
+
+  /* Color Variants */
+  .collapse-primary .collapse-trigger {
+    color: var(--color-on-primary-container);
+  }
+
+  .collapse-primary .collapse-trigger:hover {
+    background-color: var(--color-primary-container);
+  }
+
+  .collapse-secondary .collapse-trigger {
+    color: var(--color-on-secondary-container);
+  }
+
+  .collapse-secondary .collapse-trigger:hover {
+    background-color: var(--color-secondary-container);
+  }
+
+  .collapse-tertiary .collapse-trigger {
+    color: var(--color-on-tertiary-container);
+  }
+
+  .collapse-tertiary .collapse-trigger:hover {
+    background-color: var(--color-tertiary-container);
+  }
+
+  .collapse-info .collapse-trigger {
+    color: var(--color-on-info-container);
+  }
+
+  .collapse-info .collapse-trigger:hover {
+    background-color: var(--color-info-container);
+  }
+
+  .collapse-success .collapse-trigger {
+    color: var(--color-on-success-container);
+  }
+
+  .collapse-success .collapse-trigger:hover {
+    background-color: var(--color-success-container);
+  }
+
+  .collapse-warning .collapse-trigger {
+    color: var(--color-on-warning-container);
+  }
+
+  .collapse-warning .collapse-trigger:hover {
+    background-color: var(--color-warning-container);
+  }
+
+  .collapse-error .collapse-trigger {
+    color: var(--color-on-error-container);
+  }
+
+  .collapse-error .collapse-trigger:hover {
+    background-color: var(--color-error-container);
+  }
+
+  .collapse-accent .collapse-trigger {
+    color: light-dark(var(--color-accent-content), var(--color-accent));
+  }
+
+  .collapse-accent .collapse-trigger:hover {
+    background-color: color-mix(in oklch, var(--color-accent) 15%, var(--color-surface));
+  }
+
+  .collapse-neutral .collapse-trigger {
+    color: var(--color-neutral);
+  }
+
+  .collapse-neutral .collapse-trigger:hover {
+    background-color: color-mix(in oklch, var(--color-neutral) 15%, var(--color-surface));
+  }
+
+  .collapse-base .collapse-trigger {
+    color: var(--color-base-content);
+  }
+
+  .collapse-base .collapse-trigger:hover {
+    background-color: var(--color-base-200);
+  }
+
+  /* Size Variants */
+  .collapse-sm .collapse-trigger {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .collapse-sm .collapse-content > * {
+    padding: 0 0.75rem;
+  }
+
+  .collapse-sm:not(details):not(.collapse-closed):is(.collapse-open, .show) > .collapse-content > *,
+  details.collapse-sm[open] > .collapse-content > * {
+    padding: 0 0.75rem 0.75rem;
+  }
+
+  .collapse-lg .collapse-trigger {
+    padding: 1rem 1.25rem;
+    font-size: 1.125rem;
+  }
+
+  .collapse-lg .collapse-content > * {
+    padding: 0 1.25rem;
+  }
+
+  .collapse-lg:not(details):not(.collapse-closed):is(.collapse-open, .show) > .collapse-content > *,
+  details.collapse-lg[open] > .collapse-content > * {
+    padding: 0 1.25rem 1.25rem;
+  }
+
+  /* Divider Variant */
+  .collapse-divider .collapse-trigger {
+    border-bottom: 1px solid var(--color-outline-variant);
+  }
+
+  .collapse-divider.collapse-open .collapse-trigger {
+    border-bottom-color: var(--color-outline-variant);
+  }
+
+  /* Disabled State */
+  .collapse-disabled {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .collapse-disabled .collapse-trigger {
+    cursor: not-allowed;
+  }
+
+  /* Loading State */
+  .collapse-loading .collapse-trigger::after {
+    content: '';
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.5rem;
+    border: 2px solid var(--color-outline);
+    border-top-color: var(--color-primary);
+    border-radius: var(--radius-full);
+    animation: collapse-spin 0.8s linear infinite;
+  }
+
+  @keyframes collapse-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Slide Animation */
+  .collapse-slide > .collapse-content > * {
+    transform: translateY(-0.5rem);
+    opacity: 0;
+    transition: transform 300ms ease-in-out, opacity 200ms ease-in-out;
+  }
+
+  .collapse-slide:not(details):not(.collapse-closed):is(.collapse-open, .show) > .collapse-content > * {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* Horizontal Collapse */
+  .collapse-horizontal {
+    display: grid;
+    grid-template-columns: 0fr;
+    transition: grid-template-columns 300ms ease-in-out;
+  }
+
+  .collapse-horizontal.show {
+    grid-template-columns: 1fr;
+  }
+
+  .collapse-horizontal .collapse-content {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  /* Fixed Width Horizontal */
+  .collapse-horizontal-fixed {
+    display: block;
+    width: 0;
+    overflow: hidden;
+    transition: width 300ms ease-in-out;
+  }
+
+  .collapse-horizontal-fixed.show {
+    width: var(--collapse-width, 20rem);
+  }
+
+  /* Nested Collapse */
+  .collapse-nested {
+    margin-left: 1rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-outline-variant);
+  }
+
+  /* Show More/Less Pattern */
+  .collapse-showmore {
+    position: relative;
+  }
+
+  .collapse-showmore:not(.show)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3rem;
+    background: linear-gradient(to bottom, transparent, var(--color-surface));
+    pointer-events: none;
+  }
+
+  .collapse-showmore-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-on-primary-container);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .collapse-showmore-toggle:hover {
+    text-decoration: underline;
+  }
+
+  /* Collapse Group */
+  .collapse-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Transition Speed Variants */
+  .collapse-fast {
+    transition-duration: 150ms;
+  }
+
+  .collapse-slow {
+    transition-duration: 500ms;
+  }
+
+  /* Easing Variants */
+  .collapse-ease-in {
+    transition-timing-function: ease-in;
+  }
+
+  .collapse-ease-out {
+    transition-timing-function: ease-out;
+  }
+
+  .collapse-ease-in-out {
+    transition-timing-function: ease-in-out;
+  }
+
+  .collapse-spring {
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Initial States */
+  .collapse-hidden {
+    display: none;
+  }
+
+  /* Accessibility - Screen Reader Only Content */
+  .collapse-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* With Max Height (fallback for older browsers) */
+  .collapse-maxheight {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 300ms ease-in-out;
+  }
+
+  .collapse-maxheight.show {
+    max-height: var(--collapse-max-height, 100rem);
+  }
+
+  /* Animated Height (JS helper class) */
+  .collapse-animating {
+    overflow: hidden;
+    transition: height 300ms ease-in-out;
+  }
+
+  /* Native state is authoritative; controlled aliases never select native items. */
+  details.collapse { display: block; }
+  details.collapse > summary { list-style: none; }
+  details.collapse > summary::-webkit-details-marker { display: none; }
+  .collapse:not(details):not(.collapse-open):not(.show) > .collapse-content,
+  .collapse:not(details).collapse-closed > .collapse-content,
+  .collapse-content[hidden] { display: none; }
+  .collapse-content > * { min-block-size: 0; min-inline-size: 0; overflow-wrap: anywhere; }
+  .collapse.collapse-fade { opacity: 1; }
+  .collapse.collapse-fade > .collapse-content { opacity: 0; }
+  .collapse.collapse-fade:not(details):not(.collapse-closed):is(.show, .collapse-open) > .collapse-content,
+  details.collapse.collapse-fade[open] > .collapse-content { opacity: 1; }
+  .collapse.collapse-slide:not(details):not(.collapse-closed):is(.show, .collapse-open) > .collapse-content > *,
+  details.collapse.collapse-slide[open] > .collapse-content > * { transform: none; opacity: 1; }
+  .collapse.collapse-horizontal { display: block; }
+  .collapse.collapse-horizontal > .collapse-content { grid-template-rows: 1fr; grid-template-columns: 0fr; white-space: normal; }
+  .collapse.collapse-horizontal:not(details):not(.collapse-closed):is(.show, .collapse-open) > .collapse-content,
+  details.collapse.collapse-horizontal[open] > .collapse-content { grid-template-columns: 1fr; }
+  .collapse.collapse-horizontal-fixed { width: auto; }
+  .collapse.collapse-horizontal-fixed > .collapse-content { inline-size: 0; }
+  .collapse.collapse-horizontal-fixed:not(details):not(.collapse-closed):is(.show, .collapse-open) > .collapse-content,
+  details.collapse.collapse-horizontal-fixed[open] > .collapse-content { inline-size: min(100%, var(--collapse-width, 20rem)); }
+  details.collapse.collapse-maxheight { max-height: none; }
+  .collapse.collapse-maxheight:not(details):not(.collapse-closed):is(.show, .collapse-open) { max-height: var(--collapse-max-height, 100rem); }
+  .collapse.collapse-maxheight:not(details).collapse-closed { max-height: 0; }
+
+  /* Native disclosure animation; older browsers retain immediate native behavior. */
+  @supports (interpolate-size: allow-keywords) {
+    @media (prefers-reduced-motion: no-preference) {
+      details.collapse::details-content {
+        interpolate-size: allow-keywords;
+        block-size: 0;
+        overflow: clip;
+        transition: block-size 300ms ease-in-out, content-visibility 300ms allow-discrete;
+      }
+      details.collapse[open]::details-content { block-size: auto; }
+      .collapse:not(details) > .collapse-content {
+        interpolate-size: allow-keywords;
+        block-size: 0;
+        transition: block-size 300ms ease-in-out, display 300ms allow-discrete;
+      }
+      .collapse:not(details):not(.collapse-closed):is(.show, .collapse-open) > .collapse-content:not([hidden]) { block-size: auto; }
+      @starting-style {
+        .collapse:not(details):not(.collapse-closed):is(.show, .collapse-open) > .collapse-content:not([hidden]) { block-size: 0; }
+      }
+    }
+  }
+
+  /* Reduce Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .collapse,
+    .collapse-content,
+    .collapse-icon,
+    .collapse-fade,
+    .collapse-horizontal,
+    .collapse-horizontal-fixed,
+    .collapse-toggle-icon,
+    .collapse-maxheight,
+    .collapse-animating,
+    .collapse-slide .collapse-content > * {
+      transition: none;
+    }
+    .collapse-loading .collapse-trigger::after {
+      animation: none;
+    }
+  }
+}

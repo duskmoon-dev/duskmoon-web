@@ -1,0 +1,240 @@
+---
+title: Configuration
+description: Configure @duskmoon-dev/core to match your project's needs
+category: getting-started
+order: 3
+published: true
+tags: ['configuration', 'setup', 'customization']
+---
+
+# Configuration
+
+@duskmoon-dev/core is highly configurable. This guide covers all available options to customize the plugin for your needs.
+
+## Basic Configuration
+
+The simplest configuration uses default settings with Tailwind CSS 4:
+
+```css
+@import "tailwindcss";
+@plugin "@duskmoon-dev/core/plugin";
+```
+
+**Note:** @duskmoon-dev/core requires Tailwind CSS 4.0 or later. Tailwind CSS 3.x is not supported.
+
+## Plugin Options
+
+Customize @duskmoon-dev/core by passing options in Tailwind CSS 4:
+
+```css
+@import "tailwindcss";
+@plugin "@duskmoon-dev/core/plugin" {
+  @theme {
+    --theme: "sunshine";
+    --dark-theme: "moonlight";
+  }
+  @config {
+    components: ["button", "card", "input"];
+    styled: true;
+    prefix: "";
+  }
+}
+```
+
+## Available Options
+
+### `themes`
+
+**Type:** `string[]`
+**Default:** `['sunshine', 'moonlight']`
+
+Array of theme names to include. Built-in themes are `sunshine` (light) and `moonlight` (dark).
+
+```javascript
+{
+  themes: ['sunshine', 'moonlight']
+}
+```
+
+Only the built-in `sunshine` and `moonlight` themes are supported in the docs. If you need to tune colors, override their CSS variables in your own stylesheet.
+
+### `defaultTheme`
+
+**Type:** `string`
+**Default:** `'sunshine'`
+
+The theme to use when no `data-theme` attribute is present.
+
+```javascript
+{
+  defaultTheme: 'moonlight'
+}
+```
+
+### `styled`
+
+**Type:** `boolean`
+**Default:** `true`
+
+Whether to include component styles. Set to `false` if you only want theme CSS variables.
+
+```javascript
+{
+  styled: false  // Only inject theme variables, no component styles
+}
+```
+
+### `components`
+
+**Type:** `'all' | string[]`
+**Default:** `'all'`
+
+Which components to include. Use `'all'` for everything, or specify an array:
+
+```javascript
+{
+  components: ['button', 'card', 'input']  // Only these components
+}
+```
+
+Available components:
+- `button` - Button variants and icon buttons
+- `card` - Card container with subcomponents
+- `input` - Form inputs, textarea, select, checkbox, radio
+- `badge` - Badge indicators and notifications
+- `alert` - Alert messages and notifications
+
+### `prefix`
+
+**Type:** `string`
+**Default:** `''`
+
+Prefix for component classes. Useful to avoid conflicts:
+
+```javascript
+{
+  prefix: 'dm-'  // Classes become .dm-btn, .dm-card, etc.
+}
+```
+
+Example usage with prefix:
+
+```html
+<button class="dm-btn dm-btn-primary">Button</button>
+```
+
+## Theme Customization
+
+Override the built-in theme tokens in your own stylesheet when you need tweaks beyond the defaults:
+
+```css
+/* After importing @duskmoon-dev/core */
+[data-theme="sunshine"] {
+  --color-primary: hsl(38 92% 50%);
+  --color-primary-container: hsl(38 80% 90%);
+}
+
+[data-theme="moonlight"] {
+  --color-primary: hsl(220 60% 70%);
+  --color-primary-container: hsl(220 30% 25%);
+}
+```
+
+See the theme reference page for the full token list.
+
+
+## Component Customization
+
+### Selective Component Loading
+
+Load only the components you need for smaller bundle sizes:
+
+```javascript
+{
+  components: ['button', 'input']  // Only button and input components
+}
+```
+
+### Disable Component Styles
+
+If you want to use only the theme system:
+
+```javascript
+{
+  styled: false,  // No component styles, only theme CSS variables
+}
+```
+
+Then use theme variables in your custom components:
+
+```css
+.my-button {
+  background-color: var(--color-primary);
+  color: var(--color-primary-content);
+}
+```
+
+## Complete Example
+
+Here's a complete configuration example:
+
+```javascript
+// tailwind.config.js
+const { duskmoonui } = require('@duskmoon-dev/core');
+
+module.exports = {
+  content: [
+    './src/**/*.{html,js,jsx,ts,tsx,vue,astro}',
+  ],
+  plugins: [
+    duskmoonui({
+      // Use built-in themes
+      themes: ['sunshine', 'moonlight'],
+
+      // Default theme
+      defaultTheme: 'sunshine',
+
+      // Include component styles
+      styled: true,
+
+      // Load only needed components
+      components: ['button', 'card', 'input', 'badge'],
+
+      // Optional class prefix
+      prefix: '',
+    }),
+  ],
+}
+```
+
+## TypeScript Support
+
+@duskmoon-dev/core includes full TypeScript definitions:
+
+```typescript
+import { duskmoonui, type DuskMoonUIOptions } from '@duskmoon-dev/core';
+
+const options: Partial<DuskMoonUIOptions> = {
+  themes: ['sunshine', 'moonlight'],
+  defaultTheme: 'sunshine',
+  styled: true,
+  components: 'all',
+};
+```
+
+## Environment Variables
+
+You can use environment variables in your configuration:
+
+```javascript
+{
+  defaultTheme: process.env.DEFAULT_THEME || 'sunshine',
+  styled: process.env.NODE_ENV !== 'test',
+}
+```
+
+## Next Steps
+
+- [Theme Customization](/duskmoonui/docs/en/theming/customization/) - Deep dive into theming
+- [API Reference](/duskmoonui/docs/en/api/plugin-options/) - Complete API documentation
+- [Components](/duskmoonui/docs/en/components/) - Browse all components

@@ -1,0 +1,71 @@
+---
+title: Select
+description: Native option selection with consistent field composition and validation
+category: components
+order: 5
+published: true
+tags: ['select', 'form', 'components']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Select
+
+Prefer a native select for ordinary option selection. The browser owns selection,
+keyboard navigation, constraints, one submitted value and reset.
+
+## Imports
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/select.css";
+@import "@duskmoon-dev/core/components/form-group.css";
+@import "@duskmoon-dev/core/components/button.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+Aggregate: `@duskmoon-dev/core`; no-Tailwind: `@duskmoon-dev/core/standalone.css`.
+Individual: `@duskmoon-dev/core/components/select.css` plus base/theme and
+`form-group.css` for labels/help. Legacy `form.css` includes Select.
+Extensionless `components/select` exports generated `css` and `styles`.
+
+## Native Field
+
+<ComponentShowcase title="Required country selection" code={`<form>
+  <div class="form-group">
+    <label class="form-label" for="demo-select-country">Country (required)</label>
+    <select id="demo-select-country" name="country" class="select select-filled select-secondary validator" required aria-describedby="demo-select-help demo-select-error">
+      <option value="" selected>Choose a country</option>
+      <option value="ca">Canada</option>
+      <option value="fr">France</option>
+      <option value="jp">Japan</option>
+    </select>
+    <p id="demo-select-help" class="helper-text">Used for delivery.</p>
+    <p id="demo-select-error" class="validator-error">Error: select a country.</p>
+  </div>
+  <button class="btn" type="reset">Reset selection</button>
+</form>`} />
+
+The empty option makes native `required` meaningful. Reset restores the HTML
+selected default. Do not apply text-input-only `pattern` or `readonly` to Select.
+
+## Sizes, Variants And States
+
+Sizes: `.select-xs/sm/md/lg`. Appearance: default, `.select-outlined`,
+`.select-filled`, `.select-ghost` and legacy `.select-bordered`.
+Colors: `.select-primary/secondary/tertiary/info/success/warning/error/accent/neutral/base`.
+Native `disabled` and `fieldset disabled` prevent editing and submission.
+Semantic color classes are presentation. Explicit `aria-invalid="true"` always wins
+over native success and focus; see [Validator](/duskmoonui/docs/en/components/validator/).
+
+Native `multiple` can use `.select-multiple` and repeated submitted values.
+Searchable Select and [Multi-Select](/duskmoonui/docs/en/components/multi-select/)
+are separate application-controlled patterns; Core does not add search, async options,
+custom listbox keyboard management or chip value aggregation to this native select.
+Existing `.select-container/label/helper/group` and `.select-container-error`
+helper presentation remain available. Prefer the shared field composition for new forms.

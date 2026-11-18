@@ -1,0 +1,68 @@
+---
+title: Installation
+description: Get started with @duskmoon-dev/core by installing the library in your project
+category: getting-started
+order: 1
+published: true
+tags: ['setup', 'installation', 'getting-started']
+---
+
+# Installation
+
+Get started with @duskmoon-dev/core in just a few steps.
+
+## Prerequisites
+
+Before installing @duskmoon-dev/core, ensure you have:
+
+- Node.js 18+ or Bun 1.0+
+- Tailwind CSS 4.0+
+
+## Install with Bun (Recommended)
+
+```bash
+bun add @duskmoon-dev/core
+```
+
+## Install with npm
+
+```bash
+npm install @duskmoon-dev/core
+```
+
+## Install with pnpm
+
+```bash
+pnpm add @duskmoon-dev/core
+```
+
+## Configure Tailwind CSS
+
+Add @duskmoon-dev/core to your Tailwind configuration:
+
+### Option A: CSS `@import` (Recommended)
+
+In your `globals.css` or main CSS file:
+
+```css
+@import "tailwindcss";
+@import "@duskmoon-dev/core";
+```
+
+This imports all components, themes, and color tokens as pure CSS.
+
+### Option B: Tailwind `@plugin` Directive
+
+```css
+@import "tailwindcss";
+@plugin "@duskmoon-dev/core/plugin";
+```
+
+The `@plugin` approach registers Material Design 3 color tokens into Tailwind's theme system, enabling utility classes like `bg-primary`, `text-on-surface`, etc.
+
+## What's Next?
+
+- [Quick Start Guide](/duskmoonui/docs/en/getting-started/quick-start/)
+- [Configuration Options](/duskmoonui/docs/en/getting-started/configuration/)
+- [Individual Component Imports](/duskmoonui/docs/en/getting-started/individual-imports/)
+- [Your First Component](/duskmoonui/docs/en/components/button/)

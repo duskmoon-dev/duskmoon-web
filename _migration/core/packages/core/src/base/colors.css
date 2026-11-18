@@ -1,0 +1,316 @@
+/**
+ * Color Token Definitions
+ * 65+ Material Design 3 color tokens using CSS custom properties
+ * Format: OKLCH from codegen (e.g., "oklch(72% 0.17 75)")
+ */
+
+@theme {
+  /* ============================================
+   * THEME METADATA (5 tokens)
+   * Set by generated theme CSS files (e.g., sunshine.css)
+   * Enables data-driven theme switching via --theme-pair
+   * ============================================ */
+
+  --theme-name: initial;
+  --theme-mode: initial;
+  --theme-family: initial;
+  --theme-pair: initial;
+  --theme-description: initial;
+
+  /* ============================================
+   * BRAND COLORS (12 tokens)
+   * ============================================ */
+
+  /* Primary Color Family */
+  --color-primary: initial;
+  --color-primary-content: initial;
+  --color-primary-container: initial;
+  --color-on-primary-container: initial;
+
+  /* Secondary Color Family */
+  --color-secondary: initial;
+  --color-secondary-content: initial;
+  --color-secondary-container: initial;
+  --color-on-secondary-container: initial;
+
+  /* Tertiary Color Family */
+  --color-tertiary: initial;
+  --color-tertiary-content: initial;
+  --color-tertiary-container: initial;
+  --color-on-tertiary-container: initial;
+
+  /* ============================================
+   * ACCENT COLORS (2 tokens)
+   * ============================================ */
+
+  --color-accent: initial;
+  --color-accent-content: initial;
+
+  /* ============================================
+   * NEUTRAL COLORS (3 tokens)
+   * ============================================ */
+
+  --color-neutral: initial;
+  --color-neutral-content: initial;
+  --color-neutral-variant: initial;
+
+  /* ============================================
+   * SURFACE COLORS (11 tokens)
+   * ============================================ */
+
+  --color-surface: initial;
+  --color-surface-dim: initial;
+  --color-surface-bright: initial;
+  --color-surface-container-lowest: initial;
+  --color-surface-container-low: initial;
+  --color-surface-container: initial;
+  --color-surface-container-high: initial;
+  --color-surface-container-highest: initial;
+  --color-surface-variant: initial;
+  --color-on-surface: initial;
+  --color-on-surface-variant: initial;
+
+  /* ============================================
+   * SEMANTIC COLORS (16 tokens)
+   * ============================================ */
+
+  /* Info */
+  --color-info: initial;
+  --color-info-content: initial;
+  --color-info-container: initial;
+  --color-on-info-container: initial;
+
+  /* Success */
+  --color-success: initial;
+  --color-success-content: initial;
+  --color-success-container: initial;
+  --color-on-success-container: initial;
+
+  /* Warning */
+  --color-warning: initial;
+  --color-warning-content: initial;
+  --color-warning-container: initial;
+  --color-on-warning-container: initial;
+
+  /* Error */
+  --color-error: initial;
+  --color-error-content: initial;
+  --color-error-container: initial;
+  --color-on-error-container: initial;
+
+  /* ============================================
+   * BASE SCALE (10 tokens)
+   * ============================================ */
+
+  --color-base-100: initial;
+  --color-base-200: initial;
+  --color-base-300: initial;
+  --color-base-400: initial;
+  --color-base-500: initial;
+  --color-base-600: initial;
+  --color-base-700: initial;
+  --color-base-800: initial;
+  --color-base-900: initial;
+  --color-base-content: initial;
+
+  /* ============================================
+   * OUTLINE COLORS (2 tokens)
+   * ============================================ */
+
+  --color-outline: initial;
+  --color-outline-variant: initial;
+
+  /* ============================================
+   * INVERSE COLORS (3 tokens)
+   * ============================================ */
+
+  --color-inverse-surface: initial;
+  --color-inverse-on-surface: initial;
+  --color-inverse-primary: initial;
+
+  /* ============================================
+   * SHADOW & SCRIM (2 tokens)
+   * ============================================ */
+
+  --color-shadow: initial;
+  --color-scrim: initial;
+
+  /* ============================================
+   * ELEVATION SHADOWS (6 + 6 tokens)
+   * Computed from --color-shadow (theme-provided) via color-mix()
+   * Registered in @theme so Tailwind v4 generates shadow-* utilities natively
+   * ============================================ */
+
+  --shadow-xs: 0 1px 2px 0 color-mix(in srgb, var(--color-shadow) 5%, transparent);
+  --shadow-sm: 0 1px 3px 0 color-mix(in srgb, var(--color-shadow) 10%, transparent), 0 1px 2px -1px color-mix(in srgb, var(--color-shadow) 10%, transparent);
+  --shadow-md: 0 4px 6px -1px color-mix(in srgb, var(--color-shadow) 10%, transparent), 0 2px 4px -2px color-mix(in srgb, var(--color-shadow) 10%, transparent);
+  --shadow-lg: 0 10px 15px -3px color-mix(in srgb, var(--color-shadow) 10%, transparent), 0 4px 6px -4px color-mix(in srgb, var(--color-shadow) 10%, transparent);
+  --shadow-xl: 0 20px 25px -5px color-mix(in srgb, var(--color-shadow) 10%, transparent), 0 8px 10px -6px color-mix(in srgb, var(--color-shadow) 10%, transparent);
+  --shadow-2xl: 0 25px 50px -12px color-mix(in srgb, var(--color-shadow) 25%, transparent);
+
+  /* MD3 Elevation Levels — semantic shadow aliases */
+  --shadow-elevation-0: none;
+  --shadow-elevation-1: var(--shadow-xs);
+  --shadow-elevation-2: var(--shadow-sm);
+  --shadow-elevation-3: var(--shadow-md);
+  --shadow-elevation-4: var(--shadow-lg);
+  --shadow-elevation-5: var(--shadow-xl);
+
+  /* ============================================
+   * SHAPE / BORDER RADIUS (8 tokens)
+   * Values provided by generated/spacing.css
+   * ============================================ */
+
+  --radius-none: initial;
+  --radius-xs: initial;
+  --radius-sm: initial;
+  --radius-md: initial;
+  --radius-lg: initial;
+  --radius-xl: initial;
+  --radius-2xl: initial;
+  --radius-full: initial;
+
+  /* ============================================
+   * THEME SHAPE TOKENS (8 tokens)
+   * Per-theme shape values from codegen
+   * ============================================ */
+
+  --radius-selector: initial;
+  --radius-field: initial;
+  --radius-box: initial;
+  --size-selector: initial;
+  --size-field: initial;
+  --border: initial;
+  --depth: initial;
+  --noise: initial;
+}
+
+/* Utility classes for colors — token references + color-mix() for states */
+@layer utilities {
+  /* Background Colors */
+  .bg-primary { background-color: var(--color-primary); }
+  .bg-primary-focus { background-color: color-mix(in oklch, var(--color-primary), black 10%); }
+  .bg-primary-container { background-color: var(--color-primary-container); }
+
+  .bg-secondary { background-color: var(--color-secondary); }
+  .bg-secondary-focus { background-color: color-mix(in oklch, var(--color-secondary), black 10%); }
+  .bg-secondary-container { background-color: var(--color-secondary-container); }
+
+  .bg-tertiary { background-color: var(--color-tertiary); }
+  .bg-tertiary-focus { background-color: color-mix(in oklch, var(--color-tertiary), black 10%); }
+  .bg-tertiary-container { background-color: var(--color-tertiary-container); }
+
+  .bg-surface { background-color: var(--color-surface); }
+  .bg-surface-dim { background-color: var(--color-surface-dim); }
+  .bg-surface-bright { background-color: var(--color-surface-bright); }
+  .bg-surface-container-lowest { background-color: var(--color-surface-container-lowest); }
+  .bg-surface-container-low { background-color: var(--color-surface-container-low); }
+  .bg-surface-container { background-color: var(--color-surface-container); }
+  .bg-surface-container-high { background-color: var(--color-surface-container-high); }
+  .bg-surface-container-highest { background-color: var(--color-surface-container-highest); }
+
+  .bg-info { background-color: var(--color-info); }
+  .bg-info-container { background-color: var(--color-info-container); }
+  .bg-success { background-color: var(--color-success); }
+  .bg-success-container { background-color: var(--color-success-container); }
+  .bg-warning { background-color: var(--color-warning); }
+  .bg-warning-container { background-color: var(--color-warning-container); }
+  .bg-error { background-color: var(--color-error); }
+  .bg-error-container { background-color: var(--color-error-container); }
+
+  .bg-base-100 { background-color: var(--color-base-100); }
+  .bg-base-200 { background-color: var(--color-base-200); }
+  .bg-base-300 { background-color: var(--color-base-300); }
+  .bg-base-400 { background-color: var(--color-base-400); }
+  .bg-base-500 { background-color: var(--color-base-500); }
+  .bg-base-600 { background-color: var(--color-base-600); }
+  .bg-base-700 { background-color: var(--color-base-700); }
+  .bg-base-800 { background-color: var(--color-base-800); }
+  .bg-base-900 { background-color: var(--color-base-900); }
+
+  /* Text Colors */
+  .text-primary { color: var(--color-primary); }
+  .text-primary-content { color: var(--color-primary-content); }
+  .text-on-primary-container { color: var(--color-on-primary-container); }
+
+  .text-secondary { color: var(--color-secondary); }
+  .text-secondary-content { color: var(--color-secondary-content); }
+  .text-on-secondary-container { color: var(--color-on-secondary-container); }
+
+  .text-tertiary { color: var(--color-tertiary); }
+  .text-tertiary-content { color: var(--color-tertiary-content); }
+  .text-on-tertiary-container { color: var(--color-on-tertiary-container); }
+
+  .text-on-surface { color: var(--color-on-surface); }
+  .text-on-surface-variant { color: var(--color-on-surface-variant); }
+
+  .text-info { color: var(--color-info); }
+  .text-info-content { color: var(--color-info-content); }
+  .text-on-info-container { color: var(--color-on-info-container); }
+
+  .text-success { color: var(--color-success); }
+  .text-success-content { color: var(--color-success-content); }
+  .text-on-success-container { color: var(--color-on-success-container); }
+
+  .text-warning { color: var(--color-warning); }
+  .text-warning-content { color: var(--color-warning-content); }
+  .text-on-warning-container { color: var(--color-on-warning-container); }
+
+  .text-error { color: var(--color-error); }
+  .text-error-content { color: var(--color-error-content); }
+  .text-on-error-container { color: var(--color-on-error-container); }
+
+  .text-base-content { color: var(--color-base-content); }
+
+  /* Border Colors */
+  .border-primary { border-color: var(--color-primary); }
+  .border-secondary { border-color: var(--color-secondary); }
+  .border-tertiary { border-color: var(--color-tertiary); }
+  .border-outline { border-color: var(--color-outline); }
+  .border-outline-variant { border-color: var(--color-outline-variant); }
+  .border-info { border-color: var(--color-info); }
+  .border-success { border-color: var(--color-success); }
+  .border-warning { border-color: var(--color-warning); }
+  .border-error { border-color: var(--color-error); }
+
+  /* Ring Colors */
+  .ring-primary { --tw-ring-color: var(--color-primary); }
+  .ring-secondary { --tw-ring-color: var(--color-secondary); }
+  .ring-tertiary { --tw-ring-color: var(--color-tertiary); }
+  .ring-info { --tw-ring-color: var(--color-info); }
+  .ring-success { --tw-ring-color: var(--color-success); }
+  .ring-warning { --tw-ring-color: var(--color-warning); }
+  .ring-error { --tw-ring-color: var(--color-error); }
+
+  /* Accent Colors */
+  .bg-accent { background-color: var(--color-accent); }
+  .bg-accent-focus { background-color: color-mix(in oklch, var(--color-accent), black 10%); }
+  .text-accent { color: var(--color-accent); }
+  .text-accent-content { color: var(--color-accent-content); }
+  .border-accent { border-color: var(--color-accent); }
+  .ring-accent { --tw-ring-color: var(--color-accent); }
+
+  /* Neutral Colors */
+  .bg-neutral { background-color: var(--color-neutral); }
+  .bg-neutral-focus { background-color: color-mix(in oklch, var(--color-neutral), black 10%); }
+  .text-neutral { color: var(--color-neutral); }
+  .text-neutral-content { color: var(--color-neutral-content); }
+  .border-neutral { border-color: var(--color-neutral); }
+  .ring-neutral { --tw-ring-color: var(--color-neutral); }
+
+  /* Surface Variant */
+  .bg-surface-variant { background-color: var(--color-surface-variant); }
+
+  /* Inverse Colors */
+  .bg-inverse-surface { background-color: var(--color-inverse-surface); }
+  .text-inverse-on-surface { color: var(--color-inverse-on-surface); }
+  .text-inverse-primary { color: var(--color-inverse-primary); }
+
+  /* MD3 Elevation Utilities — semantic shadow levels */
+  .elevation-0 { box-shadow: var(--shadow-elevation-0); }
+  .elevation-1 { box-shadow: var(--shadow-elevation-1); }
+  .elevation-2 { box-shadow: var(--shadow-elevation-2); }
+  .elevation-3 { box-shadow: var(--shadow-elevation-3); }
+  .elevation-4 { box-shadow: var(--shadow-elevation-4); }
+  .elevation-5 { box-shadow: var(--shadow-elevation-5); }
+}

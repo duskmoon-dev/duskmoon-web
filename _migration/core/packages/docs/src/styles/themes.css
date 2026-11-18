@@ -1,0 +1,104 @@
+/* Sunshine Theme (Light) - bridges to @duskmoon-dev/core design tokens */
+:root[data-theme="sunshine"] {
+  /* Base colors - mapped from core tokens */
+  --background: var(--color-base-100);
+  --foreground: var(--color-on-surface);
+  --foreground-muted: var(--color-on-surface-variant);
+
+  /* Surface colors */
+  --surface: var(--color-surface-container);
+  --surface-variant: var(--color-surface-variant);
+
+  /* Border */
+  --border: var(--color-outline-variant);
+  --border-strong: var(--color-outline);
+
+  /* Primary colors */
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-primary-content);
+  --primary-container: var(--color-primary-container);
+  --on-primary-container: var(--color-on-primary-container);
+
+  /* Secondary colors */
+  --secondary: var(--color-secondary);
+  --secondary-foreground: var(--color-secondary-content);
+  --secondary-container: var(--color-secondary-container);
+  --on-secondary-container: var(--color-on-secondary-container);
+
+  /* Tertiary colors */
+  --tertiary: var(--color-tertiary);
+  --tertiary-foreground: var(--color-tertiary-content);
+  --tertiary-container: var(--color-tertiary-container);
+  --on-tertiary-container: var(--color-on-tertiary-container);
+
+  /* State colors */
+  --success: var(--color-success);
+  --success-container: var(--color-success-container);
+  --warning: var(--color-warning);
+  --warning-container: var(--color-warning-container);
+  --error: var(--color-error);
+  --error-container: var(--color-error-container);
+  --info: var(--color-info);
+  --info-container: var(--color-info-container);
+
+  /* Interactive states */
+  --hover-color: var(--color-surface-container-high);
+  --active-color: var(--color-surface-container-highest);
+  --preview-bg: var(--color-surface-container);
+}
+
+/* Moonlight Theme (Dark) - bridges to @duskmoon-dev/core design tokens */
+:root[data-theme="moonlight"] {
+  /* Base colors */
+  --background: var(--color-base-100);
+  --foreground: var(--color-on-surface);
+  --foreground-muted: var(--color-on-surface-variant);
+
+  /* Surface colors */
+  --surface: var(--color-surface-container);
+  --surface-variant: var(--color-surface-variant);
+
+  /* Border */
+  --border: var(--color-outline-variant);
+  --border-strong: var(--color-outline);
+
+  /* Primary colors */
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-primary-content);
+  --primary-container: var(--color-primary-container);
+  --on-primary-container: var(--color-on-primary-container);
+
+  /* Secondary colors */
+  --secondary: var(--color-secondary);
+  --secondary-foreground: var(--color-secondary-content);
+  --secondary-container: var(--color-secondary-container);
+  --on-secondary-container: var(--color-on-secondary-container);
+
+  /* Tertiary colors */
+  --tertiary: var(--color-tertiary);
+  --tertiary-foreground: var(--color-tertiary-content);
+  --tertiary-container: var(--color-tertiary-container);
+  --on-tertiary-container: var(--color-on-tertiary-container);
+
+  /* State colors */
+  --success: var(--color-success);
+  --success-container: var(--color-success-container);
+  --warning: var(--color-warning);
+  --warning-container: var(--color-warning-container);
+  --error: var(--color-error);
+  --error-container: var(--color-error-container);
+  --info: var(--color-info);
+  --info-container: var(--color-info-container);
+
+  /* Interactive states */
+  --hover-color: var(--color-surface-container-high);
+  --active-color: var(--color-surface-container-highest);
+  --preview-bg: var(--color-surface-container);
+}
+
+/* Smooth transitions for theme changes */
+@layer base {
+  * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+}

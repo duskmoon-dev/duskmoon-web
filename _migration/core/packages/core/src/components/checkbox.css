@@ -1,0 +1,273 @@
+@import "./validator.css";
+
+/**
+ * Checkbox Component Styles
+ * DuskMoonUI - Material Design 3 inspired checkbox
+ *
+ * Usage: <input type="checkbox" class="checkbox" />
+ * With label: <label class="label cursor-pointer gap-2"><input type="checkbox" class="checkbox" /><span>Label</span></label>
+ */
+
+@layer components {
+  :where(.checkbox) { box-sizing: border-box; }
+
+  /* Base Checkbox - applied directly to input[type="checkbox"] */
+  .checkbox {
+    --checkbox-size: 1.25rem;
+    --checkbox-color: var(--color-primary);
+    --checkbox-border-color: var(--color-on-surface-variant);
+    color: var(--color-on-surface);
+
+    position: relative;
+    display: inline-grid;
+    place-content: center;
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
+    margin: 0;
+    cursor: pointer;
+    appearance: none;
+    background-color: transparent;
+    border: 2px solid var(--checkbox-border-color);
+    border-radius: var(--radius-xs);
+    transition: background-color 150ms ease-in-out, border-color 150ms ease-in-out;
+  }
+
+  /* Checkmark using ::before pseudo-element */
+  .checkbox::before {
+    content: "";
+    width: 0.65em;
+    height: 0.35em;
+    transform: scale(0) rotate(-45deg);
+    transform-origin: center;
+    border-bottom: 2px solid var(--dm-validation-content, var(--color-primary-content));
+    border-left: 2px solid var(--dm-validation-content, var(--color-primary-content));
+    transition: transform 150ms ease-in-out;
+  }
+
+  /* Checked State */
+  .checkbox:checked {
+    background-color: var(--checkbox-color);
+    border-color: var(--checkbox-color);
+  }
+
+  .checkbox:checked::before {
+    transform: scale(1) rotate(-45deg);
+  }
+
+  /* Indeterminate State */
+  .checkbox:indeterminate {
+    background-color: var(--checkbox-color);
+    border-color: var(--checkbox-color);
+  }
+
+  .checkbox:indeterminate::before {
+    width: 0.5em;
+    height: 0;
+    border-bottom: 2px solid var(--dm-validation-content, var(--color-primary-content));
+    border-left: 0;
+    transform: scale(1) rotate(0deg);
+  }
+
+  /* Hover State */
+  .checkbox:hover:not(:disabled):not(:checked) {
+    border-color: var(--color-on-surface);
+  }
+
+  .checkbox:checked:hover:not(:disabled),
+  .checkbox:indeterminate:hover:not(:disabled) {
+    background-color: color-mix(in oklch, var(--checkbox-color), black 10%);
+    border-color: color-mix(in oklch, var(--checkbox-color), black 10%);
+  }
+
+  /* Focus State */
+  .checkbox:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--checkbox-color) 20%, transparent);
+  }
+
+  /* Disabled State */
+  .checkbox:disabled {
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
+
+  /* ========================================
+   * Size Variants
+   * ======================================== */
+
+  .checkbox-xs {
+    --checkbox-size: 0.875rem;
+  }
+
+  .checkbox-sm {
+    --checkbox-size: 1rem;
+  }
+
+  .checkbox-md {
+    --checkbox-size: 1.25rem;
+  }
+
+  .checkbox-lg {
+    --checkbox-size: 1.5rem;
+  }
+
+  .checkbox-xl {
+    --checkbox-size: 1.75rem;
+  }
+
+  /* ========================================
+   * Color Variants
+   * ======================================== */
+
+  .checkbox-primary {
+    --checkbox-color: var(--color-primary);
+  }
+
+  .checkbox-primary:checked::before,
+  .checkbox-primary:indeterminate::before {
+    border-color: var(--dm-validation-content, var(--color-primary-content));
+  }
+
+  .checkbox-secondary {
+    --checkbox-color: var(--color-secondary);
+  }
+
+  .checkbox-secondary:checked::before,
+  .checkbox-secondary:indeterminate::before {
+    border-color: var(--dm-validation-content, var(--color-secondary-content));
+  }
+
+  .checkbox-tertiary {
+    --checkbox-color: var(--color-tertiary);
+  }
+
+  .checkbox-tertiary:checked::before,
+  .checkbox-tertiary:indeterminate::before {
+    border-color: var(--dm-validation-content, var(--color-tertiary-content));
+  }
+
+  .checkbox-success {
+    --checkbox-color: var(--color-success);
+  }
+
+  .checkbox-success:checked::before,
+  .checkbox-success:indeterminate::before {
+    border-color: var(--dm-validation-content, var(--color-success-content));
+  }
+
+  .checkbox-warning {
+    --checkbox-color: var(--color-warning);
+  }
+
+  .checkbox-warning:checked::before,
+  .checkbox-warning:indeterminate::before {
+    border-color: var(--dm-validation-content, var(--color-warning-content));
+  }
+
+  .checkbox-error {
+    --checkbox-color: var(--color-error);
+  }
+
+  .checkbox-error:checked::before,
+  .checkbox-error:indeterminate::before {
+    border-color: var(--dm-validation-content, var(--color-error-content));
+  }
+
+  .checkbox-info {
+    --checkbox-color: var(--color-info);
+  }
+
+  .checkbox-info:checked::before,
+  .checkbox-info:indeterminate::before {
+    border-color: var(--dm-validation-content, var(--color-info-content));
+  }
+
+  .checkbox-accent {
+    --checkbox-color: var(--color-accent);
+  }
+
+  .checkbox-accent:checked::before,
+  .checkbox-accent:indeterminate::before {
+    border-color: var(--dm-validation-content, var(--color-accent-content));
+  }
+
+  .checkbox-neutral {
+    --checkbox-color: var(--color-neutral);
+  }
+
+  .checkbox-neutral:checked::before,
+  .checkbox-neutral:indeterminate::before {
+    border-color: var(--dm-validation-content, var(--color-neutral-content));
+  }
+
+  .checkbox-base {
+    --checkbox-color: var(--color-base-100);
+  }
+
+  .checkbox-base:checked::before,
+  .checkbox-base:indeterminate::before {
+    border-color: var(--dm-validation-content, var(--color-base-content));
+  }
+
+  /* Ghost Variant — borderless unchecked state */
+  .checkbox-ghost {
+    --checkbox-border-color: transparent;
+  }
+
+  .checkbox-ghost:hover:not(:disabled):not(:checked) {
+    border-color: transparent;
+  }
+
+  /* ========================================
+   * Checkbox with Label (wrapper pattern)
+   * ======================================== */
+
+  .checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.875rem;
+    color: var(--color-on-surface);
+  }
+
+  .checkbox-label:has(.checkbox:disabled) {
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
+
+  /* ========================================
+   * Checkbox Group
+   * ======================================== */
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .checkbox-group-horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .checkbox-group-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-on-surface);
+    margin-bottom: 0.5rem;
+  }
+
+  /* ========================================
+   * Reduce Motion
+   * ======================================== */
+
+  @media (prefers-reduced-motion: reduce) {
+    .checkbox,
+    .checkbox::before {
+      transition: none;
+    }
+  }
+}

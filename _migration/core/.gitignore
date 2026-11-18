@@ -1,0 +1,71 @@
+# dependencies (bun install)
+node_modules
+
+# output
+out
+dist
+*.tgz
+
+# code coverage
+coverage
+*.lcov
+
+# logs
+logs
+_.log
+report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# caches
+.eslintcache
+.cache
+*.tsbuildinfo
+.bun-cache
+
+# IntelliJ based IDEs
+.idea
+
+# Finder (MacOS) folder config
+.DS_Store
+
+# Astro build artifacts
+.astro
+
+# Playwright MCP artifacts
+.playwright-mcp
+
+# Playwright test artifacts
+playwright-report/
+test-results/
+
+
+# Claude Code - Keep commands, ignore runtime artifacts
+.claude/.cache/
+.claude/logs/
+.claude/*.log
+.claude/oauth_token
+.claude/history/
+.claude/tmp/
+
+# Explicitly keep commands (optional, but documents intent)
+!.claude/commands/
+
+# Agent runtime artifacts
+.agents/settings.local.json
+
+# Spec-kit
+.specify/.cache/
+
+.devenv/
+.devenv.*
+.direnv/
+
+# Audit artifacts
+audit-screenshots/
+

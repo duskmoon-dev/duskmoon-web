@@ -1,0 +1,361 @@
+/**
+ * Build script for compiling CSS files
+ * Inlines all CSS imports and outputs to dist/
+ */
+
+import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
+import { join, dirname, resolve } from 'node:path';
+import { existsSync } from 'node:fs';
+import { transform } from 'lightningcss';
+import { buildStandaloneBundles } from './build-standalone';
+
+const SRC_DIR = join(import.meta.dir, '../src');
+const DIST_DIR = join(import.meta.dir, '../dist');
+
+/**
+ * Read a CSS file and inline all @import statements
+ */
+async function readAndInlineCss(filePath: string, visited = new Set<string>()): Promise<string> {
+  const absolutePath = resolve(filePath);
+
+  // Prevent circular imports
+  if (visited.has(absolutePath)) {
+    return '';
+  }
+  visited.add(absolutePath);
+
+  try {
+    let content = await readFile(absolutePath, 'utf-8');
+    const dir = dirname(absolutePath);
+
+    // Find all @import statements
+    const importRegex = /^\s*@import\s+["']([^"']+)["']\s*;?/gm;
+    const imports: { match: string; path: string }[] = [];
+
+    let match;
+    while ((match = importRegex.exec(content)) !== null) {
+      imports.push({ match: match[0], path: match[1] });
+    }
+
+    // Replace imports with inlined content
+    for (const { match, path } of imports) {
+      // Skip commented imports
+      if (match.includes('/*') || match.includes('//')) {
+        continue;
+      }
+
+      const importPath = join(dir, path);
+      const inlinedContent = await readAndInlineCss(importPath, visited);
+      content = content.replace(match, inlinedContent);
+    }
+
+    return content;
+  } catch (error) {
+    console.warn(`Warning: Could not read ${filePath}`);
+    return '';
+  }
+}
+
+async function ensureDir(dir: string): Promise<void> {
+  if (!existsSync(dir)) {
+    await mkdir(dir, { recursive: true });
+  }
+}
+
+async function buildMainCss(): Promise<void> {
+  console.log('Building main CSS...');
+
+  // Read and inline all CSS from index.css
+  const mainCss = await readAndInlineCss(join(SRC_DIR, 'index.css'));
+
+  const output = `/**
+ * @duskmoon-dev/core v1.0.0
+ * Material Design 3 color system with Tailwind CSS v4
+ * https://github.com/duskmoon-dev/duskmoonui
+ *
+ * @license MIT
+ */
+
+${mainCss}
+`;
+
+  await ensureDir(DIST_DIR);
+  await writeFile(join(DIST_DIR, 'index.css'), output);
+  await writeFile(join(DIST_DIR, 'base.css'), await readAndInlineCss(join(SRC_DIR, 'base.css')));
+  console.log('✓ Built dist/index.css');
+}
+
+async function copyThemes(): Promise<void> {
+  console.log('Copying theme files...');
+
+  const themesDir = join(SRC_DIR, 'themes');
+  const distThemesDir = join(DIST_DIR, 'themes');
+  const distGeneratedDir = join(distThemesDir, 'generated');
+
+  await ensureDir(distThemesDir);
+  await ensureDir(distGeneratedDir);
+
+  // Copy generated theme files from codegen
+  const generatedThemeFiles = ['sunshine.css', 'moonlight.css', 'ocean.css', 'forest.css', 'spacing.css'];
+
+  for (const file of generatedThemeFiles) {
+    const srcPath = join(themesDir, 'generated', file);
+    if (existsSync(srcPath)) {
+      const content = await readAndInlineCss(srcPath);
+      await writeFile(join(distGeneratedDir, file), content);
+      console.log(`✓ Copied themes/generated/${file}`);
+    }
+  }
+}
+
+// List of all component files
+const componentFiles = [
+  'accordion',
+  'alert',
+  'appbar',
+  'autocomplete',
+  'avatar',
+  'badge',
+  'bottom-navigation',
+  'bottomsheet',
+  'breadcrumbs',
+  'button',
+  'card',
+  'cascader',
+  'chat',
+  'checkbox',
+  'chip',
+  'circle-menu',
+  'code-block',
+  'collapse',
+  'console-page',
+  'datepicker',
+  'dialog',
+  'divider',
+  'dropdown',
+  'drawer',
+  'fab',
+  'file-upload',
+  'file-input',
+  'filter-group',
+  'form',
+  'form-group',
+  'footer',
+  'home-page',
+  'hero',
+  'indicator',
+  'input',
+  'loading',
+  'join',
+  'link',
+  'list',
+  'markdown-body',
+  'mask',
+  'megamenu',
+  'menu',
+  'modal',
+  'multi-select',
+  'navigation',
+  'navbar',
+  'nested-menu',
+  'otp-input',
+  'popover',
+  'pagination',
+  'progress',
+  'radial-progress',
+  'radio',
+  'range',
+  'rating',
+  'segment-control',
+  'select',
+  'sidebar-layout',
+  'sign-page',
+  'skeleton',
+  'slider',
+  'snackbar',
+  'stepper',
+  'stack',
+  'swap',
+  'switch',
+  'table',
+  'tabs',
+  'textarea',
+  'theme-controller',
+  'time-input',
+  'timeline',
+  'toast',
+  'toggle',
+  'toggle-switch',
+  'validator',
+  'tooltip',
+  'tree-select',
+  'stat',
+  'kbd',
+  'carousel',
+  'countdown',
+  'diff',
+];
+
+/**
+ * Generate ESM JavaScript module from CSS content
+ */
+function generateEsmModule(componentName: string, cssContent: string): string {
+  // Escape backticks and backslashes for template literal
+  const escapedCss = cssContent
+    .replace(/\\/g, '\\\\')
+    .replace(/`/g, '\\`')
+    .replace(/\$/g, '\\$');
+
+  return `// Auto-generated from ${componentName}.css
+export const css = \`${escapedCss}\`;
+
+const sheet = typeof CSSStyleSheet !== 'undefined' ? new CSSStyleSheet() : null;
+if (sheet) {
+  sheet.replaceSync(css);
+}
+export const styles = sheet;
+export default sheet;
+`;
+}
+
+/**
+ * Generate TypeScript declaration module for component
+ */
+function generateDtsModule(componentName: string): string {
+  return `// Auto-generated type declaration for ${componentName}
+export declare const css: string;
+export declare const styles: CSSStyleSheet | null;
+declare const sheet: CSSStyleSheet | null;
+export default sheet;
+`;
+}
+
+async function copyComponents(): Promise<void> {
+  console.log('Copying component files...');
+
+  const componentsDir = join(SRC_DIR, 'components');
+  const distComponentsDir = join(DIST_DIR, 'components');
+  const distEsmComponentsDir = join(DIST_DIR, 'esm', 'components');
+
+  await ensureDir(distComponentsDir);
+  await ensureDir(distEsmComponentsDir);
+
+  // Build components index with inlined imports
+  const indexPath = join(componentsDir, 'index.css');
+  if (existsSync(indexPath)) {
+    const content = await readAndInlineCss(indexPath);
+    await writeFile(join(distComponentsDir, 'index.css'), content);
+    console.log('✓ Built components/index.css');
+  }
+
+  console.log('Building individual component files...');
+  for (const component of componentFiles) {
+    const srcPath = join(componentsDir, `${component}.css`);
+    if (existsSync(srcPath)) {
+      const content = await readAndInlineCss(srcPath);
+      // Write CSS file
+      await writeFile(join(distComponentsDir, `${component}.css`), content);
+      // Generate and write ESM module
+      const esmContent = generateEsmModule(component, content);
+      await writeFile(join(distEsmComponentsDir, `${component}.js`), esmContent);
+      // Generate and write DTS module
+      const dtsContent = generateDtsModule(component);
+      await writeFile(join(distEsmComponentsDir, `${component}.d.ts`), dtsContent);
+    }
+  }
+  console.log(`✓ Built ${componentFiles.length} individual component files`);
+  console.log(`✓ Built ${componentFiles.length} ESM component modules`);
+  // Effects use an explicit list, never component discovery or the default bundle.
+  const effectsDir = join(DIST_DIR, 'effects');
+  const effectsEsmDir = join(DIST_DIR, 'esm', 'effects');
+  await ensureDir(effectsDir);
+  await ensureDir(effectsEsmDir);
+  for (const effect of ['index', 'aura', 'hover-3d', 'hover-gallery', 'text-rotate']) {
+    const content = await readAndInlineCss(join(SRC_DIR, 'effects', `${effect}.css`));
+    await writeFile(join(effectsDir, `${effect}.css`), content);
+    await writeFile(join(effectsEsmDir, `${effect}.js`), generateEsmModule(effect, content));
+    await writeFile(join(effectsEsmDir, `${effect}.d.ts`), generateDtsModule(effect));
+  }
+}
+
+async function buildPlugin(): Promise<void> {
+  console.log('Building Tailwind plugin...');
+
+  const distEsmDir = join(DIST_DIR, 'esm');
+  const distCjsDir = join(DIST_DIR, 'cjs');
+
+  await ensureDir(distEsmDir);
+  await ensureDir(distCjsDir);
+
+  // Build ESM version using Bun
+  const esmResult = await Bun.build({
+    entrypoints: [join(SRC_DIR, 'tailwind-plugin.ts')],
+    outdir: distEsmDir,
+    format: 'esm',
+    target: 'node',
+    external: ['tailwindcss', 'tailwindcss/plugin'],
+  });
+
+  if (!esmResult.success) {
+    console.error('ESM build failed:', esmResult.logs);
+    throw new Error('ESM plugin build failed');
+  }
+  console.log('✓ Built esm/tailwind-plugin.js');
+
+  // Build CJS version
+  const cjsResult = await Bun.build({
+    entrypoints: [join(SRC_DIR, 'tailwind-plugin.ts')],
+    outdir: distCjsDir,
+    format: 'cjs',
+    target: 'node',
+    external: ['tailwindcss', 'tailwindcss/plugin'],
+    naming: '[name].cjs',
+  });
+
+  if (!cjsResult.success) {
+    console.error('CJS build failed:', cjsResult.logs);
+    throw new Error('CJS plugin build failed');
+  }
+  console.log('✓ Built cjs/tailwind-plugin.cjs');
+}
+
+async function main(): Promise<void> {
+  console.log('Building @duskmoon-dev/core CSS...\n');
+
+  try {
+    await buildMainCss();
+    await copyThemes();
+    await copyComponents();
+    await buildPlugin();
+    await buildStandaloneBundles();
+    console.log('✓ Built standalone plugin and themes bundles');
+
+    // Minify with LightningCSS
+    console.log('\nMinifying CSS...');
+    const indexCss = await readFile(join(DIST_DIR, 'index.css'), 'utf-8');
+    const { code: minified } = transform({
+      filename: 'index.css',
+      code: Buffer.from(indexCss),
+      minify: true,
+      errorRecovery: true,
+      customAtRules: {
+        theme: { body: 'declaration-list' },
+      },
+    });
+    await writeFile(join(DIST_DIR, 'index.min.css'), minified);
+    console.log('✓ Built dist/index.min.css');
+
+    // Calculate bundle sizes
+    const sizeKB = (indexCss.length / 1024).toFixed(2);
+    const minSizeKB = (minified.length / 1024).toFixed(2);
+    console.log(`\n📦 Bundle size: ${sizeKB} KB`);
+    console.log(`📦 Minified:    ${minSizeKB} KB`);
+
+    console.log('\n✓ Build complete!');
+  } catch (error) {
+    console.error('Build failed:', error);
+    process.exit(1);
+  }
+}
+
+main();

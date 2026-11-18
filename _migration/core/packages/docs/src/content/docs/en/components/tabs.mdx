@@ -1,0 +1,128 @@
+---
+title: Tabs
+description: Route tabs and accessible interactive tab panels with DuskMoonUI styling
+category: components
+order: 7
+published: true
+tags: ['tabs', 'navigation', 'tabpanel', 'aria', 'material-design']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+import TabsDemoScript from '../../../../components/navigation/TabsDemoScript.astro';
+
+# Tabs
+
+Tabs provide presentation only. DuskMoonUI owns layout, states, focus, and panel
+visibility; the browser owns link navigation; your application owns interactive
+selection and ARIA relationships. Core has no required JavaScript runtime.
+
+## Route navigation
+
+Use links and `aria-current="page"` when every tab is a route. Do not add tab roles
+or intercept arrow keys for ordinary site navigation.
+
+<ComponentShowcase title="Route tabs" code={`<nav class="tabs tabs-scrollable" aria-label="Account sections">
+  <a class="tab" href="/profile" aria-current="page">Profile</a>
+  <a class="tab" href="/security">Security</a>
+  <a class="tab" href="/notifications">Notifications</a>
+</nav>`} />
+
+## Interactive panels
+
+This page uses **automatic activation**: clicking or moving with an arrow selects
+a tab immediately. `Home` and `End` select the first and last enabled tab.
+Horizontal lists use Left/Right and respect text direction; vertical lists use
+Up/Down. Disabled tabs are skipped. IDs are instance-specific.
+
+<ComponentShowcase title="Interactive tabs" code={`<section data-dm-tabs>
+  <div class="tabs" role="tablist" aria-label="Project details">
+    <button class="tab" role="tab" id="project-overview-tab"
+      aria-controls="project-overview-panel" aria-selected="true" tabindex="0">Overview</button>
+    <button class="tab" role="tab" id="project-activity-tab"
+      aria-controls="project-activity-panel" aria-selected="false" tabindex="-1">
+      Activity <span class="tab-badge">4</span>
+    </button>
+    <button class="tab" role="tab" id="project-settings-tab"
+      aria-controls="project-settings-panel" aria-selected="false" tabindex="-1">Settings</button>
+    <button class="tab" role="tab" aria-selected="false" tabindex="-1" disabled>Archived</button>
+  </div>
+  <section class="tab-panel tab-panel-show" role="tabpanel"
+    id="project-overview-panel" aria-labelledby="project-overview-tab">
+    <p>Project overview. Interactive descendants remain reachable.</p>
+  </section>
+  <section class="tab-panel" role="tabpanel" id="project-activity-panel"
+    aria-labelledby="project-activity-tab" hidden>
+    <a class="link" href="/activity">Open the activity log</a>
+  </section>
+  <section class="tab-panel" role="tabpanel" id="project-settings-panel"
+    aria-labelledby="project-settings-tab" hidden><button class="btn">Edit settings</button></section>
+</section>`} />
+
+Inactive panels use `hidden`, removing descendants from normal keyboard navigation.
+`hidden` always wins over a stale `.tab-panel-show` class. Update `hidden`,
+`aria-selected`, and roving `tabindex` together.
+
+## Appearances
+
+<ComponentShowcase title="Underline, pill, tonal, boxed, and lifted" code={`<div class="tabs">
+  <button class="tab tab-active">Underline</button><button class="tab">Second</button>
+</div>
+<div class="tabs tabs-pill">
+  <button class="tab tab-active">Pill</button><button class="tab">Second</button>
+</div>
+<div class="tabs tabs-tonal">
+  <button class="tab tab-active">Tonal</button><button class="tab">Second</button>
+</div>
+<div class="tabs tabs-boxed">
+  <button class="tab tab-active">Boxed</button><button class="tab">Second</button>
+</div>
+<div class="tabs tabs-lifted">
+  <button class="tab tab-active">Lifted</button><button class="tab">Second</button>
+</div>`} />
+
+## Color and content
+
+<ComponentShowcase title="Color, icon, badge, and icon-only tabs" code={`<div class="tabs">
+  <button class="tab tab-active-primary"><span class="tab-icon" aria-hidden="true">●</span>Primary</button>
+  <button class="tab tab-active-secondary">Secondary <span class="tab-badge">8</span></button>
+  <button class="tab tab-active-tertiary">Tertiary</button>
+  <button class="tab tab-icon-only" aria-label="Favorites"><span class="tab-icon" aria-hidden="true">★</span></button>
+</div>`} />
+
+The active color classes are `.tab-active-primary` (default),
+`.tab-active-secondary`, and `.tab-active-tertiary`. `aria-selected="true"` uses
+the primary treatment unless an explicit color class is present.
+
+## Layout and size
+
+<ComponentShowcase title="Vertical tabs" code={`<div class="tabs tabs-vertical" role="tablist" aria-orientation="vertical" aria-label="Preferences">
+  <button class="tab" role="tab" aria-selected="true">General</button>
+  <button class="tab" role="tab" aria-selected="false" tabindex="-1">Appearance</button>
+  <button class="tab" role="tab" aria-selected="false" tabindex="-1">Advanced</button>
+</div>`} />
+
+- `.tabs-scrollable` keeps a long list on one line and allows horizontal scrolling.
+- `.tabs-full` gives items equal width; `.tabs-center` and `.tabs-end` align a list.
+- `.tabs-sm`, `.tabs-md`, and `.tabs-lg` size every item.
+- Legacy item selectors `.tab-xs`, `.tab-sm`, and `.tab-lg` remain supported.
+
+## Instance-scoped integration
+
+The docs enhance only `[data-dm-tabs]` roots. Panels are resolved from each tab's
+`aria-controls`; ownership checks prevent separate or nested groups from interfering.
+
+<TabsDemoScript />
+
+## API and compatibility
+
+| Area | Selectors |
+| --- | --- |
+| Appearance | `.tabs`, `.tabs-pill`, `.tabs-tonal`, `.tabs-boxed`, `.tabs-lifted` |
+| Layout | `.tabs-vertical`, `.tabs-scrollable`, `.tabs-full`, `.tabs-center`, `.tabs-end` |
+| Sizes | `.tabs-sm`, `.tabs-md`, `.tabs-lg`, legacy `.tab-xs`, `.tab-sm`, `.tab-lg` |
+| Item states | `.tab-active`, `.tab-active-primary`, `.tab-active-secondary`, `.tab-active-tertiary` |
+| Item content | `.tab-icon`, `.tab-icon-only`, `.tab-badge` |
+| Panels | `.tab-panel`, `.tab-panel-show` |
+
+`.tab-active` and legacy item sizes are compatibility APIs. Prefer
+`aria-current="page"` for route links and `aria-selected` for interactive tabs.

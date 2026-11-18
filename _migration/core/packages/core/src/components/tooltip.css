@@ -1,0 +1,196 @@
+/**
+ * Tooltip Component Styles
+ * DuskMoonUI - Material Design 3 inspired tooltip system
+ *
+ * Breaking: uses native Popover API (popover="hint") + CSS Anchor Positioning.
+ * Markup:
+ *   <button interestfor="id" style="anchor-name: --id" class="tooltip-delay">…</button>
+ *   <div id="id" popover="hint" class="tooltip tooltip-top" style="position-anchor: --id">…</div>
+ */
+
+@layer components {
+  /* ========================================
+   * Base surface (the popover element itself)
+   * ======================================== */
+
+  .tooltip[popover] {
+    --tooltip-bg: var(--color-on-surface);
+    --tooltip-fg: var(--color-surface);
+
+    position: absolute;
+    inset: auto;
+    z-index: 1000;
+    margin: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1rem;
+    white-space: nowrap;
+    background-color: var(--tooltip-bg);
+    color: var(--tooltip-fg);
+    border: none;
+    border-radius: var(--radius-xs);
+    box-shadow: var(--shadow-md);
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.95);
+    overflow: visible;
+    position-area: top;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    transition:
+      opacity 150ms ease-out,
+      transform 150ms ease-out,
+      overlay 150ms ease-out allow-discrete,
+      display 150ms ease-out allow-discrete;
+  }
+
+  .tooltip[popover]:popover-open {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @starting-style {
+    .tooltip[popover]:popover-open {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  /* ========================================
+   * Preferred position-area
+   * ======================================== */
+
+  .tooltip-top[popover] {
+    position-area: top;
+  }
+
+  .tooltip-bottom[popover] {
+    position-area: bottom;
+  }
+
+  .tooltip-left[popover] {
+    position-area: left;
+  }
+
+  .tooltip-right[popover] {
+    position-area: right;
+  }
+
+  /* Automatic placement can flip independently of the preferred side. The
+     core stays arrowless instead of showing a misleading arrow. */
+
+  /* ========================================
+   * Color variants
+   * ======================================== */
+
+  .tooltip-light[popover] {
+    --tooltip-bg: var(--color-surface);
+    --tooltip-fg: var(--color-on-surface);
+    border: 1px solid var(--color-outline);
+  }
+
+  .tooltip-primary[popover] {
+    --tooltip-bg: var(--color-primary);
+    --tooltip-fg: var(--color-primary-content);
+  }
+
+  .tooltip-secondary[popover] {
+    --tooltip-bg: var(--color-secondary);
+    --tooltip-fg: var(--color-secondary-content);
+  }
+
+  .tooltip-tertiary[popover] {
+    --tooltip-bg: var(--color-tertiary);
+    --tooltip-fg: var(--color-tertiary-content);
+  }
+
+  .tooltip-info[popover] {
+    --tooltip-bg: var(--color-info);
+    --tooltip-fg: var(--color-info-content);
+  }
+
+  .tooltip-success[popover] {
+    --tooltip-bg: var(--color-success);
+    --tooltip-fg: var(--color-success-content);
+  }
+
+  .tooltip-warning[popover] {
+    --tooltip-bg: var(--color-warning);
+    --tooltip-fg: var(--color-warning-content);
+  }
+
+  .tooltip-error[popover] {
+    --tooltip-bg: var(--color-error);
+    --tooltip-fg: var(--color-error-content);
+  }
+
+  .tooltip-accent[popover] {
+    --tooltip-bg: var(--color-accent);
+    --tooltip-fg: var(--color-accent-content);
+  }
+
+  .tooltip-neutral[popover] {
+    --tooltip-bg: var(--color-neutral);
+    --tooltip-fg: var(--color-neutral-content);
+  }
+
+  .tooltip-base[popover] {
+    --tooltip-bg: var(--color-base-100);
+    --tooltip-fg: var(--color-base-content);
+  }
+
+  /* ========================================
+   * Content variants
+   * ======================================== */
+
+  .tooltip-multiline[popover] {
+    white-space: normal;
+    max-width: 16rem;
+    text-align: center;
+  }
+
+  .tooltip-rich[popover] {
+    padding: 0.75rem 1rem;
+    max-width: 20rem;
+    white-space: normal;
+    text-align: left;
+  }
+
+  .tooltip-rich-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .tooltip-rich-description {
+    font-size: 0.75rem;
+    font-weight: 400;
+    opacity: 0.9;
+  }
+
+  /* ========================================
+   * Invoker utilities (apply on the trigger)
+   * ======================================== */
+
+  .tooltip-delay {
+    interest-delay: 300ms;
+  }
+
+  .tooltip-delay-long {
+    interest-delay: 500ms;
+  }
+
+  .tooltip-interactive[popover] {
+    pointer-events: auto;
+  }
+
+  /* ========================================
+   * Reduce Motion
+   * ======================================== */
+
+  @media (prefers-reduced-motion: reduce) {
+    .tooltip[popover] {
+      transition: none;
+    }
+  }
+}

@@ -1,0 +1,185 @@
+@import "./validator.css";
+@import "./file-input.css";
+
+/**
+ * Input Component Styles
+ * DuskMoonUI - Material Design 3 inspired input system
+ */
+
+@layer components {
+  /* Base Input */
+  .input {
+    box-sizing: border-box;
+    min-width: 0;
+    display: flex;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+    border: 1px solid currentColor;
+    border-radius: var(--radius-sm);
+    transition: border-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
+  }
+
+  .input::placeholder {
+    color: var(--color-on-surface-variant);
+    opacity: 0.7;
+  }
+
+  .input:focus {
+    outline: none;
+  }
+
+  .input:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+    outline: none;
+  }
+
+  .input:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: var(--color-surface-container);
+  }
+
+  /* Bordered Input */
+  .input-outlined { background-color: transparent; border-color: var(--color-outline); }
+  .input-bordered {
+    border-color: var(--color-outline);
+    background-color: var(--color-surface);
+  }
+
+  .input-bordered:hover:not(:disabled):not(:focus) {
+    border-color: var(--color-outline-variant);
+  }
+
+  /* Color Variants — base .input:focus-visible uses currentColor 20%, so no per-variant
+     focus-visible overrides needed; setting color: here is sufficient. */
+  .input-primary   { color: var(--color-on-primary-container); }
+  .input-secondary { color: var(--color-on-secondary-container); }
+  .input-tertiary  { color: var(--color-on-tertiary-container); }
+
+  /* Semantic Colors */
+  .input-info    { color: var(--color-on-info-container); }
+  .input-success { color: var(--color-on-success-container); }
+  .input-warning { color: var(--color-on-warning-container); }
+  .input-error   { color: var(--color-on-error-container); }
+  .input-accent  { color: light-dark(var(--color-accent-content), var(--color-accent)); }
+  .input-neutral { color: var(--color-neutral); }
+  .input-base    { color: var(--color-base-content); }
+
+  /* Size Variants */
+  .input-xs {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    border-radius: var(--radius-xs);
+    height: 1.75rem;
+  }
+
+  .input-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    border-radius: var(--radius-xs);
+    height: 2.25rem;
+  }
+
+  .input-lg {
+    padding: 1rem 1.25rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    border-radius: var(--radius-sm);
+    height: 3.5rem;
+  }
+
+  /* Ghost Input */
+  .input-md { height: 3rem; }
+  .input-ghost {
+    background-color: transparent;
+    border-color: transparent;
+  }
+
+  .input-ghost:focus-visible {
+    background-color: var(--color-surface-container);
+    border-color: transparent;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+
+  /* Filled Input */
+  .input-filled {
+    background-color: var(--color-surface-container);
+    border-color: transparent;
+    border-bottom: 2px solid var(--color-outline);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+
+  .input-filled:focus-visible {
+    border-bottom-color: var(--color-primary);
+    box-shadow: none;
+  }
+
+  .input-filled.input-primary:focus-visible { border-bottom-color: var(--color-primary); }
+  .input-filled.input-secondary:focus-visible { border-bottom-color: var(--color-secondary); }
+  .input-filled.input-tertiary:focus-visible { border-bottom-color: var(--color-tertiary); }
+  .input-filled.input-info:focus-visible { border-bottom-color: var(--color-info); }
+  .input-filled.input-success:focus-visible { border-bottom-color: var(--color-success); }
+  .input-filled.input-warning:focus-visible { border-bottom-color: var(--color-warning); }
+  .input-filled.input-error:focus-visible { border-bottom-color: var(--color-error); }
+  .input-filled.input-accent:focus-visible { border-bottom-color: var(--color-accent); }
+  .input-filled.input-neutral:focus-visible { border-bottom-color: var(--color-neutral); }
+  .input-filled.input-base:focus-visible { border-bottom-color: var(--color-base-content); }
+
+  /* Input with Icon */
+  .input-group {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .input-group > .input {
+    flex: 1;
+    border-radius: 0;
+  }
+
+  .input-group > .input:first-child {
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+  }
+
+  .input-group > .input:last-child {
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+  }
+
+  .input-group-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    background-color: var(--color-surface-container);
+    color: var(--color-on-surface-variant);
+    border: 1px solid var(--color-outline);
+  }
+
+  .input-group-text:first-child {
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+    border-right: none;
+  }
+
+  .input-group-text:last-child {
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+    border-left: none;
+  }
+
+  /* Reduce Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .input,
+    .input-filled,
+    .file-input {
+      transition: none;
+    }
+  }
+}

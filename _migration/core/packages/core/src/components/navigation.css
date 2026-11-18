@@ -1,0 +1,16 @@
+/**
+ * Navigation compatibility aggregate.
+ *
+ * Component-specific CSS files are canonical. Imports are resolved by the build
+ * before CSS strings and constructable stylesheets are generated.
+ */
+
+/* Keep the historical Dropdown coverage and cascade order. */
+@import "./dropdown.css";
+@import "./navbar.css";
+@import "./menu.css";
+@import "./breadcrumbs.css";
+@import "./tabs.css";
+@import "./pagination.css";
+@import "./link.css";
+@import "./megamenu.css";

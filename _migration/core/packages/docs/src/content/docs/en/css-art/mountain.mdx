@@ -1,0 +1,250 @@
+---
+title: Mountain
+description: Pure CSS northern-lights mountain scene with animated aurora borealis, star field, layered peaks, and pine tree silhouettes
+category: css-art
+order: 3
+published: true
+tags: ['css-art', 'mountain', 'aurora', 'borealis', 'landscape', 'night']
+---
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Mountain
+
+A pure CSS night-sky scene featuring a star-filled background, an animated aurora borealis, four layered mountain silhouettes, and pine tree silhouettes. The star field is built entirely with stacked `radial-gradient` background layers. Aurora columns are blurred `div`s with `filter: blur()` and coordinated keyframe animations.
+
+## Basic Usage
+
+<ComponentShowcase
+  title="Mountain Aurora Scene"
+  code={`<div class="art-mountain">
+  <div class="mountains">
+    <div class="mountain"></div>
+    <div class="mountain"></div>
+    <div class="mountain"></div>
+    <div class="mountain"></div>
+  </div>
+  <div class="trees">
+    <div class="tree"></div>
+    <div class="tree"></div>
+    <div class="tree"></div>
+  </div>
+  <div class="lights">
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+  </div>
+</div>`}
+/>
+
+## Sizes
+
+<ComponentShowcase
+  title="Mountain Sizes"
+  code={`<div style="display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
+  <div class="art-mountain art-mountain-sm">
+    <div class="mountains">
+      <div class="mountain"></div>
+      <div class="mountain"></div>
+      <div class="mountain"></div>
+      <div class="mountain"></div>
+    </div>
+    <div class="trees">
+      <div class="tree"></div>
+      <div class="tree"></div>
+      <div class="tree"></div>
+    </div>
+    <div class="lights">
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+    </div>
+  </div>
+  <div class="art-mountain">
+    <div class="mountains">
+      <div class="mountain"></div>
+      <div class="mountain"></div>
+      <div class="mountain"></div>
+      <div class="mountain"></div>
+    </div>
+    <div class="trees">
+      <div class="tree"></div>
+      <div class="tree"></div>
+      <div class="tree"></div>
+    </div>
+    <div class="lights">
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+      <div class="borealis"></div>
+    </div>
+  </div>
+</div>`}
+/>
+
+## CSS
+
+```css
+@layer css-art {
+  @keyframes art-mountain-slide {
+    0%   { transform: translateX(-2%); }
+    50%  { transform: translateX(2%);  }
+    100% { transform: translateX(-2%); }
+  }
+
+  @keyframes art-mountain-grow {
+    50% {
+      width: 2%;
+      opacity: 0.4;
+    }
+  }
+
+  @keyframes art-mountain-slide-right {
+    0%   { transform: translateX(-200%);  }
+    100% { transform: translateX(2000%);  }
+  }
+
+  @keyframes art-mountain-slide-left {
+    0%   { transform: translateX(200%);   }
+    100% { transform: translateX(-2000%); }
+  }
+
+  .art-mountain {
+    --art-mountain-size: 600px;
+
+    position: relative;
+    width: var(--art-mountain-size);
+    height: var(--art-mountain-size);
+    overflow: hidden;
+    background:
+      linear-gradient(transparent, rgba(31, 164, 152, 0.6)) 0 100% / 100% 60%,
+      /* 41 star radial-gradients … */
+      linear-gradient(rgb(20, 21, 33), #022e4e, #03518a);
+    background-repeat: no-repeat;
+  }
+
+  .art-mountain .mountain {
+    position: absolute;
+    clip-path: polygon(49% 0, 51% 0, 100% 100%, 0% 100%);
+    border-radius: 50% 50% 0 0;
+    z-index: 2;
+  }
+
+  .art-mountain .mountain::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    right: 5%;
+    background: inherit;
+    clip-path: inherit;
+    border-radius: inherit;
+  }
+
+  .art-mountain .mountain::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 15%;
+    background: linear-gradient(rgba(255, 250, 250, 0.5), transparent);
+  }
+
+  .art-mountain .mountain:nth-of-type(1) { background: linear-gradient(#02284a, transparent); width: 50%; height: 40%; left: -10%; bottom: 0; }
+  .art-mountain .mountain:nth-of-type(2) { background: linear-gradient(#022e4e, rgba(20,21,33,0.8)); width: 60%; height: 50%; left: 10%; bottom: 0; z-index: 3; }
+  .art-mountain .mountain:nth-of-type(3) { background: linear-gradient(#02284a, transparent); width: 50%; height: 65%; left: 40%; bottom: 0; }
+  .art-mountain .mountain:nth-of-type(4) { background: linear-gradient(#022e4e, rgba(20,21,33,0.8)); width: 30%; height: 40%; right: -10%; bottom: 0; }
+
+  .art-mountain .tree { position: absolute; width: 0.5%; bottom: 0; background: linear-gradient(rgb(4,24,22), rgb(20,21,33)); z-index: 4; }
+  .art-mountain .tree::before {
+    content: "";
+    position: absolute;
+    width: 800%; height: 100%; top: -5%; left: -350%;
+    background: rgb(4, 24, 22);
+    clip-path: polygon(50% 0%, 0% 30%, 50% 30%, 0% 60%, 50% 60%, 0% 90%, 50% 90%, 100% 90%, 50% 60%, 100% 60%, 50% 30%, 100% 30%);
+  }
+  .art-mountain .tree:nth-of-type(1) { height: 20%; right: 25%; }
+  .art-mountain .tree:nth-of-type(2) { height: 15%; right: 20%; }
+  .art-mountain .tree:nth-of-type(3) { height: 12%; right: 28%; }
+
+  .art-mountain .lights { height: 100%; width: 100%; animation: art-mountain-slide 15s ease-in-out infinite; }
+
+  .art-mountain .borealis { position: absolute; width: 5%; height: 100%; bottom: 8%; filter: blur(40px); background: radial-gradient(rgb(31,164,152) 40%, transparent); opacity: 0.6; }
+  .art-mountain .borealis:nth-of-type(1) { left: 0%;  animation: art-mountain-grow 30s ease-in-out infinite; }
+  .art-mountain .borealis:nth-of-type(2) { left: 20%; animation: art-mountain-grow 25s 10s ease-in-out infinite; }
+  .art-mountain .borealis:nth-of-type(3) { left: 40%; animation: art-mountain-grow 30s ease-in-out infinite; }
+  .art-mountain .borealis:nth-of-type(4) { left: 60%; animation: art-mountain-grow 20s 3s ease-in-out infinite; }
+  .art-mountain .borealis:nth-of-type(5) { left: 80%; animation: art-mountain-grow 25s ease-in-out infinite; }
+  .art-mountain .borealis:nth-of-type(6) { left: 97%; animation: art-mountain-grow 20s 8s ease-in-out infinite; }
+  .art-mountain .borealis:nth-of-type(7) { background: radial-gradient(rgb(157,78,221) 40%, transparent); transform: translateX(-200%); animation: art-mountain-slide-right 25s infinite; }
+  .art-mountain .borealis:nth-of-type(8) { background: radial-gradient(rgb(157,78,221) 40%, transparent); transform: translateX(-200%); animation: art-mountain-slide-right 25s 8s infinite; }
+  .art-mountain .borealis:nth-of-type(9) { left: unset; right: 0%; transform: translateX(200%); background: radial-gradient(#045fa0 40%, transparent); animation: art-mountain-slide-left 18s 5s ease-in-out infinite; }
+
+  .art-mountain-sm { --art-mountain-size: 300px; }
+  .art-mountain-lg { --art-mountain-size: 900px; }
+}
+```
+
+## HTML Structure
+
+```html
+<div class="art-mountain">
+  <div class="mountains">
+    <div class="mountain"></div>
+    <div class="mountain"></div>
+    <div class="mountain"></div>
+    <div class="mountain"></div>
+  </div>
+  <div class="trees">
+    <div class="tree"></div>
+    <div class="tree"></div>
+    <div class="tree"></div>
+  </div>
+  <div class="lights">
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+    <div class="borealis"></div>
+  </div>
+</div>
+```
+
+## CSS Custom Properties
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `--art-mountain-size` | `600px` | Width and height of the canvas |
+
+## API Reference
+
+| Class | Description |
+|-------|-------------|
+| `.art-mountain` | Root canvas — night sky background with stars and aurora glow |
+| `.mountains` | Container for the four layered mountain peaks |
+| `.mountain` | Individual mountain silhouette (use 4) |
+| `.trees` | Container for the pine tree silhouettes |
+| `.tree` | Individual pine tree (use 3) |
+| `.lights` | Container for aurora columns — animates as a unit |
+| `.borealis` | Individual aurora beam (use 9: 6 green, 2 purple, 1 blue) |
+| `.art-mountain-sm` | 300px canvas |
+| `.art-mountain-lg` | 900px canvas |

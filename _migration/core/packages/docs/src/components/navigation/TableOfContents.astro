@@ -1,0 +1,112 @@
+---
+interface Heading {
+  id: string;
+  text: string;
+  level: number;
+}
+
+interface Props {
+  headings?: Heading[];
+  title?: string;
+}
+
+const { headings = [], title = 'On This Page' } = Astro.props;
+---
+
+{headings.length > 0 && (
+  <aside class="toc">
+    <div class="toc-header">
+      <h4 class="toc-title">{title}</h4>
+    </div>
+    <nav class="toc-nav">
+      <ul class="toc-list">
+        {headings.map(heading => (
+          <li class:list={['toc-item', `toc-level-${heading.level}`]}>
+            <a
+              href={`#${heading.id}`}
+              class="toc-link"
+              data-heading-id={heading.id}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </aside>
+)}
+
+<script>
+  // Highlight active section in TOC
+  function updateActiveTocLink() {
+    const headings = Array.from(document.querySelectorAll('h2[id], h3[id], h4[id]'));
+    const tocLinks = Array.from(document.querySelectorAll('.toc-link'));
+
+    if (!headings.length || !tocLinks.length) return;
+
+    const scrollPosition = window.scrollY + 100;
+
+    // Find the current heading
+    let currentHeading = headings[0];
+    for (const heading of headings) {
+      const headingTop = (heading as HTMLElement).offsetTop;
+      if (scrollPosition >= headingTop) {
+        currentHeading = heading;
+      }
+    }
+
+    // Update active states
+    tocLinks.forEach(link => {
+      const linkEl = link as HTMLAnchorElement;
+      const headingId = linkEl.getAttribute('data-heading-id');
+      const isActive = headingId === currentHeading?.id;
+
+      if (isActive) {
+        linkEl.classList.add('active');
+        // Scroll TOC to show active link
+        linkEl.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'nearest'
+        });
+      } else {
+        linkEl.classList.remove('active');
+      }
+    });
+  }
+
+  // Add scroll listener
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        updateActiveTocLink();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // Initial update
+  updateActiveTocLink();
+
+  // Smooth scroll on click
+  document.querySelectorAll('.toc-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = link.getAttribute('href');
+      if (target) {
+        const element = document.querySelector(target);
+        if (element) {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+          // Update URL without triggering scroll
+          history.pushState(null, '', target);
+        }
+      }
+    });
+  });
+</script>
+

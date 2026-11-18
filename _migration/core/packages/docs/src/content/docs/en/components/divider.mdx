@@ -1,0 +1,134 @@
+---
+title: Divider
+description: Material Design 3 divider component for separating content
+category: components
+order: 9
+published: true
+tags: ['divider', 'separator', 'components', 'material-design']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Divider
+
+Dividers separate content into clear groups. Place any content inside `.divider` and it will appear centered between two line segments.
+
+## Basic Usage
+
+<ComponentShowcase title="Plain Divider" code={`<div class="divider"></div>`} />
+
+<ComponentShowcase title="Divider with Text" code={`<div class="divider">OR</div>`} />
+
+<ComponentShowcase title="Divider with Icon" code={`<div class="divider">✦</div>`} />
+
+## Content Positioning
+
+<ComponentShowcase title="Content Position" code={`<div class="divider divider-start">Section Title</div>
+<div class="divider">Centered</div>
+<div class="divider divider-end">End</div>`} />
+
+## Orientation
+
+### Horizontal (Default)
+
+<ComponentShowcase title="Horizontal Divider" code={`<div>Content above</div>
+<div class="divider">OR</div>
+<div>Content below</div>`} />
+
+### Vertical
+
+<ComponentShowcase title="Vertical Divider" code={`<div class="flex items-center h-16">
+  <span>Left</span>
+  <div class="divider divider-vertical"></div>
+  <span>Right</span>
+</div>`} />
+
+<ComponentShowcase title="Vertical with Text" code={`<div class="flex items-center h-24">
+  <span>Section A</span>
+  <div class="divider divider-vertical">OR</div>
+  <span>Section B</span>
+</div>`} />
+
+## Styles
+
+### Solid (Default)
+
+<ComponentShowcase title="Solid Divider" code={`<div class="divider">Solid</div>`} />
+
+### Dashed
+
+<ComponentShowcase title="Dashed Divider" code={`<div class="divider divider-dashed">Dashed</div>`} />
+
+### Dotted
+
+<ComponentShowcase title="Dotted Divider" code={`<div class="divider divider-dotted">Dotted</div>`} />
+
+## Thickness
+
+<ComponentShowcase title="Divider Thickness" code={`<div class="divider divider-thin">Thin</div>
+<div class="divider">Default</div>
+<div class="divider divider-medium">Medium</div>
+<div class="divider divider-thick">Thick</div>`} />
+
+## Colors
+
+<ComponentShowcase title="Colored Dividers" code={`<div class="divider divider-primary">Primary</div>
+<div class="divider divider-secondary">Secondary</div>
+<div class="divider divider-tertiary">Tertiary</div>
+<div class="divider divider-success">Success</div>
+<div class="divider divider-warning">Warning</div>
+<div class="divider divider-error">Error</div>`} />
+
+## Gradient
+
+<ComponentShowcase title="Gradient Divider" code={`<div class="divider divider-gradient">OR</div>`} />
+
+## Spacing
+
+<ComponentShowcase title="Divider Spacing" code={`<div class="divider divider-compact">Compact</div>
+<div class="divider">Default</div>
+<div class="divider divider-comfortable">Comfortable</div>
+<div class="divider divider-spacious">Spacious</div>`} />
+
+## Inset
+
+For list items or indented layouts:
+
+<ComponentShowcase title="Inset Dividers" code={`<div class="divider divider-inset"></div>
+<div class="divider divider-inset-both"></div>`} />
+
+## API Reference
+
+| Class | Description |
+|-------|-------------|
+| `.divider` | Base divider; content inside appears between lines |
+| `.divider-vertical` | Vertical orientation |
+| `.divider-start` | Content aligned to start |
+| `.divider-end` | Content aligned to end |
+| `.divider-thin` | 1px line thickness |
+| `.divider-medium` | 2px line thickness |
+| `.divider-thick` | 4px line thickness |
+| `.divider-dashed` | Dashed line style |
+| `.divider-dotted` | Dotted line style |
+| `.divider-gradient` | Fades out at edges |
+| `.divider-primary` | Primary color lines |
+| `.divider-secondary` | Secondary color lines |
+| `.divider-tertiary` | Tertiary color lines |
+| `.divider-info` | Info color lines |
+| `.divider-success` | Success color lines |
+| `.divider-warning` | Warning color lines |
+| `.divider-error` | Error color lines |
+| `.divider-compact` | Reduced spacing and gap |
+| `.divider-comfortable` | Increased margin |
+| `.divider-spacious` | Maximum margin and gap |
+| `.divider-inset` | Left-indented |
+| `.divider-inset-both` | Both sides indented |
+
+## Related Components
+
+- [Card](/duskmoonui/docs/en/components/card/) - Content containers
+- [List](/duskmoonui/docs/en/components/list/) - List items
+
+## See Also
+
+- [Divider (Material Design 3)](https://m3.material.io/components/divider/)

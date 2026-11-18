@@ -1,0 +1,183 @@
+# Changelog
+
+All notable changes to `@duskmoon-dev/core` will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+
+- **Individual component exports** - Each component CSS file is now exported individually, enabling:
+  - Tree-shaking for smaller bundle sizes
+  - Custom element / Web Component integration with Shadow DOM
+  - Micro-frontend architectures with isolated styles
+  - Import syntax: `@import "@duskmoon-dev/core/components/button";`
+  - All 34 components available as separate exports
+- **CSS Variables for component padding** - Button and card components now expose padding via CSS custom properties for easy customization:
+  - `--btn-p` and `--btn-py` for button horizontal and vertical padding
+  - `--card-p` for card body, header, and footer padding
+- **Logical CSS properties** - Components now use logical properties (`padding-inline`, `padding-block`, `margin-block-start`) for automatic RTL layout support
+- **Card header and footer** - New `.card-header` and `.card-footer` classes with proper padding and border separators
+
+### Changed
+
+- **Dialog component** - Refactored to use native HTML `<dialog>` element for better accessibility:
+  - Built-in focus trapping and Escape key handling
+  - Native `::backdrop` pseudo-element for overlay
+  - Uses `showModal()` / `close()` methods for open/close
+  - New structure: `dialog.dialog` > `.dialog-box` > `.dialog-header` / `.dialog-body` / `.dialog-footer`
+  - Size variants now applied directly to dialog element (`.dialog-sm`, `.dialog-lg`, `.dialog-xl`, `.dialog-fullscreen`)
+  - Position variants (`.dialog-top`, `.dialog-bottom`) for top/bottom alignment
+  - Footer alignment variants (`.dialog-footer-start`, `.dialog-footer-center`, `.dialog-footer-between`)
+
+### Fixed
+
+- **Switch component** - Fixed invisible thumb when checked by using correct color token (`--color-primary-content` instead of non-existent `--color-on-primary`)
+- **Snackbar component** - Added missing CSS classes and features:
+  - Added `.snackbar-show` class for showing snackbars with animation
+  - Added standalone position variants (`.snackbar-bottom`, `.snackbar-top`, `.snackbar-bottom-left`, etc.)
+  - Added brand color variants (`.snackbar-primary`, `.snackbar-secondary`, `.snackbar-tertiary`)
+  - Added `.snackbar-icon` and `.snackbar-multiline` classes
+- **Tooltip component** - Fixed position variants not working correctly:
+  - Fixed CSS specificity issues causing bottom/left/right positions to inherit top position styles
+  - Added proper reset of conflicting CSS properties for each position
+  - Fixed color variant arrows for all positions (not just top)
+
+## [1.19.4] - 2026-09-18
+
+### Data Input Consolidation
+
+- Legacy `form.css` now reuses canonical controls and `form-group.css`. Checkbox
+  and Radio no longer draw both `::before` and `::after` marks in aggregate CSS.
+  Individual imports now match aggregate control styling.
+- Validation has one CSS authority. New `.validator` enables native
+  interaction-based errors; add `.validator-success` for native success.
+  Ordinary fields no longer automatically change color from native validity.
+  Existing `.validate` retains immediate invalid/valid colors.
+  Explicit `aria-invalid="true"` and wrapper errors win over native success,
+  semantic colors, focus and filled/outlined/ghost presentation.
+- Added preferred one-value `.otp-code` with native caret/selection/editing and
+  optional four-character length guides. Guides now align with the actual monospace
+  characters, and the input fits the code instead of stretching guides across a full
+  field width. Adjacent OTP validation errors reserve space, preventing blur-time
+  layout changes from interrupting native Reset clicks. Segmented OTP APIs remain
+  styling-only.
+  Added aliases for documented underline/separator/helper names; removed examples
+  suggesting undefined length, wrapper-disabled and simulated-focus classes work.
+- Native `.range` is recommended for basic sliders. Default thumb uses on-surface
+  (use `.range-primary` for the prior primary appearance); colors/sizes/focus and
+  disabled states are available. Advanced `.slider` APIs remain unchanged.
+- Added `.rating-native` radio-backed selection and `.filter-group` Chip
+  composition. Native checked state owns selection/submission/reset.
+  Native rating wraps for narrow/enlarged-text layouts; legacy rating display/half
+  styles remain available.
+- Preserved compact `.toggle`, MD3 `.switch` and action `.toggle-btn` APIs.
+  Explicit `aria-pressed` wins over legacy action active classes when provided.
+  Legacy Toggle now has a current-color border; compact track/thumb dimensions
+  remain, and `.toggle-ghost` removes that border.
+- File Input now has a dedicated public entry and remains available from Input/Form.
+  Its border/button inherit its palette; sizes, disabled and validation states are
+  supported. Calendar nested grids now span the full surface width.
+- Added public CSS/ESM/declaration exports for Validator, Range, Filter Group,
+  File Input and legacy Toggle control, plus `base.css` for individual imports.
+  Documentation clarifies native versus application behavior and genuine disabled
+  fieldsets. No mandatory runtime, date engine or framework adapter is added.
+- Repaired Autocomplete's input-relative suggestion button, RTL positioning and
+  native/ARIA option presentation. Retained documented dropdown, selection, group,
+  empty-state and tag aliases. The copyable docs example now supplies its local
+  filtering, keyboard/pointer selection and reset controller; Core remains CSS-only.
+  Its preview allows the popup to overflow without changing other showcase frames.
+- OTP state examples now keep each label/control/feedback together, stack on narrow
+  screens and scroll their compatibility table rather than overflowing the page.
+
+## [1.0.0] - 2025-01-XX
+
+### Breaking Changes
+
+- **Requires Tailwind CSS v4.0.0 or later** - This version is not compatible with Tailwind CSS v3.x
+- **CSS-first architecture** - No longer exports a JavaScript plugin function; use `@import` instead of `plugins: []`
+- **Changed import syntax** - Use `@import "@duskmoon-dev/core"` in CSS instead of importing in `tailwind.config.js`
+- **Removed JavaScript configuration** - Themes and colors are now defined in pure CSS using CSS custom properties
+- **Color format changed** - Colors now use HSL space-separated format (`240 80% 60%`) instead of hex values
+
+### Added
+
+- **65+ Material Design 3 color tokens** - Full MD3 color system including:
+  - Brand colors: primary, secondary, tertiary (with -focus, -content, -container variants)
+  - Surface colors: surface, surface-dim, surface-bright, surface-container hierarchy
+  - Semantic colors: info, success, warning, error (with -content, -container variants)
+  - Neutral colors: base-100 through base-900
+  - Outline colors: outline, outline-variant
+- **Built-in themes** - Two production-ready themes:
+  - `sunshine` - Light theme with warm, accessible colors
+  - `moonlight` - Dark theme optimized for low-light viewing
+- **6 core components** - Minimal, composable component styles:
+  - Button (btn, btn-primary, btn-secondary, btn-tertiary, btn-outline, btn-ghost, sizes)
+  - Card (card, card-body, card-title, card-actions, card-bordered, card-compact)
+  - Input (input, input-bordered, input-primary, input-secondary, input-tertiary, sizes)
+  - Form (form-control, label, label-text, label-text-alt)
+  - Navigation (navbar, navbar-start, navbar-center, navbar-end)
+  - Modal (modal, modal-box, modal-action, modal-backdrop)
+- **WCAG AA compliance** - All color combinations meet 4.5:1 contrast ratio minimum
+- **Theme switching** - Instant theme changes via `data-theme` attribute (no JavaScript required)
+- **TypeScript types** - Full type definitions for theme configuration
+
+### Changed
+
+- **Zero JavaScript runtime** - All styling is now pure CSS with CSS custom properties
+- **Smaller bundle size** - Under 7KB gzipped (down from ~15KB in v0.x)
+- **Simpler setup** - Just two lines in your CSS file to get started
+
+### Removed
+
+- JavaScript plugin API (`duskmoonui()` function)
+- JavaScript configuration options
+- Runtime theme generation
+- `tailwind.config.js` integration
+
+---
+
+## [0.1.0] - 2025-10-25
+
+### Added
+
+#### Color System
+- Complete Material Design 3 color system with 65+ color tokens
+- Primary, Secondary, and **Tertiary** color families (first Tailwind plugin with tertiary support)
+- Surface elevation system with 5 container levels (lowest, low, default, high, highest)
+- Semantic colors: info, success, warning, error with content variants
+- On-color variants for guaranteed accessible contrast ratios
+- Outline and outline-variant tokens for borders and dividers
+- Inverse colors for Material Design 3 patterns
+
+#### Themes
+- **Sunshine Theme** - Warm, energetic light theme
+  - Primary: Amber (#f59e0b)
+  - Secondary: Pink (#ec4899)
+  - Tertiary: Violet (#8b5cf6)
+- **Moonlight Theme** - Serene, elegant dark theme
+  - Primary: Blue (#3b82f6)
+  - Secondary: Purple (#a78bfa)
+  - Tertiary: Teal (#14b8a6)
+
+#### Core Features
+- Tailwind CSS v3.4+ support (JavaScript plugin API)
+- TypeScript type definitions for all color tokens and plugin options
+- CSS variable generation with HSL color format
+- Theme switching via `data-theme` attribute
+- Custom theme support with full type safety
+
+### Browser Support
+
+Modern browsers with CSS custom properties support:
+- Chrome/Edge 88+
+- Firefox 89+
+- Safari 14.1+
+
+---
+
+[1.19.4]: https://github.com/duskmoon-dev/duskmoonui/releases/tag/v1.19.4
+[1.0.0]: https://github.com/duskmoon-dev/duskmoonui/releases/tag/v1.0.0
+[0.1.0]: https://github.com/duskmoon-dev/duskmoonui/releases/tag/v0.1.0

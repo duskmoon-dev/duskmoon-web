@@ -1,0 +1,64 @@
+---
+title: Bottom Sheet
+description: Material Design 3 bottom sheet component for mobile-first interactions
+category: components
+order: 32
+published: true
+tags: ['bottomsheet', 'components', 'material-design', 'mobile']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Bottom Sheet
+
+Bottom sheets are surfaces containing supplementary content that are anchored to the bottom of the screen. They're commonly used on mobile devices for contextual actions, settings, or additional information.
+
+## Native non-modal bottom sheet
+
+Use `popover="auto"` for a non-modal surface in the browser's top layer. The browser handles Escape, outside-click dismissal, and focus restoration when dismissed with Escape. It does not make the rest of the page inert or trap focus.
+
+<ComponentShowcase title="Native non-modal Bottom Sheet" code={`<button type="button" class="btn" command="toggle-popover" commandfor="demo-bottomsheet-popover">Open bottom sheet</button>
+<section id="demo-bottomsheet-popover" class="bottomsheet" popover="auto" aria-labelledby="demo-bottomsheet-title">
+  <div class="bottomsheet-header">
+    <h2 id="demo-bottomsheet-title" class="bottomsheet-title">Quick actions</h2>
+    <button type="button" class="bottomsheet-close" command="hide-popover" commandfor="demo-bottomsheet-popover" aria-label="Close bottom sheet" autofocus>×</button>
+  </div>
+  <div class="bottomsheet-content">
+    <p>Choose an action, or keep working on the page.</p>
+  </div>
+</section>`} />
+
+## Native modal bottom sheet
+
+Use a native `dialog` with `show-modal` for modal interaction: the browser makes the background inert, keeps keyboard focus inside, and returns focus to the opener on close. `closedby="any"` enables outside-click dismissal in supporting browsers; Escape and the explicit close button remain available. Omit `closedby="any"` to require Escape or a close action. The scrim comes from `::backdrop`; no separate backdrop element is needed.
+
+<ComponentShowcase title="Native modal Bottom Sheet" code={`<button type="button" class="btn btn-primary" command="show-modal" commandfor="demo-bottomsheet-modal">Open modal bottom sheet</button>
+<dialog id="demo-bottomsheet-modal" class="bottomsheet" closedby="any" aria-labelledby="demo-bottomsheet-modal-title">
+  <div class="bottomsheet-header">
+    <h2 id="demo-bottomsheet-modal-title" class="bottomsheet-title">Review changes</h2>
+    <button type="button" class="bottomsheet-close" command="close" commandfor="demo-bottomsheet-modal" aria-label="Close bottom sheet" autofocus>×</button>
+  </div>
+  <div class="bottomsheet-content">
+    <p>Review your changes before continuing.</p>
+  </div>
+</dialog>`} />
+
+### State, positioning, and motion
+
+Native surfaces use `:popover-open` or the dialog's `open` attribute. Do not add legacy visibility classes or toggle `open` directly for modal dialogs. Invoker commands require browser support; applications targeting older browsers can call `showPopover()` / `hidePopover()` and `showModal()` / `close()` as a compatibility fallback.
+
+These panels attach to viewport edges rather than their trigger, so they do not need an anchor name. Opening and closing transitions preserve the top layer with discrete `display` / `overlay` transitions. Reduced-motion preferences disable these transitions.
+
+## Variants and content
+
+Use `bottomsheet-sm` (50vh), `bottomsheet-lg` (95vh), or `bottomsheet-full` (100vh). The default maximum height is 90vh. `bottomsheet-peek`, `bottomsheet-half`, and `bottomsheet-expanded` provide 30vh, 50vh, and 90vh maximum heights.
+
+Add `bottomsheet-responsive` to change the bottom sheet into a right-side sheet at 768px. `bottomsheet-content` scrolls independently; `bottomsheet-header` and `bottomsheet-footer` hold the heading and actions. The sheet includes bottom safe-area padding.
+
+`bottomsheet-handle` provides a visual drag handle only; dragging and detent selection require application behavior. Use `bottomsheet-list` / `bottomsheet-item` for action lists or `bottomsheet-grid` / `bottomsheet-grid-item` for a grid of actions.
+
+## Legacy class-controlled API
+
+Existing applications can continue using `.bottomsheet.show` and `.bottomsheet-backdrop.show`. This API does not provide native focus management, Escape handling, background inertness, or light dismissal. Applications must implement those behaviors themselves. `bottomsheet-persistent` uses absolute positioning for an embedded sheet.
+
+The CSS class prefix is `bottomsheet-`, not `bottom-sheet-`. Use `bottomsheet-content` for the body. A modal sheet is a native `dialog`, rather than a `bottomsheet-modal` class.

@@ -1,0 +1,397 @@
+/**
+ * Alert Component Styles
+ * DuskMoonUI - Material Design 3 inspired alert system
+ */
+
+@layer components {
+  /* Base Alert */
+  .alert {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      "icon content actions close";
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface-container);
+    color: var(--color-on-surface);
+    border: 1px solid var(--color-outline);
+  }
+
+  /* Alert Icon */
+  .alert-icon {
+    grid-area: icon;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    align-self: start;
+  }
+
+  /* Alert Content */
+  .alert-content {
+    grid-area: content;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .alert-content > p {
+    margin: 0;
+  }
+
+  /* Keep the compact single-message form vertically balanced against global typography margins. */
+  .alert > p {
+    margin: 0;
+  }
+
+  .alert-horizontal { display: grid; }
+  .alert-actions-end { grid-template-areas: "icon content actions close"; }
+  .alert-actions-bottom {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icon content close"
+      ". actions .";
+  }
+
+  .alert-actions-bottom .alert-actions {
+    justify-self: start;
+    margin-top: 0.5rem;
+  }
+  .alert-vertical {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .alert-title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+  }
+
+  .alert-description {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  /* Alert Close Button */
+  .alert-close {
+    grid-area: close;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1rem;
+    color: currentColor;
+    opacity: 0.7;
+    background-color: transparent;
+    border: none;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: opacity 150ms ease-in-out;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .alert-close:hover {
+    opacity: 1;
+  }
+
+  .alert-close:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+
+  /* Type Variants */
+  .alert-info {
+    background-color: var(--color-info-container);
+    color: var(--color-on-info-container);
+    border-color: transparent;
+  }
+
+  .alert-success {
+    background-color: var(--color-success-container);
+    color: var(--color-on-success-container);
+    border-color: transparent;
+  }
+
+  .alert-warning {
+    background-color: var(--color-warning-container);
+    color: var(--color-on-warning-container);
+    border-color: transparent;
+  }
+
+  .alert-error {
+    background-color: var(--color-error-container);
+    color: var(--color-on-error-container);
+    border-color: transparent;
+  }
+
+  .alert-primary {
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+    border-color: transparent;
+  }
+
+  .alert-secondary {
+    background-color: var(--color-secondary-container);
+    color: var(--color-on-secondary-container);
+    border-color: transparent;
+  }
+
+  .alert-tertiary {
+    background-color: var(--color-tertiary-container);
+    color: var(--color-on-tertiary-container);
+    border-color: transparent;
+  }
+
+  .alert-accent {
+    background-color: color-mix(in oklch, var(--color-accent) 15%, var(--color-surface));
+    color: var(--color-on-surface);
+    border-color: transparent;
+  }
+
+  .alert-neutral {
+    background-color: color-mix(in oklch, var(--color-neutral) 15%, var(--color-surface));
+    color: var(--color-on-surface);
+    border-color: transparent;
+  }
+
+  .alert-base {
+    background-color: var(--color-base-200);
+    color: var(--color-base-content);
+    border-color: transparent;
+  }
+
+  /* Filled Variants */
+  .alert-filled.alert-info {
+    background-color: var(--color-info);
+    color: var(--color-info-content);
+  }
+
+  .alert-filled.alert-success {
+    background-color: var(--color-success);
+    color: var(--color-success-content);
+  }
+
+  .alert-filled.alert-warning {
+    background-color: var(--color-warning);
+    color: var(--color-warning-content);
+  }
+
+  .alert-filled.alert-error {
+    background-color: var(--color-error);
+    color: var(--color-error-content);
+  }
+
+  .alert-filled.alert-primary {
+    background-color: var(--color-primary);
+    color: var(--color-primary-content);
+  }
+
+  .alert-filled.alert-secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-content);
+  }
+
+  .alert-filled.alert-tertiary {
+    background-color: var(--color-tertiary);
+    color: var(--color-tertiary-content);
+  }
+
+  .alert-filled.alert-accent {
+    background-color: var(--color-accent);
+    color: var(--color-accent-content);
+  }
+
+  .alert-filled.alert-neutral {
+    background-color: var(--color-neutral);
+    color: var(--color-neutral-content);
+  }
+
+  .alert-filled.alert-base {
+    background-color: var(--color-base-100);
+    color: var(--color-base-content);
+  }
+
+  /* Outlined Variants */
+  .alert-outlined {
+    background-color: transparent;
+  }
+
+  .alert-outlined.alert-info {
+    border-color: currentColor;
+    color: var(--color-on-info-container);
+  }
+
+  .alert-outlined.alert-success {
+    border-color: currentColor;
+    color: var(--color-on-success-container);
+  }
+
+  .alert-outlined.alert-warning {
+    border-color: currentColor;
+    color: var(--color-on-warning-container);
+  }
+
+  .alert-outlined.alert-error {
+    border-color: currentColor;
+    color: var(--color-on-error-container);
+  }
+
+  .alert-outlined.alert-primary {
+    border-color: currentColor;
+    color: var(--color-on-primary-container);
+  }
+
+  .alert-outlined.alert-secondary {
+    border-color: currentColor;
+    color: var(--color-on-secondary-container);
+  }
+
+  .alert-outlined.alert-tertiary {
+    border-color: currentColor;
+    color: var(--color-on-tertiary-container);
+  }
+
+  .alert-outlined.alert-accent {
+    border-color: currentColor;
+    color: light-dark(var(--color-accent-content), var(--color-accent));
+  }
+
+  .alert-outlined.alert-neutral {
+    border-color: currentColor;
+    color: var(--color-on-surface);
+  }
+
+  .alert-outlined.alert-base {
+    border-color: var(--color-base-content);
+    color: var(--color-base-content);
+  }
+
+  /* Ghost Variant */
+  .alert-ghost {
+    background-color: transparent;
+    border-color: transparent;
+  }
+
+  .alert-ghost.alert-primary   { color: var(--color-on-primary-container); }
+  .alert-ghost.alert-secondary { color: var(--color-on-secondary-container); }
+  .alert-ghost.alert-tertiary  { color: var(--color-on-tertiary-container); }
+  .alert-ghost.alert-info      { color: var(--color-on-info-container); }
+  .alert-ghost.alert-success   { color: var(--color-on-success-container); }
+  .alert-ghost.alert-warning   { color: var(--color-on-warning-container); }
+  .alert-ghost.alert-error     { color: var(--color-on-error-container); }
+  .alert-ghost.alert-accent    { color: light-dark(var(--color-accent-content), var(--color-accent)); }
+  .alert-ghost.alert-neutral   { color: var(--color-on-surface); }
+  .alert-ghost.alert-base      { color: var(--color-base-content); }
+
+  /* Dismissible */
+  .alert-dismissible {
+    padding-right: 2.5rem;
+    padding-inline-end: 2.5rem;
+    position: relative;
+  }
+
+  .alert-dismissible .alert-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    inset-inline-end: 0.75rem;
+  }
+
+  /* Compact */
+  .alert-compact {
+    padding: 0.625rem 0.875rem;
+    gap: 0.5rem;
+  }
+
+  .alert-compact .alert-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 1rem;
+  }
+
+  .alert-compact .alert-title,
+  .alert-compact .alert-description {
+    font-size: 0.8125rem;
+  }
+
+  .alert-comfortable {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+
+  /* Alert Actions */
+  .alert-actions {
+    grid-area: actions;
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0;
+    flex-wrap: wrap;
+    align-self: center;
+    justify-self: end;
+  }
+
+  .alert-vertical .alert-actions {
+    align-self: stretch;
+    width: 100%;
+  }
+
+  .alert-filled .alert-actions .btn-text {
+    color: inherit;
+  }
+
+  .alert-filled .alert-actions .btn-text:hover {
+    background-color: color-mix(in oklch, currentColor 12%, transparent);
+  }
+
+  /* Banner Style (full width) */
+  .alert-banner {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  /* Reduce Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .alert-close {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 32rem) {
+    .alert:not(.alert-vertical) .alert-content,
+    .alert-horizontal .alert-content {
+      flex-basis: min(100%, 18rem);
+    }
+    .alert:not(.alert-vertical),
+    .alert-horizontal {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "icon content close"
+        ". actions actions";
+    }
+    .alert:not(.alert-vertical).alert-actions-end,
+    .alert-horizontal.alert-actions-end {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "icon content close"
+        ". actions actions";
+    }
+    .alert:not(.alert-vertical) .alert-actions,
+    .alert-horizontal .alert-actions {
+      justify-self: start;
+      margin-top: 0.5rem;
+    }
+  }
+}

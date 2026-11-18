@@ -1,0 +1,347 @@
+/**
+ * Modal Component Styles
+ * DuskMoonUI - Material Design 3 inspired modal/dialog system
+ */
+
+@layer components {
+  /* Native HTML dialog owns visibility and modal behavior. */
+  dialog.modal {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    padding: 0;
+    border: none;
+    width: calc(100% - 2rem);
+    max-width: 32rem;
+    max-height: calc(100dvh - 2rem);
+    box-sizing: border-box;
+    background-color: transparent;
+    color: var(--color-on-surface);
+    border-radius: var(--radius-lg);
+    overflow: visible;
+    opacity: 0;
+    transition: opacity 200ms ease-out, display 200ms allow-discrete, overlay 200ms allow-discrete;
+  }
+
+  dialog.modal[open] {
+    opacity: 1;
+  }
+
+  dialog.modal:not([open]) {
+    display: none;
+  }
+
+  /* Modal Box */
+  .modal-box {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    max-height: calc(100dvh - 2rem);
+    padding: 1.5rem;
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2xl);
+    overflow-y: auto;
+    transform: scale(0.95);
+    transition: transform 200ms ease-out;
+  }
+
+  dialog.modal[open] .modal-box {
+    transform: scale(1);
+  }
+
+  /* The browser renders the backdrop in the top layer. */
+  dialog.modal::backdrop {
+    background-color: color-mix(in srgb, var(--color-scrim) 50%, transparent);
+    opacity: 0;
+    transition: opacity 200ms ease-out, display 200ms allow-discrete, overlay 200ms allow-discrete;
+  }
+
+  dialog.modal[open]::backdrop {
+    opacity: 1;
+  }
+
+  /* Modal Action */
+  .modal-action,
+  .modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+  }
+
+  /* Modal Sizes */
+  dialog.modal.modal-sm {
+    max-width: 20rem;
+  }
+
+  dialog.modal.modal-md {
+    max-width: 32rem;
+  }
+
+  dialog.modal.modal-lg {
+    max-width: 48rem;
+  }
+
+  dialog.modal.modal-xl {
+    max-width: 64rem;
+  }
+
+  dialog.modal.modal-full {
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100dvh - 2rem);
+    width: calc(100% - 2rem);
+    height: calc(100dvh - 2rem);
+  }
+
+  dialog.modal.modal-full .modal-box {
+    height: 100%;
+  }
+
+  /* Modal Positions */
+  dialog.modal.modal-top {
+    margin-top: 2rem;
+    margin-bottom: auto;
+  }
+
+  dialog.modal.modal-bottom {
+    margin-top: auto;
+    margin-bottom: 2rem;
+  }
+
+  dialog.modal.modal-middle {
+    margin: auto;
+  }
+
+  /* Animation Variants */
+  .modal-slide-up .modal-box {
+    transform: translateY(6rem) scale(0.95);
+  }
+
+  .modal-slide-down .modal-box {
+    transform: translateY(-6rem) scale(0.95);
+  }
+
+  .modal-zoom .modal-box {
+    transform: scale(0.75);
+  }
+
+  dialog.modal:is(.modal-slide-up, .modal-slide-down, .modal-zoom)[open] .modal-box {
+    transform: translateY(0) scale(1);
+  }
+
+  /* Backdrop Variants */
+  dialog.modal.modal-backdrop-light::backdrop {
+    background-color: color-mix(in srgb, white 80%, transparent);
+  }
+
+  dialog.modal.modal-backdrop-blur::backdrop {
+    background-color: color-mix(in srgb, var(--color-scrim) 30%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  dialog.modal.modal-no-backdrop::backdrop {
+    background-color: transparent;
+  }
+
+  /* Modal Close Button */
+  .modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.25rem;
+    color: var(--color-on-surface-variant);
+    background-color: transparent;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+  }
+
+  .modal-close:hover {
+    background-color: var(--color-surface-container);
+    color: var(--color-on-surface);
+  }
+
+  .modal-close:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+
+  /* Modal Header */
+  .modal-header {
+    margin-bottom: 1rem;
+    padding-right: 2rem;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  /* Modal Body */
+  .modal-body {
+    color: var(--color-on-surface-variant);
+    line-height: 1.5;
+  }
+
+  .modal-scrollable .modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .modal-no-padding .modal-body {
+    padding: 0;
+  }
+
+  .modal-centered .modal-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Responsive Modal */
+  @media (max-width: 640px) {
+    dialog.modal.modal-responsive {
+      width: 100%;
+      max-width: 100%;
+      max-height: 90dvh;
+      margin: auto 0 0;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .modal-responsive .modal-box {
+      max-height: 90dvh;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+  }
+
+  /* Drawer Modal */
+  dialog.modal.drawer-modal {
+    width: min(20rem, 100%);
+    max-width: 20rem;
+    max-height: 100dvh;
+    height: 100dvh;
+    margin: 0 0 0 auto;
+    border-radius: 0;
+  }
+
+  .drawer-modal .modal-box {
+    max-height: 100dvh;
+    height: 100%;
+    border-radius: 0;
+    transform: translateX(100%);
+  }
+
+  dialog.modal.drawer-modal[open] .modal-box {
+    transform: translateX(0);
+  }
+
+  dialog.modal.drawer-modal-left {
+    margin: 0 auto 0 0;
+  }
+
+  .drawer-modal-left .modal-box {
+    transform: translateX(-100%);
+  }
+
+  dialog.modal.drawer-modal-left[open] .modal-box {
+    transform: translateX(0);
+  }
+
+  /* Alert/Confirm Dialog */
+  .alert-dialog {
+    text-align: center;
+  }
+
+  dialog.modal.alert-dialog {
+    max-width: 24rem;
+  }
+
+  .alert-dialog .modal-icon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    font-size: 2rem;
+  }
+
+  .alert-dialog .modal-icon.info {
+    background-color: var(--color-info-container);
+    color: var(--color-on-info-container);
+  }
+
+  .alert-dialog .modal-icon.success {
+    background-color: var(--color-success-container);
+    color: var(--color-on-success-container);
+  }
+
+  .alert-dialog .modal-icon.warning {
+    background-color: var(--color-warning-container);
+    color: var(--color-on-warning-container);
+  }
+
+  .alert-dialog .modal-icon.error {
+    background-color: var(--color-error-container);
+    color: var(--color-on-error-container);
+  }
+
+  .alert-dialog .modal-action {
+    justify-content: center;
+  }
+
+  /* Entry styles retain motion without changing native visibility. */
+  @starting-style {
+    dialog.modal[open],
+    dialog.modal[open]::backdrop {
+      opacity: 0;
+    }
+
+    dialog.modal[open] .modal-box {
+      transform: scale(0.95);
+    }
+
+    dialog.modal.modal-slide-up[open] .modal-box {
+      transform: translateY(6rem) scale(0.95);
+    }
+
+    dialog.modal.modal-slide-down[open] .modal-box {
+      transform: translateY(-6rem) scale(0.95);
+    }
+
+    dialog.modal.modal-zoom[open] .modal-box {
+      transform: scale(0.75);
+    }
+
+    dialog.modal.drawer-modal[open] .modal-box {
+      transform: translateX(100%);
+    }
+
+    dialog.modal.drawer-modal-left[open] .modal-box {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* Reduce Motion */
+  @media (prefers-reduced-motion: reduce) {
+    dialog.modal,
+    dialog.modal::backdrop,
+    .modal-box {
+      transition: none;
+    }
+  }
+}

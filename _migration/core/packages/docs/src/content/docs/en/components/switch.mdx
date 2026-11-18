@@ -1,0 +1,370 @@
+---
+title: Switch
+description: Material Design 3 switch component for toggling between on and off states
+category: components
+order: 17
+published: true
+tags: ['switch', 'toggle', 'components', 'material-design', 'form']
+---
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Switch
+
+## Native Contract And Imports
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/switch.css";
+@import "@duskmoon-dev/core/components/form-group.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+Aggregate: `@duskmoon-dev/core` with Tailwind v4; no-Tailwind:
+`@duskmoon-dev/core/standalone.css`. Individual:
+`@duskmoon-dev/core/components/switch.css` plus base/theme and
+`form-group.css` for associated labels/help. Extensionless `components/switch`
+exports generated `css` and constructable `styles`, not a behavior runtime.
+
+Use native inputs for values, selection, constraints, submission and reset.
+Actual `disabled` or `fieldset disabled` owns semantic disabling.
+Use `.validator` for native interaction-based errors and add
+`.validator-success` for native success. Explicit `aria-invalid="true"`
+wins over those states and color modifiers, including focus.
+Supply described error text as well as color. See
+[Validator](/duskmoonui/docs/en/components/validator/) and
+[Field composition](/duskmoonui/docs/en/components/form-group/).
+
+Switch / Toggle is an on/off form control. `.switch` is the MD3 control;
+legacy `input[type="checkbox"].toggle` retains its compact appearance through
+`components/toggle-switch.css`, `form.css` or `toggle.css`.
+`.toggle-btn` is a separate pressed action button, documented under
+[Toggle Button](/duskmoonui/docs/en/components/toggle/).
+All use native checked state except actions, whose `aria-pressed` updates belong to applications.
+
+Switches toggle the state of a single item on or off. @duskmoon-dev/core provides a Material Design 3 switch component with smooth animations and multiple variants.
+
+## Basic Usage
+
+Simply add the `.switch` class to an `<input type="checkbox">`:
+
+<ComponentShowcase title="Basic Switch" code={`<input type="checkbox" class="switch" aria-label="Basic switch" />`} />
+
+## With Label
+
+Wrap the switch in a label for better UX:
+
+<ComponentShowcase title="Switch with Label" code={`<label class="switch-label">
+  <input type="checkbox" class="switch" />
+  <span>Enable notifications</span>
+</label>`} />
+
+## Checked State
+
+<ComponentShowcase title="Checked Switch" code={`<label class="switch-label">
+  <input type="checkbox" class="switch" checked />
+  <span>Enabled by default</span>
+</label>`} />
+
+## Sizes
+
+Five sizes are available:
+
+<ComponentShowcase title="Switch Sizes" code={`<div class="switch-group switch-group-horizontal">
+  <label class="switch-label">
+    <input type="checkbox" class="switch switch-xs" checked />
+    <span>Extra Small</span>
+  </label>
+
+  <label class="switch-label">
+    <input type="checkbox" class="switch switch-sm" checked />
+    <span>Small</span>
+  </label>
+
+  <label class="switch-label">
+    <input type="checkbox" class="switch switch-md" checked />
+    <span>Medium</span>
+  </label>
+
+  <label class="switch-label">
+    <input type="checkbox" class="switch switch-lg" checked />
+    <span>Large</span>
+  </label>
+
+  <label class="switch-label">
+    <input type="checkbox" class="switch switch-xl" checked />
+    <span>Extra Large</span>
+  </label>
+</div>`} />
+
+## Color Variants
+
+### Primary (Default)
+
+<ComponentShowcase title="Primary Switch" code={`<label class="switch-label">
+  <input type="checkbox" class="switch switch-primary" checked />
+  <span>Primary</span>
+</label>`} />
+
+### Secondary
+
+<ComponentShowcase title="Secondary Switch" code={`<label class="switch-label">
+  <input type="checkbox" class="switch switch-secondary" checked />
+  <span>Secondary</span>
+</label>`} />
+
+### Tertiary
+
+<ComponentShowcase title="Tertiary Switch" code={`<label class="switch-label">
+  <input type="checkbox" class="switch switch-tertiary" checked />
+  <span>Tertiary</span>
+</label>`} />
+
+### Success
+
+<ComponentShowcase title="Success Switch" code={`<label class="switch-label">
+  <input type="checkbox" class="switch switch-success" checked />
+  <span>Success</span>
+</label>`} />
+
+### Warning
+
+<ComponentShowcase title="Warning Switch" code={`<label class="switch-label">
+  <input type="checkbox" class="switch switch-warning" checked />
+  <span>Warning</span>
+</label>`} />
+
+### Error
+
+<ComponentShowcase title="Error Switch" code={`<label class="switch-label">
+  <input type="checkbox" class="switch switch-error" checked />
+  <span>Error</span>
+</label>`} />
+
+### Info
+
+<ComponentShowcase title="Info Switch" code={`<label class="switch-label">
+  <input type="checkbox" class="switch switch-info" checked />
+  <span>Info</span>
+</label>`} />
+
+## All Colors Comparison
+
+<ComponentShowcase title="All Color Variants" code={`<div class="switch-group switch-group-horizontal">
+  <input type="checkbox" class="switch switch-primary" checked aria-label="Primary switch" />
+  <input type="checkbox" class="switch switch-secondary" checked aria-label="Secondary switch" />
+  <input type="checkbox" class="switch switch-tertiary" checked aria-label="Tertiary switch" />
+  <input type="checkbox" class="switch switch-success" checked aria-label="Success switch" />
+  <input type="checkbox" class="switch switch-warning" checked aria-label="Warning switch" />
+  <input type="checkbox" class="switch switch-error" checked aria-label="Error switch" />
+  <input type="checkbox" class="switch switch-info" checked aria-label="Info switch" />
+</div>`} />
+
+## States
+
+### Disabled
+
+<ComponentShowcase title="Disabled Switches" code={`<div class="switch-group switch-group-horizontal">
+  <label class="switch-label">
+    <input type="checkbox" class="switch" disabled />
+    <span>Disabled unchecked</span>
+  </label>
+
+  <label class="switch-label">
+    <input type="checkbox" class="switch" checked disabled />
+    <span>Disabled checked</span>
+  </label>
+</div>`} />
+
+## Switch Groups
+
+### Vertical Group
+
+<ComponentShowcase title="Vertical Switch Group" code={`<div class="switch-group">
+  <label class="switch-label">
+    <input type="checkbox" class="switch" name="notifications" checked />
+    <span>Email notifications</span>
+  </label>
+
+  <label class="switch-label">
+    <input type="checkbox" class="switch" name="sms" />
+    <span>SMS notifications</span>
+  </label>
+
+  <label class="switch-label">
+    <input type="checkbox" class="switch" name="push" checked />
+    <span>Push notifications</span>
+  </label>
+</div>`} />
+
+### Horizontal Group
+
+<ComponentShowcase title="Horizontal Switch Group" code={`<div class="switch-group switch-group-horizontal">
+  <label class="switch-label">
+    <input type="checkbox" class="switch" checked />
+    <span>Wi-Fi</span>
+  </label>
+
+  <label class="switch-label">
+    <input type="checkbox" class="switch" />
+    <span>Bluetooth</span>
+  </label>
+
+  <label class="switch-label">
+    <input type="checkbox" class="switch" checked />
+    <span>GPS</span>
+  </label>
+</div>`} />
+
+## Form Integration
+
+<ComponentShowcase title="Switch in Form" code={`<form>
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Privacy Settings</legend>
+
+    <div class="switch-group">
+      <label class="switch-label">
+        <input type="checkbox" class="switch" name="cookies" checked />
+        <span>Essential cookies</span>
+      </label>
+
+      <label class="switch-label">
+        <input type="checkbox" class="switch" name="analytics" />
+        <span>Analytics cookies</span>
+      </label>
+
+      <label class="switch-label">
+        <input type="checkbox" class="switch" name="marketing" />
+        <span>Marketing cookies</span>
+      </label>
+    </div>
+  </fieldset>
+</form>`} />
+
+## Best Practices
+
+### When to Use
+
+Switches are best for:
+
+- **Instant changes**: Settings that take effect immediately
+- **On/off states**: Binary choices like enable/disable features
+- **System settings**: Preferences and configurations
+
+### When Not to Use
+
+Avoid switches for:
+
+- **Form submission**: Use checkboxes instead when changes require user confirmation
+- **Multiple options**: Use radio buttons or select dropdowns
+- **Actions with delay**: If the change requires processing time, consider a button
+
+### Accessibility
+
+- Use semantic `<label>` elements to associate labels with switches
+- Provide descriptive label text that explains what the switch controls
+- Support keyboard navigation (built-in with native inputs)
+- Ensure sufficient color contrast in both states
+
+### Touch Targets
+
+The switch provides adequate touch targets. For mobile-first designs, use larger sizes:
+
+<ComponentShowcase title="Mobile-Friendly Switch" code={`<label class="switch-label">
+  <input type="checkbox" class="switch switch-lg" />
+  <span>Mobile-friendly option</span>
+</label>`} />
+
+## API Reference
+
+### Class Names
+
+| Class | Description |
+|-------|-------------|
+| `.switch` | Base switch styling (required, on input element) |
+| `.switch-xs` | Extra small size (2rem width) |
+| `.switch-sm` | Small size (2.5rem width) |
+| `.switch-md` | Medium size (3.25rem width, default) |
+| `.switch-lg` | Large size (4rem width) |
+| `.switch-xl` | Extra large size (4.75rem width) |
+| `.switch-primary` | Primary color variant (default) |
+| `.switch-secondary` | Secondary color variant |
+| `.switch-tertiary` | Tertiary color variant |
+| `.switch-success` | Success color variant |
+| `.switch-warning` | Warning color variant |
+| `.switch-error` | Error color variant |
+| `.switch-info` | Info color variant |
+| `.switch-label` | Label wrapper for switch + text |
+| `.switch-group` | Container for vertical switch group |
+| `.switch-group-horizontal` | Horizontal layout modifier |
+
+### HTML Structure
+
+Simple switch:
+```html
+<input type="checkbox" class="switch" aria-label="Example switch" />
+```
+
+With label:
+```html
+<label class="switch-label">
+  <input type="checkbox" class="switch" />
+  <span>Label text</span>
+</label>
+```
+
+Switch group:
+```html
+<div class="switch-group">
+  <label class="switch-label">
+    <input type="checkbox" class="switch" name="option1" />
+    <span>Option 1</span>
+  </label>
+  <label class="switch-label">
+    <input type="checkbox" class="switch" name="option2" />
+    <span>Option 2</span>
+  </label>
+</div>
+```
+
+### States
+
+| State | How to Apply |
+|-------|--------------|
+| Checked | `checked` attribute |
+| Disabled | `disabled` attribute |
+| Focus | Automatic via `:focus-visible` |
+
+## Ghost Variant
+
+The ghost variant removes the visible track border and background when off — creates a minimal toggle.
+
+<ComponentShowcase title="Ghost Switch" code={`<label class="switch-label">
+  <input type="checkbox" class="switch switch-ghost" />
+  <span>Ghost off (no track)</span>
+</label>
+<label class="switch-label">
+  <input type="checkbox" class="switch switch-ghost" checked />
+  <span>Ghost on</span>
+</label>`}>
+  <div class="switch-group">
+    <label class="switch-label">
+      <input type="checkbox" class="switch switch-ghost" />
+      <span>Ghost off (no track)</span>
+    </label>
+    <label class="switch-label">
+      <input type="checkbox" class="switch switch-ghost" checked />
+      <span>Ghost on</span>
+    </label>
+  </div>
+</ComponentShowcase>
+
+## Related Components
+
+- [Checkbox](/duskmoonui/docs/en/components/checkbox/) - Multi-select form control
+- [Radio](/duskmoonui/docs/en/components/radio/) - Single selection input
+- [Button](/duskmoonui/docs/en/components/button/) - For action triggers

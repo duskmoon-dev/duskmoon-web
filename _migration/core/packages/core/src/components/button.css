@@ -1,0 +1,677 @@
+/**
+ * Button Component Styles
+ * DuskMoonUI - Material Design 3 inspired button system
+ */
+
+@layer components {
+  /* Base Button */
+  .btn {
+    --btn-size: 2.5rem;
+    --btn-p: 1.25rem;
+    --btn-py: 0.625rem;
+    --btn-text-color: var(--color-on-surface);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding-inline: var(--btn-p);
+    padding-block: var(--btn-py);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    transition: all 150ms ease-in-out;
+    background-color: var(--color-surface-container);
+    color: var(--btn-text-color);
+  }
+
+  .btn:hover {
+    filter: brightness(0.95);
+  }
+
+  .btn:active {
+    transform: scale(0.98);
+  }
+
+  .btn:focus {
+    outline: none;
+  }
+
+  .btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 20%, transparent);
+  }
+
+  .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* Primary Button */
+  .btn-primary {
+    --btn-text-color: var(--color-primary-content);
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .btn-primary:hover {
+    background-color: color-mix(in oklch, var(--color-primary), black 10%);
+    border-color: color-mix(in oklch, var(--color-primary), black 10%);
+    filter: none;
+  }
+
+  /* Secondary Button */
+  .btn-secondary {
+    --btn-text-color: var(--color-secondary-content);
+    background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
+  }
+
+  .btn-secondary:hover {
+    background-color: color-mix(in oklch, var(--color-secondary), black 10%);
+    border-color: color-mix(in oklch, var(--color-secondary), black 10%);
+    filter: none;
+  }
+
+  /* Tertiary Button */
+  .btn-tertiary {
+    --btn-text-color: var(--color-tertiary-content);
+    background-color: var(--color-tertiary);
+    border-color: var(--color-tertiary);
+  }
+
+  .btn-tertiary:hover {
+    background-color: color-mix(in oklch, var(--color-tertiary), black 10%);
+    border-color: color-mix(in oklch, var(--color-tertiary), black 10%);
+    filter: none;
+  }
+
+  .btn-accent {
+    --btn-text-color: var(--color-accent-content);
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .btn-accent:hover {
+    background-color: color-mix(in oklch, var(--color-accent), black 10%);
+    border-color: color-mix(in oklch, var(--color-accent), black 10%);
+    filter: none;
+  }
+
+  .btn-neutral {
+    --btn-text-color: var(--color-neutral-content);
+    background-color: var(--color-neutral);
+    border-color: var(--color-neutral);
+  }
+
+  .btn-neutral:hover {
+    background-color: color-mix(in oklch, var(--color-neutral), black 10%);
+    border-color: color-mix(in oklch, var(--color-neutral), black 10%);
+    filter: none;
+  }
+
+  .btn-base {
+    --btn-text-color: var(--color-base-content);
+    background-color: var(--color-base-100);
+    border-color: var(--color-base-100);
+  }
+
+  .btn-base:hover {
+    background-color: var(--color-base-200);
+    border-color: var(--color-base-200);
+    filter: none;
+  }
+
+  /* Semantic Colors — must precede outline/ghost/text/tonal so those variants
+     can override the filled background at equal specificity. */
+  .btn-info {
+    --btn-text-color: var(--color-info-content);
+    background-color: var(--color-info);
+    border-color: var(--color-info);
+  }
+
+  .btn-info:hover {
+    background-color: color-mix(in oklch, var(--color-info), black 10%);
+    border-color: color-mix(in oklch, var(--color-info), black 10%);
+    filter: none;
+  }
+
+  .btn-success {
+    --btn-text-color: var(--color-success-content);
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+  }
+
+  .btn-success:hover {
+    background-color: color-mix(in oklch, var(--color-success), black 10%);
+    border-color: color-mix(in oklch, var(--color-success), black 10%);
+    filter: none;
+  }
+
+  .btn-warning {
+    --btn-text-color: var(--color-warning-content);
+    background-color: var(--color-warning);
+    border-color: var(--color-warning);
+  }
+
+  .btn-warning:hover {
+    background-color: color-mix(in oklch, var(--color-warning), black 10%);
+    border-color: color-mix(in oklch, var(--color-warning), black 10%);
+    filter: none;
+  }
+
+  .btn-error {
+    --btn-text-color: var(--color-error-content);
+    background-color: var(--color-error);
+    border-color: var(--color-error);
+  }
+
+  .btn-error:hover {
+    background-color: color-mix(in oklch, var(--color-error), black 10%);
+    border-color: color-mix(in oklch, var(--color-error), black 10%);
+    filter: none;
+  }
+
+  /* Outline / Outlined Variant (.btn-outlined is an alias) */
+  .btn-outline,
+  .btn-outlined {
+    --btn-text-color: var(--color-on-surface);
+    background-color: transparent;
+    border-color: var(--color-outline);
+  }
+
+  .btn-outline:hover,
+  .btn-outlined:hover {
+    background-color: var(--color-surface-container);
+    filter: none;
+  }
+
+  .btn-outline.btn-primary,
+  .btn-outlined.btn-primary {
+    --btn-text-color: var(--color-on-primary-container);
+    border-color: currentColor;
+  }
+
+  .btn-outline.btn-primary:hover,
+  .btn-outlined.btn-primary:hover {
+    --btn-text-color: var(--color-primary-content);
+    background-color: var(--color-primary);
+  }
+
+  .btn-outline.btn-secondary,
+  .btn-outlined.btn-secondary {
+    --btn-text-color: var(--color-on-secondary-container);
+    border-color: currentColor;
+  }
+
+  .btn-outline.btn-secondary:hover,
+  .btn-outlined.btn-secondary:hover {
+    --btn-text-color: var(--color-secondary-content);
+    background-color: var(--color-secondary);
+  }
+
+  .btn-outline.btn-tertiary,
+  .btn-outlined.btn-tertiary {
+    --btn-text-color: var(--color-on-tertiary-container);
+    border-color: currentColor;
+  }
+
+  .btn-outline.btn-tertiary:hover,
+  .btn-outlined.btn-tertiary:hover {
+    --btn-text-color: var(--color-tertiary-content);
+    background-color: var(--color-tertiary);
+  }
+
+  .btn-outline.btn-accent,
+  .btn-outlined.btn-accent {
+    --btn-text-color: light-dark(var(--color-accent-content), var(--color-accent));
+    border-color: currentColor;
+  }
+
+  .btn-outline.btn-accent:hover,
+  .btn-outlined.btn-accent:hover {
+    --btn-text-color: var(--color-accent-content);
+    background-color: var(--color-accent);
+  }
+
+  .btn-outline.btn-neutral,
+  .btn-outlined.btn-neutral {
+    --btn-text-color: var(--color-on-surface);
+    border-color: currentColor;
+  }
+
+  .btn-outline.btn-neutral:hover,
+  .btn-outlined.btn-neutral:hover {
+    --btn-text-color: var(--color-on-surface);
+    background-color: color-mix(in oklch, var(--color-neutral) 15%, var(--color-surface));
+  }
+
+  .btn-outline.btn-base,
+  .btn-outlined.btn-base {
+    --btn-text-color: var(--color-base-content);
+    border-color: currentColor;
+  }
+
+  .btn-outline.btn-base:hover,
+  .btn-outlined.btn-base:hover {
+    --btn-text-color: var(--color-base-content);
+    background-color: var(--color-base-100);
+  }
+
+  .btn-outline.btn-info,
+  .btn-outlined.btn-info {
+    --btn-text-color: var(--color-on-info-container);
+    border-color: currentColor;
+  }
+
+  .btn-outline.btn-info:hover,
+  .btn-outlined.btn-info:hover {
+    --btn-text-color: var(--color-info-content);
+    background-color: var(--color-info);
+  }
+
+  .btn-outline.btn-success,
+  .btn-outlined.btn-success {
+    --btn-text-color: var(--color-on-success-container);
+    border-color: currentColor;
+  }
+
+  .btn-outline.btn-success:hover,
+  .btn-outlined.btn-success:hover {
+    --btn-text-color: var(--color-success-content);
+    background-color: var(--color-success);
+  }
+
+  .btn-outline.btn-warning,
+  .btn-outlined.btn-warning {
+    --btn-text-color: var(--color-on-warning-container);
+    border-color: currentColor;
+  }
+
+  .btn-outline.btn-warning:hover,
+  .btn-outlined.btn-warning:hover {
+    --btn-text-color: var(--color-warning-content);
+    background-color: var(--color-warning);
+  }
+
+  .btn-outline.btn-error,
+  .btn-outlined.btn-error {
+    --btn-text-color: var(--color-on-error-container);
+    border-color: currentColor;
+  }
+
+  .btn-outline.btn-error:hover,
+  .btn-outlined.btn-error:hover {
+    --btn-text-color: var(--color-error-content);
+    background-color: var(--color-error);
+  }
+
+  /* Ghost Variant */
+  .btn-ghost {
+    --btn-text-color: var(--color-on-surface);
+    background-color: transparent;
+    border-color: transparent;
+  }
+
+  .btn-ghost:hover {
+    background-color: var(--color-surface-container);
+    filter: none;
+  }
+
+  .btn-ghost.btn-primary {
+    --btn-text-color: var(--color-on-primary-container);
+  }
+
+  .btn-ghost.btn-primary:hover {
+    --btn-text-color: var(--color-on-primary-container);
+    background-color: var(--color-primary-container);
+  }
+
+  .btn-ghost.btn-secondary {
+    --btn-text-color: var(--color-on-secondary-container);
+  }
+
+  .btn-ghost.btn-secondary:hover {
+    --btn-text-color: var(--color-on-secondary-container);
+    background-color: var(--color-secondary-container);
+  }
+
+  .btn-ghost.btn-tertiary {
+    --btn-text-color: var(--color-on-tertiary-container);
+  }
+
+  .btn-ghost.btn-tertiary:hover {
+    --btn-text-color: var(--color-on-tertiary-container);
+    background-color: var(--color-tertiary-container);
+  }
+
+  .btn-ghost.btn-info    { --btn-text-color: var(--color-on-info-container); }
+  .btn-ghost.btn-success { --btn-text-color: var(--color-on-success-container); }
+  .btn-ghost.btn-warning { --btn-text-color: var(--color-on-warning-container); }
+  .btn-ghost.btn-error   { --btn-text-color: var(--color-on-error-container); }
+  .btn-ghost.btn-accent  { --btn-text-color: light-dark(var(--color-accent-content), var(--color-accent)); }
+  .btn-ghost.btn-neutral { --btn-text-color: var(--color-on-surface); }
+  .btn-ghost.btn-base    { --btn-text-color: var(--color-base-content); }
+
+  .btn-ghost.btn-accent:hover {
+    --btn-text-color: light-dark(var(--color-accent-content), var(--color-accent));
+    background-color: color-mix(in oklch, var(--color-accent) 15%, var(--color-surface));
+  }
+
+  .btn-ghost.btn-neutral:hover {
+    --btn-text-color: var(--color-on-surface);
+    background-color: color-mix(in oklch, var(--color-neutral) 15%, var(--color-surface));
+  }
+
+  .btn-ghost.btn-base:hover {
+    --btn-text-color: var(--color-base-content);
+    background-color: var(--color-base-200);
+  }
+
+  .btn-ghost.btn-info:hover {
+    --btn-text-color: var(--color-on-info-container);
+    background-color: var(--color-info-container);
+  }
+
+  .btn-ghost.btn-success:hover {
+    --btn-text-color: var(--color-on-success-container);
+    background-color: var(--color-success-container);
+  }
+
+  .btn-ghost.btn-warning:hover {
+    --btn-text-color: var(--color-on-warning-container);
+    background-color: var(--color-warning-container);
+  }
+
+  .btn-ghost.btn-error:hover {
+    --btn-text-color: var(--color-on-error-container);
+    background-color: var(--color-error-container);
+  }
+
+  /* Text Variant (alias for .btn-ghost - documentation aligned) */
+  .btn-text {
+    --btn-text-color: var(--color-on-surface);
+    background-color: transparent;
+    border-color: transparent;
+  }
+
+  .btn-text:hover {
+    background-color: var(--color-surface-container);
+    filter: none;
+  }
+
+  .btn-text.btn-primary {
+    --btn-text-color: var(--color-on-primary-container);
+  }
+
+  .btn-text.btn-primary:hover {
+    --btn-text-color: var(--color-on-primary-container);
+    background-color: var(--color-primary-container);
+  }
+
+  .btn-text.btn-secondary {
+    --btn-text-color: var(--color-on-secondary-container);
+  }
+
+  .btn-text.btn-secondary:hover {
+    --btn-text-color: var(--color-on-secondary-container);
+    background-color: var(--color-secondary-container);
+  }
+
+  .btn-text.btn-tertiary {
+    --btn-text-color: var(--color-on-tertiary-container);
+  }
+
+  .btn-text.btn-tertiary:hover {
+    --btn-text-color: var(--color-on-tertiary-container);
+    background-color: var(--color-tertiary-container);
+  }
+
+  .btn-text.btn-info    { --btn-text-color: var(--color-on-info-container); }
+  .btn-text.btn-success { --btn-text-color: var(--color-on-success-container); }
+  .btn-text.btn-warning { --btn-text-color: var(--color-on-warning-container); }
+  .btn-text.btn-error   { --btn-text-color: var(--color-on-error-container); }
+  .btn-text.btn-accent  { --btn-text-color: light-dark(var(--color-accent-content), var(--color-accent)); }
+  .btn-text.btn-neutral { --btn-text-color: var(--color-on-surface); }
+  .btn-text.btn-base    { --btn-text-color: var(--color-base-content); }
+
+  .btn-text.btn-accent:hover {
+    --btn-text-color: light-dark(var(--color-accent-content), var(--color-accent));
+    background-color: color-mix(in oklch, var(--color-accent) 15%, var(--color-surface));
+  }
+
+  .btn-text.btn-neutral:hover {
+    --btn-text-color: var(--color-on-surface);
+    background-color: color-mix(in oklch, var(--color-neutral) 15%, var(--color-surface));
+  }
+
+  .btn-text.btn-base:hover {
+    --btn-text-color: var(--color-base-content);
+    background-color: var(--color-base-200);
+  }
+
+  .btn-text.btn-info:hover {
+    --btn-text-color: var(--color-on-info-container);
+    background-color: var(--color-info-container);
+  }
+
+  .btn-text.btn-success:hover {
+    --btn-text-color: var(--color-on-success-container);
+    background-color: var(--color-success-container);
+  }
+
+  .btn-text.btn-warning:hover {
+    --btn-text-color: var(--color-on-warning-container);
+    background-color: var(--color-warning-container);
+  }
+
+  .btn-text.btn-error:hover {
+    --btn-text-color: var(--color-on-error-container);
+    background-color: var(--color-error-container);
+  }
+
+  /* Tonal Variant - uses container colors for subtle appearance */
+  .btn-tonal {
+    --btn-text-color: var(--color-on-primary-container);
+    background-color: var(--color-primary-container);
+    border-color: transparent;
+  }
+
+  .btn-tonal:hover {
+    filter: brightness(0.95);
+  }
+
+  .btn-tonal.btn-primary {
+    --btn-text-color: var(--color-on-primary-container);
+    background-color: var(--color-primary-container);
+  }
+
+  .btn-tonal.btn-secondary {
+    --btn-text-color: var(--color-on-secondary-container);
+    background-color: var(--color-secondary-container);
+  }
+
+  .btn-tonal.btn-tertiary {
+    --btn-text-color: var(--color-on-tertiary-container);
+    background-color: var(--color-tertiary-container);
+  }
+
+  .btn-tonal.btn-accent {
+    --btn-text-color: var(--color-on-surface);
+    background-color: color-mix(in oklch, var(--color-accent) 15%, var(--color-surface));
+  }
+
+  .btn-tonal.btn-neutral {
+    --btn-text-color: var(--color-on-surface);
+    background-color: color-mix(in oklch, var(--color-neutral) 15%, var(--color-surface));
+  }
+
+  .btn-tonal.btn-base {
+    --btn-text-color: var(--color-base-content);
+    background-color: var(--color-base-200);
+  }
+
+  .btn-tonal.btn-info {
+    --btn-text-color: var(--color-on-info-container);
+    background-color: var(--color-info-container);
+  }
+
+  .btn-tonal.btn-success {
+    --btn-text-color: var(--color-on-success-container);
+    background-color: var(--color-success-container);
+  }
+
+  .btn-tonal.btn-warning {
+    --btn-text-color: var(--color-on-warning-container);
+    background-color: var(--color-warning-container);
+  }
+
+  .btn-tonal.btn-error {
+    --btn-text-color: var(--color-on-error-container);
+    background-color: var(--color-error-container);
+  }
+
+  /* Size Variants */
+  .btn-xs {
+    --btn-size: 1.5rem;
+    --btn-p: 0.5rem;
+    --btn-py: 0.25rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    border-radius: var(--radius-xs);
+  }
+
+  .btn-sm {
+    --btn-size: 2rem;
+    --btn-p: 0.75rem;
+    --btn-py: 0.375rem;
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+    border-radius: var(--radius-xs);
+  }
+
+  .btn-md {
+    --btn-size: 2.5rem;
+    --btn-p: 1.25rem;
+    --btn-py: 0.625rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .btn-lg {
+    --btn-size: 3rem;
+    --btn-p: 1.75rem;
+    --btn-py: 0.875rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Block Button */
+  .btn-block {
+    display: flex;
+    width: 100%;
+  }
+
+  /* Button Group */
+  .btn-group {
+    display: inline-flex;
+  }
+
+  .btn-group .btn {
+    border-radius: 0;
+  }
+
+  .btn-group .btn:first-child {
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+  }
+
+  .btn-group .btn:last-child {
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+  }
+
+  .btn-group .btn:not(:first-child) {
+    margin-inline-start: -1px;
+  }
+
+  /* Loading State */
+  .btn-loading {
+    pointer-events: none;
+    position: relative;
+    color: transparent !important;
+  }
+
+  .btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--btn-text-color);
+    border-right-color: transparent;
+    border-radius: var(--radius-full);
+    animation: btn-spin 0.6s linear infinite;
+  }
+
+  @keyframes btn-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Icon Button */
+  .btn-icon {
+    padding: 0.75rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-full);
+  }
+
+  .btn-icon-sm {
+    padding: 0.5rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .btn-icon-lg {
+    padding: 1rem;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .btn-circle,
+  .btn-square {
+    --btn-p: 0;
+    --btn-py: 0;
+    box-sizing: border-box;
+    width: var(--btn-size);
+    height: var(--btn-size);
+    flex-shrink: 0;
+    aspect-ratio: 1;
+  }
+
+  .btn-circle {
+    border-radius: var(--radius-full, 9999px);
+  }
+
+  /* Reduce Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .btn {
+      transition: none;
+    }
+
+    .btn-loading::after {
+      animation: none;
+    }
+  }
+}

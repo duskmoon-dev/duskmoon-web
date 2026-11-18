@@ -1,0 +1,71 @@
+---
+title: Toggle Button
+description: ARIA pressed action buttons, distinct from native on/off Switch and legacy Toggle
+category: components
+order: 18
+published: true
+tags: ['toggle', 'button', 'components']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Toggle Button
+
+`.toggle-btn` is a pressed/unpressed **action button**, not a form control.
+For an on/off submitted value use [Switch](/duskmoonui/docs/en/components/switch/)
+or the retained compact `input[type="checkbox"].toggle` API.
+
+## Imports
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/toggle.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+Aggregate: `@duskmoon-dev/core`; no-Tailwind: `@duskmoon-dev/core/standalone.css`.
+Individual: `@duskmoon-dev/core/components/toggle.css` plus theme/reset.
+This includes the legacy `.toggle` control for compatibility. Extensionless
+`components/toggle` exports generated `css` and constructable `styles`.
+
+## Pressed Action
+
+Core derives presentation from `aria-pressed`; applications still update the attribute.
+This runnable demo contains explicit local application code, not a Core runtime.
+
+<ComponentShowcase title="Pressed action" code={`<button id="demo-toggle-bold" type="button" class="toggle-btn toggle-btn-primary" aria-pressed="false" aria-label="Bold" title="Bold"><strong>B</strong></button>
+<button type="button" class="toggle-btn" aria-pressed="true" disabled>Unavailable option</button>
+<script>
+  const button = document.getElementById('demo-toggle-bold');
+  button.addEventListener('click', () => {
+    button.setAttribute('aria-pressed', String(button.getAttribute('aria-pressed') !== 'true'));
+  });
+</script>`} />
+
+Use a stable accessible name: do not change "Bold" to "Unbold" when pressed.
+Native button Enter/Space activates it. `disabled` actually disables it;
+`.toggle-btn-disabled` alone is legacy visual presentation.
+Buttons do not submit a persistent on/off value unless an application integrates one.
+
+## Compatibility And Variants
+
+When `aria-pressed` is present, it wins over stale `.toggle-btn-active` or
+`.active`. Those aliases still work for integrations without the ARIA attribute.
+Do not maintain both semantic and duplicate visual state in new code.
+
+Sizes: default, `.toggle-btn-sm/lg`; colors:
+`toggle-btn-primary/secondary/tertiary/info/success/warning/error/accent/neutral/base`.
+`.toggle-btn-ghost`, `.toggle-outlined`, `.toggle-filled` and
+`.toggle-chip` retain appearance contracts.
+`.toggle-btn-icon-only`, `.toggle-icon`, `.toggle-badge` and `.toggle-loading`
+are presentation; loading does not announce state or disable a native button.
+
+Existing `.toggle-group`, `toggle-group-vertical/full/exclusive`,
+`.toggle-full` and `.toggle-segmented` styles remain. Exclusive selection,
+toolbar roving focus and reset synchronization require application code.
+A group class does not implement radio behavior; use native radios when that is the intent.

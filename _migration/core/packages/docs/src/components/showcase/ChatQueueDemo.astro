@@ -1,0 +1,308 @@
+<div data-chat-queue-demo style="width: min(48rem, 100%); display: flex; flex-direction: column; gap: 1rem;">
+  <div data-chat-queue-transcript aria-label="Demo conversation" role="region" style="display: flex; flex-direction: column; gap: 1rem;">
+    <div class="chat chat-start chat-agent" data-chat-role="assistant" data-chat-state="completed">
+      <div class="chat-header">Agent</div>
+      <div class="chat-content">What would you like to work on?</div>
+    </div>
+  </div>
+
+  <div class="chat-input-area">
+    <section class="chat-queue" data-chat-queue-panel aria-labelledby="demo-chat-queue-title" hidden>
+      <div class="chat-queue-header sr-only">
+        <h3 class="chat-queue-title" id="demo-chat-queue-title">Message Queue (<span data-chat-queue-title-count>0</span>)</h3>
+        <span class="chat-queue-count" data-chat-queue-count>0 Queued</span>
+      </div>
+      <ol class="chat-queue-list" data-chat-queue-list role="list" tabindex="0" aria-label="Waiting messages"></ol>
+    </section>
+
+    <form class="chat-composer chat-composer-ghost" data-chat-queue-form>
+      <label class="sr-only" for="demo-chat-queue-message">Message</label>
+      <textarea class="chat-composer-input" id="demo-chat-queue-message" name="message" rows="1" placeholder="Message the agent…" aria-describedby="demo-chat-queue-help-text"></textarea>
+      <div class="chat-composer-toolbar chat-composer-toolbar-compact">
+        <button class="btn btn-ghost btn-sm btn-circle" type="button" aria-label="Composer help" popovertarget="demo-chat-queue-help" style="anchor-name: --demo-chat-queue-help">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg>
+        </button>
+        <div class="chat-composer-actions">
+          <button class="btn btn-primary btn-sm btn-circle" type="submit" data-chat-queue-send aria-label="Send message" aria-keyshortcuts="Enter" interestfor="demo-chat-queue-send-tip" aria-describedby="demo-chat-queue-send-tip" style="anchor-name: --demo-chat-queue-send" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-sm btn-circle" type="button" data-chat-queue-steer aria-label="Steer current message" aria-keyshortcuts="Control+Enter Meta+Enter" interestfor="demo-chat-queue-steer-tip" aria-describedby="demo-chat-queue-steer-tip" style="anchor-name: --demo-chat-queue-steer" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4 5 5-5 5"/><path d="M20 9h-9a6 6 0 0 0-6 6v4"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="demo-chat-queue-help" popover class="popover popover-top popover-start popover-sm" style="position-anchor: --demo-chat-queue-help">
+        <div class="popover-body" id="demo-chat-queue-help-text">Enter sends your draft, or queues it while a reply is active. Shift+Enter adds a new line. Ctrl/⌘+Enter steers the current reply. Empty drafts cannot be sent. The checkmark completes the demo response; the reset arrow starts fresh.</div>
+      </div>
+      <div id="demo-chat-queue-send-tip" popover="hint" class="tooltip" role="tooltip" style="position-anchor: --demo-chat-queue-send; position-area: top span-left"><span data-chat-queue-send-label>Send</span> · Enter</div>
+      <div id="demo-chat-queue-steer-tip" popover="hint" class="tooltip" role="tooltip" style="position-anchor: --demo-chat-queue-steer; position-area: top span-left">Steer · Ctrl/⌘+Enter</div>
+    </form>
+  </div>
+  <div class="chat-actions">
+    <button class="btn btn-ghost btn-sm btn-square" type="button" data-chat-queue-complete aria-label="Complete response" interestfor="demo-chat-queue-complete-tip" aria-describedby="demo-chat-queue-complete-tip" style="anchor-name: --demo-chat-queue-complete" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 4 4L19 6"/></svg>
+    </button>
+    <button class="btn btn-ghost btn-sm btn-square" type="button" data-chat-queue-reset aria-label="Start fresh" interestfor="demo-chat-queue-reset-tip" aria-describedby="demo-chat-queue-reset-tip" style="anchor-name: --demo-chat-queue-reset">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 11a9 9 0 1 1 2.6 7.4M3 4v7h7"/></svg>
+    </button>
+    <div id="demo-chat-queue-complete-tip" popover="hint" class="tooltip" role="tooltip" style="position-anchor: --demo-chat-queue-complete; position-area: top span-right">Complete demo response</div>
+    <div id="demo-chat-queue-reset-tip" popover="hint" class="tooltip" role="tooltip" style="position-anchor: --demo-chat-queue-reset; position-area: top span-right">Start fresh</div>
+  </div>
+  <p class="chat-status sr-only" data-chat-queue-status role="status" aria-live="polite" aria-atomic="true">Ready. 0 messages waiting.</p>
+
+  <template data-chat-queue-item-template>
+    <li class="chat-queue-item">
+      <svg class="chat-queue-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m8 6 4 4-4 4"/><path d="M12 10H5m10-4h4m-4 6h4m-4 6h4"/></svg>
+      <span class="chat-queue-number sr-only"></span>
+      <div class="chat-queue-content"></div>
+      <div class="chat-actions chat-queue-actions">
+        <button class="btn btn-ghost btn-sm btn-square chat-queue-steer" type="button" data-chat-queue-steer>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 4 5 5-5 5"/><path d="M20 9h-9a6 6 0 0 0-6 6v4"/></svg>
+        </button>
+        <button class="btn btn-ghost btn-sm btn-square chat-queue-remove" type="button" data-chat-queue-remove>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg>
+        </button>
+      </div>
+    </li>
+  </template>
+</div>
+
+<script>
+  import { initChatBubbleCollapse } from './chatBubbleCollapse';
+
+  function initChatQueueDemos() {
+    document.querySelectorAll<HTMLElement>('[data-chat-queue-demo]').forEach(root => {
+      root.querySelectorAll<HTMLElement>('.chat-bubble-collapsible').forEach(initChatBubbleCollapse);
+      if (root.dataset.chatQueueInitialized) return;
+      root.dataset.chatQueueInitialized = 'true';
+
+      const transcript = root.querySelector<HTMLElement>('[data-chat-queue-transcript]')!;
+      const greeting = transcript.firstElementChild!;
+      const panel = root.querySelector<HTMLElement>('[data-chat-queue-panel]')!;
+      const list = root.querySelector<HTMLOListElement>('[data-chat-queue-list]')!;
+      const count = root.querySelector<HTMLElement>('[data-chat-queue-count]')!;
+      const titleCount = root.querySelector<HTMLElement>('[data-chat-queue-title-count]')!;
+      const form = root.querySelector<HTMLFormElement>('[data-chat-queue-form]')!;
+      const input = root.querySelector<HTMLTextAreaElement>('textarea')!;
+      const send = root.querySelector<HTMLButtonElement>('[data-chat-queue-send]')!;
+      const sendLabel = root.querySelector<HTMLElement>('[data-chat-queue-send-label]')!;
+      const steer = form.querySelector<HTMLButtonElement>('[data-chat-queue-steer]')!;
+      const complete = root.querySelector<HTMLButtonElement>('[data-chat-queue-complete]')!;
+      const reset = root.querySelector<HTMLButtonElement>('[data-chat-queue-reset]')!;
+      const status = root.querySelector<HTMLElement>('[data-chat-queue-status]')!;
+      const itemTemplate = root.querySelector<HTMLTemplateElement>('[data-chat-queue-item-template]')!;
+      const queue: { text: string; row: HTMLLIElement }[] = [];
+      const bubbleCleanups: (() => void)[] = [];
+      let nextId = 1;
+      let nextMessageId = 1;
+      let composing = false;
+      let activeReply: { row: HTMLDivElement; body: HTMLDivElement; state: HTMLDivElement; steers: number } | null = null;
+
+      function updateDraftActions() {
+        const empty = !input.value.trim();
+        send.disabled = empty || composing;
+        steer.disabled = empty || composing || !activeReply;
+      }
+
+      function update(message: string) {
+        panel.hidden = queue.length === 0;
+        count.textContent = `${queue.length} Queued`;
+        titleCount.textContent = String(queue.length);
+        sendLabel.textContent = activeReply ? 'Queue' : 'Send';
+        send.setAttribute('aria-label', activeReply ? 'Queue message' : 'Send message');
+        updateDraftActions();
+        complete.disabled = !activeReply;
+        queue.forEach((message, index) => {
+          message.row.classList.toggle('chat-queue-item-active', index === 0);
+          message.row.querySelector<HTMLElement>('.chat-queue-number')!.textContent = `#${index + 1}`;
+        });
+        status.textContent = `${message} ${queue.length} ${queue.length === 1 ? 'message' : 'messages'} waiting.`;
+      }
+
+      function addMessage(role: 'user' | 'assistant', text: string) {
+        const row = document.createElement('div');
+        row.className = `chat ${role === 'user' ? 'chat-end' : 'chat-start chat-agent'}`;
+        row.dataset.chatRole = role;
+        const header = document.createElement('div');
+        header.className = 'chat-header';
+        header.textContent = role === 'user' ? 'You' : 'Agent';
+        const body = document.createElement('div');
+        body.className = role === 'user' ? 'chat-bubble chat-bubble-primary chat-bubble-collapsible' : 'chat-content';
+        if (role === 'user') {
+          const content = document.createElement('div');
+          content.className = 'chat-bubble-content';
+          content.id = `demo-chat-queue-message-${nextMessageId++}`;
+          content.tabIndex = -1;
+          content.textContent = text;
+          const toggle = document.createElement('button');
+          toggle.type = 'button';
+          toggle.className = 'btn btn-ghost btn-xs chat-bubble-toggle';
+          toggle.setAttribute('aria-controls', content.id);
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.textContent = 'Show more';
+          toggle.hidden = true;
+          body.append(content, toggle);
+        } else {
+          body.textContent = text;
+        }
+        const state = document.createElement('div');
+        state.className = 'chat-status';
+        row.append(header, body, state);
+        transcript.append(row);
+        if (role === 'user') {
+          const cleanup = initChatBubbleCollapse(body);
+          if (cleanup) bubbleCleanups.push(cleanup);
+        }
+        return { row, body, state };
+      }
+
+      function startReply(text: string) {
+        addMessage('user', text).state.textContent = 'Sent';
+        const reply = addMessage('assistant', 'Demo response in progress.');
+        reply.row.dataset.chatState = 'active';
+        reply.body.classList.add('chat-streaming');
+        reply.state.textContent = 'Generating demo reply';
+        activeReply = { ...reply, steers: 0 };
+      }
+
+      function takeMessage(index: number, action: 'steer' | 'remove') {
+        const [message] = queue.splice(index, 1);
+        const restoreFocus = message.row.contains(document.activeElement);
+        message.row.remove();
+        if (restoreFocus) {
+          const neighbor = queue[index] ?? queue[index - 1];
+          const target = neighbor?.row.querySelector<HTMLButtonElement>(`[data-chat-queue-${action}]`);
+          (target ?? input).focus();
+        }
+        return message.text;
+      }
+
+      function enqueue(text: string) {
+        const id = nextId++;
+        const row = itemTemplate.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+        row.dataset.chatQueueItem = String(id);
+        const content = row.querySelector<HTMLElement>('.chat-queue-content')!;
+        content.textContent = text;
+        content.title = text;
+        for (const action of ['steer', 'remove'] as const) {
+          const button = row.querySelector<HTMLButtonElement>(`[data-chat-queue-${action}]`)!;
+          button.setAttribute('aria-label', `${action === 'steer' ? 'Steer' : 'Remove'} waiting message ${id}`);
+          const tip = document.createElement('div');
+          tip.id = `demo-chat-queue-${action}-${id}-tip`;
+          tip.className = 'tooltip';
+          tip.setAttribute('popover', 'hint');
+          tip.setAttribute('role', 'tooltip');
+          tip.textContent = `${action === 'steer' ? 'Steer' : 'Remove'} waiting message`;
+          tip.style.setProperty('position-anchor', `--${tip.id}`);
+          tip.style.setProperty('position-area', 'top span-left');
+          button.style.setProperty('anchor-name', `--${tip.id}`);
+          button.setAttribute('interestfor', tip.id);
+          button.setAttribute('aria-describedby', tip.id);
+          row.append(tip);
+          button.addEventListener('click', () => {
+            const index = queue.findIndex(message => message.row === row);
+            if (action === 'steer' && activeReply) {
+              const text = takeMessage(index, action);
+              steerMessage(text);
+            } else if (action === 'remove') {
+              takeMessage(index, action);
+              update('Waiting message removed.');
+            }
+          });
+        }
+        queue.push({ text, row });
+        list.append(row);
+      }
+
+      function steerMessage(text: string) {
+        if (!activeReply) return;
+        addMessage('user', text).state.textContent = 'Steered into current reply';
+        activeReply.steers++;
+        activeReply.body.textContent = `Demo response in progress. Latest steering message: ${text}`;
+        update('Message added to the current reply.');
+      }
+
+      function steerDraft() {
+        if (!activeReply || composing) return;
+        const text = input.value;
+        if (!text.trim()) return;
+        steerMessage(text);
+        input.value = '';
+        updateDraftActions();
+        input.focus();
+      }
+
+      input.addEventListener('input', updateDraftActions);
+      input.addEventListener('compositionstart', () => { composing = true; updateDraftActions(); });
+      input.addEventListener('compositionend', () => { composing = false; updateDraftActions(); });
+      input.addEventListener('keydown', event => {
+        if (event.key !== 'Enter' || event.shiftKey || event.altKey || event.isComposing || composing || event.keyCode === 229) return;
+        event.preventDefault();
+        if (event.ctrlKey || event.metaKey) {
+          if (activeReply) steerDraft();
+        } else {
+          if (!send.disabled) form.requestSubmit(send);
+        }
+      });
+      steer.addEventListener('click', steerDraft);
+
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        if (composing) return;
+        const text = input.value;
+        if (!text.trim()) return;
+        if (activeReply) {
+          enqueue(text);
+          update('Message queued.');
+        } else {
+          startReply(text);
+          update('Demo reply started.');
+        }
+        input.value = '';
+        updateDraftActions();
+        input.focus();
+      });
+
+      complete.addEventListener('click', () => {
+        if (!activeReply) return;
+        activeReply.row.dataset.chatState = 'completed';
+        activeReply.body.classList.remove('chat-streaming');
+        activeReply.body.textContent = activeReply.steers
+          ? `Demo response completed with ${activeReply.steers} steering ${activeReply.steers === 1 ? 'message' : 'messages'} applied.`
+          : 'Demo response completed.';
+        activeReply.state.textContent = 'Completed';
+        activeReply = null;
+        if (queue.length) {
+          startReply(takeMessage(0, 'steer'));
+          update('Demo reply completed. Oldest waiting message sent; next reply started.');
+        } else {
+          update('Demo reply completed.');
+          if (document.activeElement === complete) input.focus();
+        }
+      });
+
+      reset.addEventListener('click', () => {
+        for (const cleanup of bubbleCleanups) cleanup();
+        bubbleCleanups.length = 0;
+        transcript.replaceChildren(greeting);
+        list.replaceChildren();
+        queue.length = 0;
+        activeReply = null;
+        nextId = 1;
+        nextMessageId = 1;
+        composing = false;
+        input.value = '';
+        update('Ready.');
+        input.focus();
+      });
+
+      startReply('Help me improve the chat interface.');
+      enqueue('Keep one queued message per line.');
+      enqueue('Check the mobile layout and keyboard controls.');
+      update('Demo reply in progress.');
+    });
+  }
+
+  initChatQueueDemos();
+  document.addEventListener('astro:page-load', initChatQueueDemos);
+</script>

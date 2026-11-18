@@ -1,0 +1,173 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const base = import.meta.env.BASE_URL;
+
+const categories = [
+  {
+    name: 'Actions',
+    emoji: '🔘',
+    components: [
+      { name: 'Button', slug: 'button', description: 'Clickable buttons for actions' },
+      { name: 'Dropdown', slug: 'dropdown', description: 'Popover-based disclosure containers' },
+      { name: 'FAB / Speed Dial', slug: 'fab', description: 'Floating primary actions and expanding action groups' },
+      { name: 'Swap', slug: 'swap', description: 'State-driven visual content replacement' },
+      { name: 'Theme Controller', slug: 'theme-controller', description: 'Styled theme preference controls' },
+      { name: 'File Upload', slug: 'file-upload', description: 'Drag-and-drop file uploader' },
+      { name: 'Toggle', slug: 'toggle', description: 'Toggle button controls' },
+    ]
+  },
+  {
+    name: 'Data Display',
+    emoji: '📊',
+    components: [
+      { name: 'Stat', slug: 'stat', description: 'Responsive statistics groups' },
+      { name: 'Kbd', slug: 'kbd', description: 'Native key presentation' },
+      { name: 'Carousel', slug: 'carousel', description: 'Native scroll-snap containers' },
+      { name: 'Countdown', slug: 'countdown', description: 'Application-updated time presentation' },
+      { name: 'Diff', slug: 'diff', description: 'Visual before/after comparison' },
+      { name: 'Avatar', slug: 'avatar', description: 'User profile pictures' },
+      { name: 'Badge', slug: 'badge', description: 'Status indicators' },
+      { name: 'Card', slug: 'card', description: 'Content containers' },
+      { name: 'Chat', slug: 'chat', description: 'Conversational UI primitives' },
+      { name: 'Chip', slug: 'chip', description: 'Compact tags' },
+      { name: 'Code Block', slug: 'code-block', description: 'Styled code containers' },
+      { name: 'Collapse', slug: 'collapse', description: 'Collapsible content' },
+      { name: 'List', slug: 'list', description: 'Vertical item lists' },
+      { name: 'Markdown Body', slug: 'markdown-body', description: 'GitHub-style markdown typography' },
+      { name: 'Table', slug: 'table', description: 'Data tables' },
+      { name: 'Timeline', slug: 'timeline', description: 'Chronological events' },
+    ]
+  },
+  {
+    name: 'Optional Effects',
+    emoji: '✨',
+    components: [
+      { name: 'Aura', slug: 'aura', description: 'Opt-in border light' },
+      { name: 'Hover 3D', slug: 'hover-3d', description: 'Opt-in restrained tilt' },
+      { name: 'Hover Gallery', slug: 'hover-gallery', description: 'Deliberate gallery selection' },
+      { name: 'Text Rotate', slug: 'text-rotate', description: 'Decorative rotating phrases' },
+    ]
+  },
+  {
+    name: 'Data Entry',
+    emoji: '📝',
+    components: [
+      { name: 'Autocomplete', slug: 'autocomplete', description: 'Search with suggestions' },
+      { name: 'Cascader', slug: 'cascader', description: 'Multi-level cascading selection' },
+      { name: 'Checkbox', slug: 'checkbox', description: 'Multiple selection checkboxes' },
+      { name: 'Date Picker', slug: 'datepicker', description: 'Calendar selection' },
+      { name: 'Form', slug: 'form', description: 'Complete form examples' },
+      { name: 'Form Group', slug: 'form-group', description: 'Form layout utilities' },
+      { name: 'Input', slug: 'input', description: 'Text input fields' },
+      { name: 'Multi-Select', slug: 'multi-select', description: 'Multiple selection dropdown' },
+      { name: 'OTP Input', slug: 'otp-input', description: 'Verification code input' },
+      { name: 'Radio', slug: 'radio', description: 'Single selection radio buttons' },
+      { name: 'Rating', slug: 'rating', description: 'Star/heart ratings' },
+      { name: 'Segment Control', slug: 'segment-control', description: 'Segmented button toggle' },
+      { name: 'Select', slug: 'select', description: 'Dropdown selection' },
+      { name: 'Slider', slug: 'slider', description: 'Range selector' },
+      { name: 'Switch', slug: 'switch', description: 'Toggle controls' },
+      { name: 'Textarea', slug: 'textarea', description: 'Multi-line text input' },
+      { name: 'Time Input', slug: 'time-input', description: 'Time selection' },
+      { name: 'Tree Select', slug: 'tree-select', description: 'Hierarchical dropdown' },
+    ]
+  },
+  {
+    name: 'Feedback',
+    emoji: '💬',
+    components: [
+      { name: 'Alert', slug: 'alert', description: 'Important messages' },
+      { name: 'Dialog', slug: 'dialog', description: 'Modal dialogs' },
+      { name: 'Modal', slug: 'modal', description: 'Full-featured overlays' },
+      { name: 'Progress', slug: 'progress', description: 'Loading indicators' },
+      { name: 'Loading', slug: 'loading', description: 'CSS-only activity indicators' },
+      { name: 'Radial Progress', slug: 'radial-progress', description: 'Determinate circular progress' },
+      { name: 'Skeleton', slug: 'skeleton', description: 'Loading placeholders' },
+      { name: 'Snackbar', slug: 'snackbar', description: 'Brief messages' },
+      { name: 'Toast', slug: 'toast', description: 'Toast notifications' },
+      { name: 'Tooltip', slug: 'tooltip', description: 'Contextual information' },
+    ]
+  },
+  {
+    name: 'Layout',
+    emoji: '🎨',
+    components: [
+      { name: 'App Bar', slug: 'appbar', description: 'Action bars' },
+      { name: 'Divider', slug: 'divider', description: 'Visual separators' },
+      { name: 'Footer', slug: 'footer', description: 'Responsive footer composition' },
+      { name: 'Grid', slug: 'grid', description: 'Auto-fill/auto-fit responsive grids', isLayout: true },
+      { name: 'Hero', slug: 'hero', description: 'Foreground and overlay composition' },
+      { name: 'Indicator', slug: 'indicator', description: 'Positioned badges and markers' },
+      { name: 'Join', slug: 'join', description: 'Visually joined arbitrary controls' },
+      { name: 'Mask', slug: 'mask', description: 'Reusable clipping shapes' },
+      { name: 'Stack', slug: 'stack', description: 'Overlapping grid composition' },
+      { name: 'Sidebar Layout', slug: 'sidebar-layout', description: 'Persistent responsive sidebar grid', isLayout: true },
+      { name: 'Sign Page', slug: 'sign-page', description: 'Responsive sign-in and sign-up layouts', isLayout: true },
+      { name: 'Home Page', slug: 'home-page', description: 'Application home shell with adaptive navigation', isLayout: true },
+      { name: 'Console Page', slug: 'console-page', description: 'Console shell with collapsible sidebar and mobile menu', isLayout: true },
+    ]
+  },
+  {
+    name: 'Navigation',
+    emoji: '🧭',
+    components: [
+      { name: 'Bottom Navigation / Dock', slug: 'bottom-navigation', description: 'Safe-area-aware mobile destination dock' },
+      { name: 'Breadcrumbs', slug: 'breadcrumbs', description: 'Hierarchical navigation' },
+      { name: 'Circle Menu', slug: 'circle-menu', description: 'Radial circular navigation' },
+      { name: 'Drawer', slug: 'drawer', description: 'Side navigation' },
+      { name: 'Link', slug: 'link', description: 'Theme-aware native text links' },
+      { name: 'Megamenu', slug: 'megamenu', description: 'Responsive grouped site navigation' },
+      { name: 'Menu', slug: 'menu', description: 'Dropdown menus' },
+      { name: 'Navbar', slug: 'navbar', description: 'Primary navigation' },
+      { name: 'Nested Menu', slug: 'nested-menu', description: 'Collapsible sidebar navigation' },
+      { name: 'Pagination', slug: 'pagination', description: 'Page navigation' },
+      { name: 'Stepper / Steps', slug: 'stepper', description: 'Progress and step navigation' },
+      { name: 'Tabs', slug: 'tabs', description: 'Tab navigation' },
+    ]
+  },
+  {
+    name: 'Surfaces',
+    emoji: '📦',
+    components: [
+      { name: 'Accordion', slug: 'accordion', description: 'Expandable panels' },
+      { name: 'Bottom Sheet', slug: 'bottom-sheet', description: 'Mobile panels' },
+      { name: 'Popover', slug: 'popover', description: 'Contextual overlays' },
+    ]
+  },
+];
+---
+
+<DocsLayout title="Components">
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <header class="text-center mb-16">
+      <h1 class="text-5xl font-bold mb-4">Components</h1>
+      <p class="text-xl text-on-surface-variant">
+        60+ Material Design 3-inspired components organized by category
+      </p>
+    </header>
+
+    <div class="flex flex-col gap-16">
+      {categories.map((category, idx) => (
+        <section class={idx < categories.length - 1 ? "border-b border-outline-variant pb-12" : ""}>
+          <h2 class="text-3xl font-semibold mb-8 flex items-center gap-3">
+            <span class="text-3xl">{category.emoji}</span>
+            {category.name}
+            <span class="text-2xl font-normal text-on-surface-variant">({category.components.length})</span>
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {category.components.map(component => (
+              <div class="p-6 bg-surface-container rounded-xl border border-outline-variant hover:bg-surface-container-high hover:border-primary transition-all hover:-translate-y-1">
+                <h3 class="text-xl font-semibold mb-2">{component.name}</h3>
+                <p class="text-sm text-on-surface-variant mb-4 leading-relaxed">{component.description}</p>
+                <a href={`${base}docs/en/${component.isLayout ? 'layout' : 'components'}/${component.slug}/`} class="inline-block text-sm font-medium text-primary hover:text-tertiary hover:underline transition-colors">
+                  View Docs
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+</DocsLayout>

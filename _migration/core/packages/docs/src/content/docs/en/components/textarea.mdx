@@ -1,0 +1,79 @@
+---
+title: Textarea
+description: Native multiline text with consistent variants, constraints and field composition
+category: components
+order: 4
+published: true
+tags: ['textarea', 'input', 'form', 'components']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Textarea
+
+Native Textarea owns multiline editing, selection, constraints, submission and reset.
+Core presents its state without a mandatory runtime.
+
+## Imports
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/textarea.css";
+@import "@duskmoon-dev/core/components/form-group.css";
+@import "@duskmoon-dev/core/components/button.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+Aggregate: `@duskmoon-dev/core`; no-Tailwind: `@duskmoon-dev/core/standalone.css`.
+Individual: `@duskmoon-dev/core/components/textarea.css` plus base/theme and
+`form-group.css`. Legacy `form.css` includes Textarea.
+Extensionless `components/textarea` exports generated `css` and `styles`.
+
+## Native Field
+
+<ComponentShowcase title="Multiline notes" code={`<form>
+  <div class="form-group">
+    <label class="form-label" for="demo-textarea-notes">Notes (required)</label>
+    <textarea id="demo-textarea-notes" name="notes" class="textarea textarea-filled textarea-secondary validator" rows="4" minlength="5" maxlength="200" required aria-describedby="demo-textarea-help demo-textarea-error">Default notes</textarea>
+    <p id="demo-textarea-help" class="helper-text">5 to 200 characters.</p>
+    <p id="demo-textarea-error" class="validator-error">Error: enter at least five characters.</p>
+  </div>
+  <button class="btn" type="reset">Reset notes</button>
+</form>`} />
+
+Do not use `pattern` on Textarea: HTML does not support it. An application can use
+`setCustomValidity()` for additional constraints and must clear it when resolved.
+Reset restores the initial text content, not a stale application counter.
+
+## API And States
+
+Sizes: `.textarea-xs/sm/md/lg`. Appearance: default, `.textarea-outlined`,
+`.textarea-filled`, `.textarea-ghost`, legacy `.textarea-bordered`.
+Colors: `.textarea-primary/secondary/tertiary/info/success/warning/error/accent/neutral/base`.
+`disabled` excludes a control from focus/editing/submission; `readonly` keeps it
+focusable and submitted but prevents editing. Both are native attributes.
+Use [Validator](/duskmoonui/docs/en/components/validator/) for explicit ARIA errors
+or opt-in native colors.
+
+Existing `.textarea-container/label/helper`, `.textarea-label-floating`,
+`textarea-container-error/success`, `.textarea-full`,
+`textarea-resize-none/vertical/horizontal/both` and
+`textarea-counter/error/exceeded` remain presentation APIs.
+Floating labels still require proper native association and a placeholder for
+`:placeholder-shown`; they do not replace an accessible label.
+
+## Automatic Size And Counters
+
+The base uses `field-sizing: content`; explicit `.textarea-auto-resize` and
+legacy alias `.textarea-autosize` also support content sizing. Browser support varies.
+Unsupported browsers retain the minimum height and native rows; keep a usable resize
+strategy or provide application-owned auto-sizing if necessary.
+
+CSS cannot count characters or update output text. A live counter must synchronize
+on `input` and after native `reset`, including programmatic application changes.
+No static counter is shown next to an editable field.

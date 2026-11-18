@@ -1,0 +1,647 @@
+{
+  "name": "@duskmoon-dev/core",
+  "version": "1.21.5",
+  "description": "DuskMoonUI - Tailwind CSS v4 plugin with Material Design 3 color system and component styles",
+  "type": "module",
+  "main": "./dist/index.css",
+  "types": "./dist/types/types/index.d.ts",
+  "exports": {
+    "./components/dropdown": {
+      "types": "./dist/esm/components/dropdown.d.ts",
+      "style": "./dist/components/dropdown.css",
+      "import": "./dist/esm/components/dropdown.js",
+      "default": "./dist/esm/components/dropdown.js"
+    },
+    "./components/fab": {
+      "types": "./dist/esm/components/fab.d.ts",
+      "style": "./dist/components/fab.css",
+      "import": "./dist/esm/components/fab.js",
+      "default": "./dist/esm/components/fab.js"
+    },
+    "./components/swap": {
+      "types": "./dist/esm/components/swap.d.ts",
+      "style": "./dist/components/swap.css",
+      "import": "./dist/esm/components/swap.js",
+      "default": "./dist/esm/components/swap.js"
+    },
+    "./components/validator": {
+      "types": "./dist/esm/components/validator.d.ts",
+      "style": "./dist/components/validator.css",
+      "import": "./dist/esm/components/validator.js",
+      "default": "./dist/esm/components/validator.js"
+    },
+    "./components/range": {
+      "types": "./dist/esm/components/range.d.ts",
+      "style": "./dist/components/range.css",
+      "import": "./dist/esm/components/range.js",
+      "default": "./dist/esm/components/range.js"
+    },
+    "./components/file-input": {
+      "types": "./dist/esm/components/file-input.d.ts",
+      "style": "./dist/components/file-input.css",
+      "import": "./dist/esm/components/file-input.js",
+      "default": "./dist/esm/components/file-input.js"
+    },
+    "./components/filter-group": {
+      "types": "./dist/esm/components/filter-group.d.ts",
+      "style": "./dist/components/filter-group.css",
+      "import": "./dist/esm/components/filter-group.js",
+      "default": "./dist/esm/components/filter-group.js"
+    },
+    "./components/toggle-switch": {
+      "types": "./dist/esm/components/toggle-switch.d.ts",
+      "style": "./dist/components/toggle-switch.css",
+      "import": "./dist/esm/components/toggle-switch.js",
+      "default": "./dist/esm/components/toggle-switch.js"
+    },
+    ".": {
+      "default": "./dist/index.css",
+      "style": "./dist/index.css",
+      "types": "./dist/types/types/index.d.ts"
+    },
+    "./components/stat": {
+      "types": "./dist/esm/components/stat.d.ts",
+      "style": "./dist/components/stat.css",
+      "import": "./dist/esm/components/stat.js",
+      "default": "./dist/esm/components/stat.js"
+    },
+    "./components/kbd": {
+      "types": "./dist/esm/components/kbd.d.ts",
+      "style": "./dist/components/kbd.css",
+      "import": "./dist/esm/components/kbd.js",
+      "default": "./dist/esm/components/kbd.js"
+    },
+    "./components/carousel": {
+      "types": "./dist/esm/components/carousel.d.ts",
+      "style": "./dist/components/carousel.css",
+      "import": "./dist/esm/components/carousel.js",
+      "default": "./dist/esm/components/carousel.js"
+    },
+    "./components/countdown": {
+      "types": "./dist/esm/components/countdown.d.ts",
+      "style": "./dist/components/countdown.css",
+      "import": "./dist/esm/components/countdown.js",
+      "default": "./dist/esm/components/countdown.js"
+    },
+    "./components/diff": {
+      "types": "./dist/esm/components/diff.d.ts",
+      "style": "./dist/components/diff.css",
+      "import": "./dist/esm/components/diff.js",
+      "default": "./dist/esm/components/diff.js"
+    },
+    "./effects/aura": {
+      "types": "./dist/esm/effects/aura.d.ts",
+      "style": "./dist/effects/aura.css",
+      "import": "./dist/esm/effects/aura.js",
+      "default": "./dist/esm/effects/aura.js"
+    },
+    "./effects/hover-3d": {
+      "types": "./dist/esm/effects/hover-3d.d.ts",
+      "style": "./dist/effects/hover-3d.css",
+      "import": "./dist/esm/effects/hover-3d.js",
+      "default": "./dist/esm/effects/hover-3d.js"
+    },
+    "./effects/hover-gallery": {
+      "types": "./dist/esm/effects/hover-gallery.d.ts",
+      "style": "./dist/effects/hover-gallery.css",
+      "import": "./dist/esm/effects/hover-gallery.js",
+      "default": "./dist/esm/effects/hover-gallery.js"
+    },
+    "./effects/text-rotate": {
+      "types": "./dist/esm/effects/text-rotate.d.ts",
+      "style": "./dist/effects/text-rotate.css",
+      "import": "./dist/esm/effects/text-rotate.js",
+      "default": "./dist/esm/effects/text-rotate.js"
+    },
+    "./effects": {
+      "types": "./dist/esm/effects/index.d.ts",
+      "style": "./dist/effects/index.css",
+      "import": "./dist/esm/effects/index.js",
+      "default": "./dist/esm/effects/index.js"
+    },
+    "./plugin": {
+      "import": "./dist/esm/tailwind-plugin.js",
+      "require": "./dist/cjs/tailwind-plugin.cjs",
+      "types": "./dist/types/tailwind-plugin.d.ts"
+    },
+    "./base.css": "./dist/base.css",
+    "./components/*.css": "./dist/components/*.css",
+    "./effects/*.css": "./dist/effects/*.css",
+    "./effects.css": "./dist/effects/index.css",
+    "./standalone.css": "./dist/standalone/duskmoonui.css",
+    "./themes/sunshine": {
+      "style": "./dist/themes/generated/sunshine.css",
+      "default": "./dist/themes/generated/sunshine.css"
+    },
+    "./themes/moonlight": {
+      "style": "./dist/themes/generated/moonlight.css",
+      "default": "./dist/themes/generated/moonlight.css"
+    },
+    "./themes/ocean": {
+      "style": "./dist/themes/generated/ocean.css",
+      "default": "./dist/themes/generated/ocean.css"
+    },
+    "./themes/forest": {
+      "style": "./dist/themes/generated/forest.css",
+      "default": "./dist/themes/generated/forest.css"
+    },
+    "./components": {
+      "style": "./dist/components/index.css",
+      "default": "./dist/components/index.css"
+    },
+    "./components/accordion": {
+      "types": "./dist/esm/components/accordion.d.ts",
+      "style": "./dist/components/accordion.css",
+      "import": "./dist/esm/components/accordion.js",
+      "default": "./dist/esm/components/accordion.js"
+    },
+    "./components/alert": {
+      "types": "./dist/esm/components/alert.d.ts",
+      "style": "./dist/components/alert.css",
+      "import": "./dist/esm/components/alert.js",
+      "default": "./dist/esm/components/alert.js"
+    },
+    "./components/appbar": {
+      "types": "./dist/esm/components/appbar.d.ts",
+      "style": "./dist/components/appbar.css",
+      "import": "./dist/esm/components/appbar.js",
+      "default": "./dist/esm/components/appbar.js"
+    },
+    "./components/autocomplete": {
+      "types": "./dist/esm/components/autocomplete.d.ts",
+      "style": "./dist/components/autocomplete.css",
+      "import": "./dist/esm/components/autocomplete.js",
+      "default": "./dist/esm/components/autocomplete.js"
+    },
+    "./components/avatar": {
+      "types": "./dist/esm/components/avatar.d.ts",
+      "style": "./dist/components/avatar.css",
+      "import": "./dist/esm/components/avatar.js",
+      "default": "./dist/esm/components/avatar.js"
+    },
+    "./components/badge": {
+      "types": "./dist/esm/components/badge.d.ts",
+      "style": "./dist/components/badge.css",
+      "import": "./dist/esm/components/badge.js",
+      "default": "./dist/esm/components/badge.js"
+    },
+    "./components/bottom-navigation": {
+      "types": "./dist/esm/components/bottom-navigation.d.ts",
+      "style": "./dist/components/bottom-navigation.css",
+      "import": "./dist/esm/components/bottom-navigation.js",
+      "default": "./dist/esm/components/bottom-navigation.js"
+    },
+    "./components/bottomsheet": {
+      "types": "./dist/esm/components/bottomsheet.d.ts",
+      "style": "./dist/components/bottomsheet.css",
+      "import": "./dist/esm/components/bottomsheet.js",
+      "default": "./dist/esm/components/bottomsheet.js"
+    },
+    "./components/button": {
+      "types": "./dist/esm/components/button.d.ts",
+      "style": "./dist/components/button.css",
+      "import": "./dist/esm/components/button.js",
+      "default": "./dist/esm/components/button.js"
+    },
+    "./components/card": {
+      "types": "./dist/esm/components/card.d.ts",
+      "style": "./dist/components/card.css",
+      "import": "./dist/esm/components/card.js",
+      "default": "./dist/esm/components/card.js"
+    },
+    "./components/cascader": {
+      "types": "./dist/esm/components/cascader.d.ts",
+      "style": "./dist/components/cascader.css",
+      "import": "./dist/esm/components/cascader.js",
+      "default": "./dist/esm/components/cascader.js"
+    },
+    "./components/chat": {
+      "types": "./dist/esm/components/chat.d.ts",
+      "style": "./dist/components/chat.css",
+      "import": "./dist/esm/components/chat.js",
+      "default": "./dist/esm/components/chat.js"
+    },
+    "./components/checkbox": {
+      "types": "./dist/esm/components/checkbox.d.ts",
+      "style": "./dist/components/checkbox.css",
+      "import": "./dist/esm/components/checkbox.js",
+      "default": "./dist/esm/components/checkbox.js"
+    },
+    "./components/chip": {
+      "types": "./dist/esm/components/chip.d.ts",
+      "style": "./dist/components/chip.css",
+      "import": "./dist/esm/components/chip.js",
+      "default": "./dist/esm/components/chip.js"
+    },
+    "./components/circle-menu": {
+      "types": "./dist/esm/components/circle-menu.d.ts",
+      "style": "./dist/components/circle-menu.css",
+      "import": "./dist/esm/components/circle-menu.js",
+      "default": "./dist/esm/components/circle-menu.js"
+    },
+    "./components/code-block": {
+      "types": "./dist/esm/components/code-block.d.ts",
+      "style": "./dist/components/code-block.css",
+      "import": "./dist/esm/components/code-block.js",
+      "default": "./dist/esm/components/code-block.js"
+    },
+    "./components/collapse": {
+      "types": "./dist/esm/components/collapse.d.ts",
+      "style": "./dist/components/collapse.css",
+      "import": "./dist/esm/components/collapse.js",
+      "default": "./dist/esm/components/collapse.js"
+    },
+    "./components/console-page": {
+      "types": "./dist/esm/components/console-page.d.ts",
+      "style": "./dist/components/console-page.css",
+      "import": "./dist/esm/components/console-page.js",
+      "default": "./dist/esm/components/console-page.js"
+    },
+    "./components/datepicker": {
+      "types": "./dist/esm/components/datepicker.d.ts",
+      "style": "./dist/components/datepicker.css",
+      "import": "./dist/esm/components/datepicker.js",
+      "default": "./dist/esm/components/datepicker.js"
+    },
+    "./components/dialog": {
+      "types": "./dist/esm/components/dialog.d.ts",
+      "style": "./dist/components/dialog.css",
+      "import": "./dist/esm/components/dialog.js",
+      "default": "./dist/esm/components/dialog.js"
+    },
+    "./components/divider": {
+      "types": "./dist/esm/components/divider.d.ts",
+      "style": "./dist/components/divider.css",
+      "import": "./dist/esm/components/divider.js",
+      "default": "./dist/esm/components/divider.js"
+    },
+    "./components/drawer": {
+      "types": "./dist/esm/components/drawer.d.ts",
+      "style": "./dist/components/drawer.css",
+      "import": "./dist/esm/components/drawer.js",
+      "default": "./dist/esm/components/drawer.js"
+    },
+    "./components/file-upload": {
+      "types": "./dist/esm/components/file-upload.d.ts",
+      "style": "./dist/components/file-upload.css",
+      "import": "./dist/esm/components/file-upload.js",
+      "default": "./dist/esm/components/file-upload.js"
+    },
+    "./components/form": {
+      "types": "./dist/esm/components/form.d.ts",
+      "style": "./dist/components/form.css",
+      "import": "./dist/esm/components/form.js",
+      "default": "./dist/esm/components/form.js"
+    },
+    "./components/form-group": {
+      "types": "./dist/esm/components/form-group.d.ts",
+      "style": "./dist/components/form-group.css",
+      "import": "./dist/esm/components/form-group.js",
+      "default": "./dist/esm/components/form-group.js"
+    },
+    "./components/footer": {
+      "types": "./dist/esm/components/footer.d.ts",
+      "style": "./dist/components/footer.css",
+      "import": "./dist/esm/components/footer.js",
+      "default": "./dist/esm/components/footer.js"
+    },
+    "./components/hero": {
+      "types": "./dist/esm/components/hero.d.ts",
+      "style": "./dist/components/hero.css",
+      "import": "./dist/esm/components/hero.js",
+      "default": "./dist/esm/components/hero.js"
+    },
+    "./components/home-page": {
+      "types": "./dist/esm/components/home-page.d.ts",
+      "style": "./dist/components/home-page.css",
+      "import": "./dist/esm/components/home-page.js",
+      "default": "./dist/esm/components/home-page.js"
+    },
+    "./components/indicator": {
+      "types": "./dist/esm/components/indicator.d.ts",
+      "style": "./dist/components/indicator.css",
+      "import": "./dist/esm/components/indicator.js",
+      "default": "./dist/esm/components/indicator.js"
+    },
+    "./components/input": {
+      "types": "./dist/esm/components/input.d.ts",
+      "style": "./dist/components/input.css",
+      "import": "./dist/esm/components/input.js",
+      "default": "./dist/esm/components/input.js"
+    },
+    "./components/join": {
+      "types": "./dist/esm/components/join.d.ts",
+      "style": "./dist/components/join.css",
+      "import": "./dist/esm/components/join.js",
+      "default": "./dist/esm/components/join.js"
+    },
+    "./components/list": {
+      "types": "./dist/esm/components/list.d.ts",
+      "style": "./dist/components/list.css",
+      "import": "./dist/esm/components/list.js",
+      "default": "./dist/esm/components/list.js"
+    },
+    "./components/markdown-body": {
+      "types": "./dist/esm/components/markdown-body.d.ts",
+      "style": "./dist/components/markdown-body.css",
+      "import": "./dist/esm/components/markdown-body.js",
+      "default": "./dist/esm/components/markdown-body.js"
+    },
+    "./components/mask": {
+      "types": "./dist/esm/components/mask.d.ts",
+      "style": "./dist/components/mask.css",
+      "import": "./dist/esm/components/mask.js",
+      "default": "./dist/esm/components/mask.js"
+    },
+    "./components/modal": {
+      "types": "./dist/esm/components/modal.d.ts",
+      "style": "./dist/components/modal.css",
+      "import": "./dist/esm/components/modal.js",
+      "default": "./dist/esm/components/modal.js"
+    },
+    "./components/multi-select": {
+      "types": "./dist/esm/components/multi-select.d.ts",
+      "style": "./dist/components/multi-select.css",
+      "import": "./dist/esm/components/multi-select.js",
+      "default": "./dist/esm/components/multi-select.js"
+    },
+    "./components/navigation": {
+      "types": "./dist/esm/components/navigation.d.ts",
+      "style": "./dist/components/navigation.css",
+      "import": "./dist/esm/components/navigation.js",
+      "default": "./dist/esm/components/navigation.js"
+    },
+    "./components/navbar": {
+      "types": "./dist/esm/components/navbar.d.ts",
+      "style": "./dist/components/navbar.css",
+      "import": "./dist/esm/components/navbar.js",
+      "default": "./dist/esm/components/navbar.js"
+    },
+    "./components/menu": {
+      "types": "./dist/esm/components/menu.d.ts",
+      "style": "./dist/components/menu.css",
+      "import": "./dist/esm/components/menu.js",
+      "default": "./dist/esm/components/menu.js"
+    },
+    "./components/breadcrumbs": {
+      "types": "./dist/esm/components/breadcrumbs.d.ts",
+      "style": "./dist/components/breadcrumbs.css",
+      "import": "./dist/esm/components/breadcrumbs.js",
+      "default": "./dist/esm/components/breadcrumbs.js"
+    },
+    "./components/pagination": {
+      "types": "./dist/esm/components/pagination.d.ts",
+      "style": "./dist/components/pagination.css",
+      "import": "./dist/esm/components/pagination.js",
+      "default": "./dist/esm/components/pagination.js"
+    },
+    "./components/tabs": {
+      "types": "./dist/esm/components/tabs.d.ts",
+      "style": "./dist/components/tabs.css",
+      "import": "./dist/esm/components/tabs.js",
+      "default": "./dist/esm/components/tabs.js"
+    },
+    "./components/link": {
+      "types": "./dist/esm/components/link.d.ts",
+      "style": "./dist/components/link.css",
+      "import": "./dist/esm/components/link.js",
+      "default": "./dist/esm/components/link.js"
+    },
+    "./components/megamenu": {
+      "types": "./dist/esm/components/megamenu.d.ts",
+      "style": "./dist/components/megamenu.css",
+      "import": "./dist/esm/components/megamenu.js",
+      "default": "./dist/esm/components/megamenu.js"
+    },
+    "./components/nested-menu": {
+      "types": "./dist/esm/components/nested-menu.d.ts",
+      "style": "./dist/components/nested-menu.css",
+      "import": "./dist/esm/components/nested-menu.js",
+      "default": "./dist/esm/components/nested-menu.js"
+    },
+    "./components/otp-input": {
+      "types": "./dist/esm/components/otp-input.d.ts",
+      "style": "./dist/components/otp-input.css",
+      "import": "./dist/esm/components/otp-input.js",
+      "default": "./dist/esm/components/otp-input.js"
+    },
+    "./components/popover": {
+      "types": "./dist/esm/components/popover.d.ts",
+      "style": "./dist/components/popover.css",
+      "import": "./dist/esm/components/popover.js",
+      "default": "./dist/esm/components/popover.js"
+    },
+    "./components/progress": {
+      "types": "./dist/esm/components/progress.d.ts",
+      "style": "./dist/components/progress.css",
+      "import": "./dist/esm/components/progress.js",
+      "default": "./dist/esm/components/progress.js"
+    },
+    "./components/loading": {
+      "types": "./dist/esm/components/loading.d.ts",
+      "style": "./dist/components/loading.css",
+      "import": "./dist/esm/components/loading.js",
+      "default": "./dist/esm/components/loading.js"
+    },
+    "./components/radial-progress": {
+      "types": "./dist/esm/components/radial-progress.d.ts",
+      "style": "./dist/components/radial-progress.css",
+      "import": "./dist/esm/components/radial-progress.js",
+      "default": "./dist/esm/components/radial-progress.js"
+    },
+    "./components/radio": {
+      "types": "./dist/esm/components/radio.d.ts",
+      "style": "./dist/components/radio.css",
+      "import": "./dist/esm/components/radio.js",
+      "default": "./dist/esm/components/radio.js"
+    },
+    "./components/rating": {
+      "types": "./dist/esm/components/rating.d.ts",
+      "style": "./dist/components/rating.css",
+      "import": "./dist/esm/components/rating.js",
+      "default": "./dist/esm/components/rating.js"
+    },
+    "./components/segment-control": {
+      "types": "./dist/esm/components/segment-control.d.ts",
+      "style": "./dist/components/segment-control.css",
+      "import": "./dist/esm/components/segment-control.js",
+      "default": "./dist/esm/components/segment-control.js"
+    },
+    "./components/select": {
+      "types": "./dist/esm/components/select.d.ts",
+      "style": "./dist/components/select.css",
+      "import": "./dist/esm/components/select.js",
+      "default": "./dist/esm/components/select.js"
+    },
+    "./components/sidebar-layout": {
+      "types": "./dist/esm/components/sidebar-layout.d.ts",
+      "style": "./dist/components/sidebar-layout.css",
+      "import": "./dist/esm/components/sidebar-layout.js",
+      "default": "./dist/esm/components/sidebar-layout.js"
+    },
+    "./components/sign-page": {
+      "types": "./dist/esm/components/sign-page.d.ts",
+      "style": "./dist/components/sign-page.css",
+      "import": "./dist/esm/components/sign-page.js",
+      "default": "./dist/esm/components/sign-page.js"
+    },
+    "./components/skeleton": {
+      "types": "./dist/esm/components/skeleton.d.ts",
+      "style": "./dist/components/skeleton.css",
+      "import": "./dist/esm/components/skeleton.js",
+      "default": "./dist/esm/components/skeleton.js"
+    },
+    "./components/slider": {
+      "types": "./dist/esm/components/slider.d.ts",
+      "style": "./dist/components/slider.css",
+      "import": "./dist/esm/components/slider.js",
+      "default": "./dist/esm/components/slider.js"
+    },
+    "./components/snackbar": {
+      "types": "./dist/esm/components/snackbar.d.ts",
+      "style": "./dist/components/snackbar.css",
+      "import": "./dist/esm/components/snackbar.js",
+      "default": "./dist/esm/components/snackbar.js"
+    },
+    "./components/stepper": {
+      "types": "./dist/esm/components/stepper.d.ts",
+      "style": "./dist/components/stepper.css",
+      "import": "./dist/esm/components/stepper.js",
+      "default": "./dist/esm/components/stepper.js"
+    },
+    "./components/stack": {
+      "types": "./dist/esm/components/stack.d.ts",
+      "style": "./dist/components/stack.css",
+      "import": "./dist/esm/components/stack.js",
+      "default": "./dist/esm/components/stack.js"
+    },
+    "./components/switch": {
+      "types": "./dist/esm/components/switch.d.ts",
+      "style": "./dist/components/switch.css",
+      "import": "./dist/esm/components/switch.js",
+      "default": "./dist/esm/components/switch.js"
+    },
+    "./components/table": {
+      "types": "./dist/esm/components/table.d.ts",
+      "style": "./dist/components/table.css",
+      "import": "./dist/esm/components/table.js",
+      "default": "./dist/esm/components/table.js"
+    },
+    "./components/textarea": {
+      "types": "./dist/esm/components/textarea.d.ts",
+      "style": "./dist/components/textarea.css",
+      "import": "./dist/esm/components/textarea.js",
+      "default": "./dist/esm/components/textarea.js"
+    },
+    "./components/theme-controller": {
+      "types": "./dist/esm/components/theme-controller.d.ts",
+      "style": "./dist/components/theme-controller.css",
+      "import": "./dist/esm/components/theme-controller.js",
+      "default": "./dist/esm/components/theme-controller.js"
+    },
+    "./components/time-input": {
+      "types": "./dist/esm/components/time-input.d.ts",
+      "style": "./dist/components/time-input.css",
+      "import": "./dist/esm/components/time-input.js",
+      "default": "./dist/esm/components/time-input.js"
+    },
+    "./components/timeline": {
+      "types": "./dist/esm/components/timeline.d.ts",
+      "style": "./dist/components/timeline.css",
+      "import": "./dist/esm/components/timeline.js",
+      "default": "./dist/esm/components/timeline.js"
+    },
+    "./components/toast": {
+      "types": "./dist/esm/components/toast.d.ts",
+      "style": "./dist/components/toast.css",
+      "import": "./dist/esm/components/toast.js",
+      "default": "./dist/esm/components/toast.js"
+    },
+    "./components/toggle": {
+      "types": "./dist/esm/components/toggle.d.ts",
+      "style": "./dist/components/toggle.css",
+      "import": "./dist/esm/components/toggle.js",
+      "default": "./dist/esm/components/toggle.js"
+    },
+    "./components/tooltip": {
+      "types": "./dist/esm/components/tooltip.d.ts",
+      "style": "./dist/components/tooltip.css",
+      "import": "./dist/esm/components/tooltip.js",
+      "default": "./dist/esm/components/tooltip.js"
+    },
+    "./components/tree-select": {
+      "types": "./dist/esm/components/tree-select.d.ts",
+      "style": "./dist/components/tree-select.css",
+      "import": "./dist/esm/components/tree-select.js",
+      "default": "./dist/esm/components/tree-select.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "bun run build --watch",
+    "build": "bun run clean && bun run build:css && bun run build:types",
+    "build:css": "bun run scripts/build-css.ts",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist/types",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test tests/unit",
+    "test:unit": "bun test tests/unit",
+    "test:visual": "playwright test --config=playwright.visual.config.ts",
+    "test:integration": "playwright test --config=playwright.integration.config.ts",
+    "test:native-overlays": "playwright test --config=playwright.native-overlays.config.ts",
+    "test:data-display": "playwright test --config=playwright.data-display.config.ts",
+    "test:data-input": "playwright test --config=playwright.data-input.config.ts",
+    "test:a11y": "playwright test --config=playwright.integration.config.ts tests/accessibility/",
+    "test:contrast": "playwright test --config=playwright.integration.config.ts tests/accessibility/sunshine-contrast.spec.ts --project=chromium",
+    "test:all": "bun run test:unit && bun run test:visual && bun run test:integration && bun run test:a11y"
+  },
+  "keywords": [
+    "tailwind",
+    "tailwindcss",
+    "tailwind-plugin",
+    "component-library",
+    "ui-library",
+    "design-system",
+    "tertiary-colors",
+    "material-design-3",
+    "css-framework",
+    "color-system",
+    "theming",
+    "dark-mode"
+  ],
+  "author": "DuskMoon Development",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duskmoon-dev/duskmoonui.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/duskmoon-dev/duskmoonui#readme",
+  "bugs": {
+    "url": "https://github.com/duskmoon-dev/duskmoonui/issues"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.64.0",
+    "@types/bun": "latest",
+    "axe-core": "4.14.0",
+    "lightningcss": "1.33.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "7.0.2",
+    "vitest": "5.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

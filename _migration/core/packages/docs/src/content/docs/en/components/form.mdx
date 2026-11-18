@@ -1,0 +1,109 @@
+---
+title: Form
+description: Native, composable Data Input with truthful state and submission semantics
+category: components
+order: 28
+published: true
+tags: ['form', 'input', 'components']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+# Form
+
+Compose native controls. Core styles appearance and state; the browser owns values,
+selection, constraints, submission and reset. Applications own remote validation and
+asynchronous work. The legacy `form.css` entry imports canonical controls and composition
+rather than maintaining competing implementations.
+
+## Imports
+
+Individual example prerequisites (including composition and demo actions):
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/form.css";
+@import "@duskmoon-dev/core/components/switch.css";
+@import "@duskmoon-dev/core/components/button.css";
+```
+
+`base.css` supplies global focus/utility definitions and shared spacing/shape tokens;
+use your framework reset when appropriate. Substitute the Moonlight theme for dark forms.
+
+Aggregate: `@duskmoon-dev/core` with Tailwind v4. No-Tailwind: `@duskmoon-dev/core/standalone.css`.
+Individual: `@duskmoon-dev/core/components/form.css` plus theme/reset; this includes
+Input, File Input, Checkbox, Radio, legacy Toggle, Select, Textarea, Range and Form Group.
+Add `rating.css`, `otp-input.css`, `switch.css`, `datepicker.css` or
+`filter-group.css` only when needed. Extensionless imports export generated
+`css` and `styles`. The regular `/plugin` provides tokens/utilities, not component CSS;
+the generated standalone plugin also includes components.
+
+## Copyable Native Composition
+
+<ComponentShowcase title="Account preferences" code={`<form>
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Account preferences</legend>
+    <div class="form-group">
+      <label class="form-label" for="demo-form-email">Email (required)</label>
+      <input id="demo-form-email" name="email" type="email" class="input input-filled validator" required aria-describedby="demo-form-email-help demo-form-email-error">
+      <p id="demo-form-email-help" class="helper-text">Used for account notifications.</p>
+      <p id="demo-form-email-error" class="validator-error">Error: enter a valid email address.</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="demo-form-language">Language</label>
+      <select id="demo-form-language" name="language" class="select"><option value="en" selected>English</option><option value="fr">French</option></select>
+    </div>
+    <label class="switch-label"><input type="checkbox" name="notifications" value="enabled" class="switch" checked>Enable notifications</label>
+    <div class="form-group">
+      <label class="form-label" for="demo-form-volume">Notification volume</label>
+      <input id="demo-form-volume" name="volume" type="range" class="range range-primary" min="0" max="100" step="5" value="50">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="demo-form-notes">Notes</label>
+      <textarea id="demo-form-notes" name="notes" class="textarea" maxlength="200">Default note</textarea>
+    </div>
+  </fieldset>
+  <div class="form-actions">
+    <button class="btn" type="reset">Reset preferences</button>
+  </div>
+</form>`} />
+
+A server/application can read `new FormData(form)`. Checked checkboxes contribute their
+value; unchecked and disabled controls contribute none. Reset restores HTML defaults,
+not application async state. Do not add a stale decorative fill or static value ARIA to Range.
+
+## Discover Data Input
+
+| Capability | Canonical docs |
+| --- | --- |
+| Calendar, Datepicker | [Calendar and Datepicker](/duskmoonui/docs/en/components/datepicker/) |
+| Checkbox | [Checkbox](/duskmoonui/docs/en/components/checkbox/) |
+| Fieldset, Label | [Form Group](/duskmoonui/docs/en/components/form-group/) |
+| File Input | [File Input](/duskmoonui/docs/en/components/file-input/) |
+| Filter | [Filter Group](/duskmoonui/docs/en/components/filter-group/) |
+| Radio | [Radio](/duskmoonui/docs/en/components/radio/) |
+| Range | [Range](/duskmoonui/docs/en/components/range/) |
+| Rating | [Rating](/duskmoonui/docs/en/components/rating/) |
+| Input field | [Input](/duskmoonui/docs/en/components/input/) |
+| Select | [Select](/duskmoonui/docs/en/components/select/) |
+| Textarea | [Textarea](/duskmoonui/docs/en/components/textarea/) |
+| Toggle (on/off) | [Switch](/duskmoonui/docs/en/components/switch/) |
+| Validator | [Validator](/duskmoonui/docs/en/components/validator/) |
+| OTP | [OTP Input](/duskmoonui/docs/en/components/otp-input/) |
+
+Searchable/multi-select, File Upload and advanced custom Slider are separate
+application-controlled compositions. [Toggle Button](/duskmoonui/docs/en/components/toggle/)
+is a pressed action, not an on/off form value.
+
+## Compatibility And Semantics
+
+`.form-control`, `.label`, `.label-text`, `.label-text-alt`,
+`.helper-text.error/success/warning/info`, wrapper color/error states and legacy
+`.toggle` remain available. Prefer `.form-group` + associated `.form-label` +
+native control + described helper/error text for new fields.
+`.form-group-disabled` is legacy visual styling, not semantic disabling:
+use `fieldset disabled`. Place `required` on the actual control.
+Automatic native colors now require the explicit
+[Validator API](/duskmoonui/docs/en/components/validator/);
+`.validate` retains immediate native validity presentation.
