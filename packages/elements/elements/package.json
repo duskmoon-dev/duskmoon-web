@@ -1,0 +1,156 @@
+{
+  "name": "@duskmoon-dev/elements",
+  "version": "11.0.0",
+  "description": "All DuskMoon custom elements in one package",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./register": {
+      "types": "./dist/types/register.d.ts",
+      "import": "./dist/esm/register.js",
+      "require": "./dist/cjs/register.js"
+    },
+    "./el-*": {
+      "types": "./dist/types/el-*/index.d.ts",
+      "import": "./dist/esm/el-*/index.js",
+      "require": "./dist/cjs/el-*/index.js"
+    },
+    "./el-*/register": {
+      "types": "./dist/types/el-*/register.d.ts",
+      "import": "./dist/esm/el-*/register.js",
+      "require": "./dist/cjs/el-*/register.js"
+    },
+    "./code-engine": {
+      "types": "./dist/types/code-engine.d.ts",
+      "import": "./dist/esm/code-engine.js",
+      "require": "./dist/cjs/code-engine.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "generate:entrypoints": "bun ../../../scripts/js/generate-bundle-entrypoints.mjs @duskmoon-dev/el-",
+    "build": "bun run clean && bun run build:esm && bun run build:cjs && bun run build:types && bun run generate:entrypoints",
+    "build:esm": "bun build ./src/index.ts ./src/register.ts ./src/code-engine.ts --outdir ./dist/esm --format esm --sourcemap --external @duskmoon-dev/el-base --external @duskmoon-dev/el-button --external @duskmoon-dev/el-card --external @duskmoon-dev/el-input --external @duskmoon-dev/el-markdown --external @duskmoon-dev/el-switch --external @duskmoon-dev/el-alert --external @duskmoon-dev/el-dialog --external @duskmoon-dev/el-badge --external @duskmoon-dev/el-chart --external @duskmoon-dev/el-chip --external @duskmoon-dev/el-tooltip --external @duskmoon-dev/el-progress --external @duskmoon-dev/el-form --external @duskmoon-dev/el-slider --external @duskmoon-dev/el-file-upload --external @duskmoon-dev/el-autocomplete --external @duskmoon-dev/el-datepicker --external @duskmoon-dev/el-datetime --external @duskmoon-dev/el-select --external @duskmoon-dev/el-cascader --external @duskmoon-dev/el-bottom-navigation --external @duskmoon-dev/el-breadcrumbs --external @duskmoon-dev/el-drawer --external @duskmoon-dev/el-menu --external @duskmoon-dev/el-navbar --external @duskmoon-dev/el-pagination --external @duskmoon-dev/el-stepper --external @duskmoon-dev/el-tabs --external @duskmoon-dev/el-accordion --external @duskmoon-dev/el-bottom-sheet --external @duskmoon-dev/el-popover --external @duskmoon-dev/el-table --external @duskmoon-dev/el-markdown-input --external @duskmoon-dev/el-pro-data-grid --external @duskmoon-dev/el-code-block --external @duskmoon-dev/el-form-group --external @duskmoon-dev/el-navigation --external @duskmoon-dev/el-nested-menu --external @duskmoon-dev/el-otp-input --external @duskmoon-dev/el-segment-control --external @duskmoon-dev/el-theme-controller --external @duskmoon-dev/el-time-input --external @duskmoon-dev/el-code-engine --external @duskmoon-dev/el-circle-menu --external @duskmoon-dev/el-chat --external @duskmoon-dev/el-carousel --external @duskmoon-dev/el-console-page --external @duskmoon-dev/el-countdown --external @duskmoon-dev/el-diff --external @duskmoon-dev/el-dropdown --external @duskmoon-dev/el-fab --external @duskmoon-dev/el-file-input --external @duskmoon-dev/el-filter-group --external @duskmoon-dev/el-footer --external @duskmoon-dev/el-hero --external @duskmoon-dev/el-home-page --external @duskmoon-dev/el-indicator --external @duskmoon-dev/el-join --external @duskmoon-dev/el-kbd --external @duskmoon-dev/el-link --external @duskmoon-dev/el-loading --external @duskmoon-dev/el-mask --external @duskmoon-dev/el-megamenu --external @duskmoon-dev/el-radial-progress --external @duskmoon-dev/el-range --external @duskmoon-dev/el-sidebar-layout --external @duskmoon-dev/el-sign-page --external @duskmoon-dev/el-stack --external @duskmoon-dev/el-stat --external @duskmoon-dev/el-swap --external @duskmoon-dev/el-toggle-switch --external @duskmoon-dev/el-validator",
+    "build:cjs": "bun build ./src/index.ts ./src/register.ts ./src/code-engine.ts --outdir ./dist/cjs --format cjs --sourcemap --external @duskmoon-dev/el-base --external @duskmoon-dev/el-button --external @duskmoon-dev/el-card --external @duskmoon-dev/el-input --external @duskmoon-dev/el-markdown --external @duskmoon-dev/el-switch --external @duskmoon-dev/el-alert --external @duskmoon-dev/el-dialog --external @duskmoon-dev/el-badge --external @duskmoon-dev/el-chart --external @duskmoon-dev/el-chip --external @duskmoon-dev/el-tooltip --external @duskmoon-dev/el-progress --external @duskmoon-dev/el-form --external @duskmoon-dev/el-slider --external @duskmoon-dev/el-file-upload --external @duskmoon-dev/el-autocomplete --external @duskmoon-dev/el-datepicker --external @duskmoon-dev/el-datetime --external @duskmoon-dev/el-select --external @duskmoon-dev/el-cascader --external @duskmoon-dev/el-bottom-navigation --external @duskmoon-dev/el-breadcrumbs --external @duskmoon-dev/el-drawer --external @duskmoon-dev/el-menu --external @duskmoon-dev/el-navbar --external @duskmoon-dev/el-pagination --external @duskmoon-dev/el-stepper --external @duskmoon-dev/el-tabs --external @duskmoon-dev/el-accordion --external @duskmoon-dev/el-bottom-sheet --external @duskmoon-dev/el-popover --external @duskmoon-dev/el-table --external @duskmoon-dev/el-markdown-input --external @duskmoon-dev/el-pro-data-grid --external @duskmoon-dev/el-code-block --external @duskmoon-dev/el-form-group --external @duskmoon-dev/el-navigation --external @duskmoon-dev/el-nested-menu --external @duskmoon-dev/el-otp-input --external @duskmoon-dev/el-segment-control --external @duskmoon-dev/el-theme-controller --external @duskmoon-dev/el-time-input --external @duskmoon-dev/el-code-engine --external @duskmoon-dev/el-circle-menu --external @duskmoon-dev/el-chat --external @duskmoon-dev/el-carousel --external @duskmoon-dev/el-console-page --external @duskmoon-dev/el-countdown --external @duskmoon-dev/el-diff --external @duskmoon-dev/el-dropdown --external @duskmoon-dev/el-fab --external @duskmoon-dev/el-file-input --external @duskmoon-dev/el-filter-group --external @duskmoon-dev/el-footer --external @duskmoon-dev/el-hero --external @duskmoon-dev/el-home-page --external @duskmoon-dev/el-indicator --external @duskmoon-dev/el-join --external @duskmoon-dev/el-kbd --external @duskmoon-dev/el-link --external @duskmoon-dev/el-loading --external @duskmoon-dev/el-mask --external @duskmoon-dev/el-megamenu --external @duskmoon-dev/el-radial-progress --external @duskmoon-dev/el-range --external @duskmoon-dev/el-sidebar-layout --external @duskmoon-dev/el-sign-page --external @duskmoon-dev/el-stack --external @duskmoon-dev/el-stat --external @duskmoon-dev/el-swap --external @duskmoon-dev/el-toggle-switch --external @duskmoon-dev/el-validator",
+    "build:types": "tsc --emitDeclarationOnly --outDir ./dist/types",
+    "clean": "del-cli dist",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write 'src/**/*.ts' '*.json' '*.md'",
+    "format:check": "prettier --check 'src/**/*.ts' '*.json' '*.md'",
+    "lint": "eslint src",
+    "lint:check": "eslint src --max-warnings 0",
+    "lint:fix": "eslint src --fix"
+  },
+  "dependencies": {
+    "@duskmoon-dev/el-base": "11.0.0",
+    "@duskmoon-dev/el-button": "11.0.0",
+    "@duskmoon-dev/el-card": "11.0.0",
+    "@duskmoon-dev/el-input": "11.0.0",
+    "@duskmoon-dev/el-markdown": "11.0.0",
+    "@duskmoon-dev/el-switch": "11.0.0",
+    "@duskmoon-dev/el-alert": "11.0.0",
+    "@duskmoon-dev/el-dialog": "11.0.0",
+    "@duskmoon-dev/el-badge": "11.0.0",
+    "@duskmoon-dev/el-chart": "11.0.0",
+    "@duskmoon-dev/el-chip": "11.0.0",
+    "@duskmoon-dev/el-tooltip": "11.0.0",
+    "@duskmoon-dev/el-progress": "11.0.0",
+    "@duskmoon-dev/el-form": "11.0.0",
+    "@duskmoon-dev/el-slider": "11.0.0",
+    "@duskmoon-dev/el-file-upload": "11.0.0",
+    "@duskmoon-dev/el-autocomplete": "11.0.0",
+    "@duskmoon-dev/el-datepicker": "11.0.0",
+    "@duskmoon-dev/el-datetime": "11.0.0",
+    "@duskmoon-dev/el-select": "11.0.0",
+    "@duskmoon-dev/el-cascader": "11.0.0",
+    "@duskmoon-dev/el-bottom-navigation": "11.0.0",
+    "@duskmoon-dev/el-breadcrumbs": "11.0.0",
+    "@duskmoon-dev/el-drawer": "11.0.0",
+    "@duskmoon-dev/el-menu": "11.0.0",
+    "@duskmoon-dev/el-navbar": "11.0.0",
+    "@duskmoon-dev/el-pagination": "11.0.0",
+    "@duskmoon-dev/el-stepper": "11.0.0",
+    "@duskmoon-dev/el-tabs": "11.0.0",
+    "@duskmoon-dev/el-accordion": "11.0.0",
+    "@duskmoon-dev/el-bottom-sheet": "11.0.0",
+    "@duskmoon-dev/el-popover": "11.0.0",
+    "@duskmoon-dev/el-table": "11.0.0",
+    "@duskmoon-dev/el-markdown-input": "11.0.0",
+    "@duskmoon-dev/el-pro-data-grid": "11.0.0",
+    "@duskmoon-dev/el-code-block": "11.0.0",
+    "@duskmoon-dev/el-form-group": "11.0.0",
+    "@duskmoon-dev/el-navigation": "11.0.0",
+    "@duskmoon-dev/el-nested-menu": "11.0.0",
+    "@duskmoon-dev/el-otp-input": "11.0.0",
+    "@duskmoon-dev/el-segment-control": "11.0.0",
+    "@duskmoon-dev/el-theme-controller": "11.0.0",
+    "@duskmoon-dev/el-time-input": "11.0.0",
+    "@duskmoon-dev/el-code-engine": "11.0.0",
+    "@duskmoon-dev/el-circle-menu": "11.0.0",
+    "@duskmoon-dev/el-chat": "11.0.0",
+    "@duskmoon-dev/el-carousel": "11.0.0",
+    "@duskmoon-dev/el-console-page": "11.0.0",
+    "@duskmoon-dev/el-countdown": "11.0.0",
+    "@duskmoon-dev/el-diff": "11.0.0",
+    "@duskmoon-dev/el-dropdown": "11.0.0",
+    "@duskmoon-dev/el-fab": "11.0.0",
+    "@duskmoon-dev/el-file-input": "11.0.0",
+    "@duskmoon-dev/el-filter-group": "11.0.0",
+    "@duskmoon-dev/el-footer": "11.0.0",
+    "@duskmoon-dev/el-hero": "11.0.0",
+    "@duskmoon-dev/el-home-page": "11.0.0",
+    "@duskmoon-dev/el-indicator": "11.0.0",
+    "@duskmoon-dev/el-join": "11.0.0",
+    "@duskmoon-dev/el-kbd": "11.0.0",
+    "@duskmoon-dev/el-link": "11.0.0",
+    "@duskmoon-dev/el-loading": "11.0.0",
+    "@duskmoon-dev/el-mask": "11.0.0",
+    "@duskmoon-dev/el-megamenu": "11.0.0",
+    "@duskmoon-dev/el-radial-progress": "11.0.0",
+    "@duskmoon-dev/el-range": "11.0.0",
+    "@duskmoon-dev/el-sidebar-layout": "11.0.0",
+    "@duskmoon-dev/el-sign-page": "11.0.0",
+    "@duskmoon-dev/el-stack": "11.0.0",
+    "@duskmoon-dev/el-stat": "11.0.0",
+    "@duskmoon-dev/el-swap": "11.0.0",
+    "@duskmoon-dev/el-toggle-switch": "11.0.0",
+    "@duskmoon-dev/el-validator": "11.0.0"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  },
+  "peerDependencies": {
+    "mermaid": ">=10.0.0"
+  },
+  "peerDependenciesMeta": {
+    "mermaid": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "duskmoon-dev",
+    "duskmoon",
+    "custom-elements",
+    "customelements",
+    "web-components",
+    "webcomponents",
+    "html"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duskmoon-dev/duskmoon-web.git",
+    "directory": "packages/elements/elements"
+  }
+}

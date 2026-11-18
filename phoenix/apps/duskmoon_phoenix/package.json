@@ -1,0 +1,104 @@
+{
+  "name": "duskmoon_phoenix",
+  "version": "11.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./assets/js/duskmoon_phoenix.d.ts",
+      "default": "./priv/static/assets/js/duskmoon_phoenix.js"
+    },
+    "./hooks": "./assets/js/hooks/index.js",
+    "./css": "./priv/static/assets/css/app.css",
+    "./components": "./priv/static/assets/css/app.css",
+    "./svg/mdi/*.svg": "./priv/mdi/svg/*.svg",
+    "./svg/bsi/*.svg": "./priv/bsi/svg/*.svg",
+    "./react-form": "./assets/js/react_form/index.js",
+    "./react-chat": "./assets/js/react_chat/index.js",
+    "./elements": "./assets/js/elements.js",
+    "./lazy-hook": "./assets/js/lazy_hook.js",
+    "./elements.css": "./assets/css/element-theme-bridge.css",
+    "./react.css": "./assets/css/react.css",
+    "./art.css": "./assets/css/art.css"
+  },
+  "scripts": {
+    "format": "bunx --bun @biomejs/biome format --write",
+    "lint": "bunx --bun @biomejs/biome lint --write",
+    "check": "bunx --bun @biomejs/biome check --write",
+    "test": "bun test"
+  },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "package.json",
+    "assets/",
+    "priv/mdi/",
+    "priv/bsi/",
+    "VERSION",
+    "priv/static/assets/js/duskmoon_phoenix.js",
+    "priv/static/assets/js/manifest.json",
+    "priv/static/assets/css/app.css",
+    "priv/static/assets/css/manifest.json"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duskmoon-dev/duskmoon-web.git",
+    "directory": "phoenix/apps/duskmoon_phoenix"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "@duskmoon-dev/core": "11.0.0"
+  },
+  "devDependencies": {
+    "@mdi/svg": "7.4.47",
+    "bootstrap-icons": "1.13.2",
+    "postcss": "8.5.32",
+    "@duskmoon-dev/components": "11.0.0",
+    "@duskmoon-dev/css-art": "11.0.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tailwindcss": "4.3.5",
+    "lexical": "0.53.0",
+    "@lexical/history": "0.53.0",
+    "@lexical/plain-text": "0.53.0"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4.3.2",
+    "lexical": "0.53.0",
+    "@lexical/history": "0.53.0",
+    "@lexical/plain-text": "0.53.0",
+    "@duskmoon-dev/components": "11.0.0",
+    "@duskmoon-dev/css-art": "11.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "lexical": {
+      "optional": true
+    },
+    "@lexical/history": {
+      "optional": true
+    },
+    "@lexical/plain-text": {
+      "optional": true
+    },
+    "@duskmoon-dev/components": {
+      "optional": true
+    },
+    "@duskmoon-dev/css-art": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "tailwindcss": {
+      "optional": true
+    }
+  },
+  "license": "MIT"
+}

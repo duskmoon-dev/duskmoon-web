@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <title>{assigns[:page_title] || "Duskmoon UI"} · Storybook</title>
+    <link
+      rel="stylesheet"
+      href={
+        DuskmoonBundler.static_path(DuskmoonStorybookWeb.Endpoint, "/assets/css/app.css",
+          profile: :duskmoon_storybook
+        )
+      }
+    />
+    <script
+      defer
+      type="module"
+      src={
+        DuskmoonBundler.static_path(DuskmoonStorybookWeb.Endpoint, "/assets/js/app.js",
+          profile: :duskmoon_storybook
+        )
+      }
+    >
+    </script>
+  </head>
+  <body class={DemoLayout.classes().body}>
+    <div class="rainbow"></div>
+    <.dm_appbar
+      title="Duskmoon UI"
+      title_to={~p"/"}
+      class={DemoLayout.classes().appbar}
+    >
+      <:logo>
+        <.dm_mdi name="moon-waning-crescent" class="w-8 h-8" />
+      </:logo>
+      <:after_title>
+        <.dm_badge size="sm" variant="secondary" pill>
+          v{Application.spec(:duskmoon_phoenix, :vsn)}
+        </.dm_badge>
+      </:after_title>
+      <:menu :for={item <- DemoLayout.navigation()} to={item.to} class="hidden sm:flex">
+        {item.label}
+      </:menu>
+      <:user_profile>
+        <.dm_theme_switcher id="storybook-theme-switcher" />
+        <.dm_link href="https://github.com/duskmoon-dev/phoenix-duskmoon-ui" class="appbar-action">
+          <.dm_mdi name="github" class="w-8 h-8" />
+        </.dm_link>
+      </:user_profile>
+    </.dm_appbar>
+    {@inner_content}
+  </body>
+</html>

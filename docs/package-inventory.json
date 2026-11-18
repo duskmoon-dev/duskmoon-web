@@ -1,0 +1,3378 @@
+{
+  "registryCheckedOn": "2026-11-18",
+  "packages": [
+    {
+      "name": "@duskmoon-dev/core",
+      "family": "core",
+      "registry": "npm",
+      "sourceRepository": "duskmoonui",
+      "sourceCommit": "204ef29f553e008ee2f5085cc2aadb137e09c9f6",
+      "sourcePath": "packages/core",
+      "path": "packages/css/core",
+      "sourceVersion": "1.21.5",
+      "sourceRuntimeDependencies": {
+        "peerDependencies": {
+          "tailwindcss": "^4.0.0"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "README.md",
+        "LICENSE"
+      ],
+      "sourceChecks": [
+        "typecheck",
+        "test",
+        "test:unit",
+        "test:visual",
+        "test:integration",
+        "test:native-overlays",
+        "test:data-display",
+        "test:data-input",
+        "test:a11y",
+        "test:contrast",
+        "test:all"
+      ],
+      "sourceDocs": [
+        "packages/core/CHANGELOG.md",
+        "packages/core/README.md"
+      ],
+      "sourceLicense": "MIT",
+      "licenseFiles": [
+        "LICENSE",
+        "packages/core/LICENSE"
+      ],
+      "published": {
+        "status": 200,
+        "latest": "1.21.5",
+        "highestStable": "1.21.5",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/css-art",
+      "family": "core",
+      "registry": "npm",
+      "sourceRepository": "duskmoonui",
+      "sourceCommit": "204ef29f553e008ee2f5085cc2aadb137e09c9f6",
+      "sourcePath": "packages/css-art",
+      "path": "packages/css/css-art",
+      "sourceVersion": "1.21.5",
+      "sourceRuntimeDependencies": {},
+      "sourceAssets": [
+        "dist",
+        "README.md",
+        "LICENSE"
+      ],
+      "sourceChecks": [
+        "test",
+        "test:unit"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "published": {
+        "status": 200,
+        "latest": "1.21.5",
+        "highestStable": "1.21.5",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/art-elements",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "packages/art-elements",
+      "path": "packages/elements/art-elements",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/el-art-moon": "1.10.4",
+          "@duskmoon-dev/el-art-sun": "1.10.4",
+          "@duskmoon-dev/el-art-atom": "1.10.4",
+          "@duskmoon-dev/el-art-eclipse": "1.10.4",
+          "@duskmoon-dev/el-art-mountain": "1.10.4",
+          "@duskmoon-dev/el-art-plasma-ball": "1.10.4",
+          "@duskmoon-dev/el-art-cat-stargazer": "1.10.4",
+          "@duskmoon-dev/el-art-color-spin": "1.10.4",
+          "@duskmoon-dev/el-art-synthwave-starfield": "1.10.4",
+          "@duskmoon-dev/el-art-circular-gallery": "1.10.4",
+          "@duskmoon-dev/el-art-snow": "1.10.4",
+          "@duskmoon-dev/el-art-flower-animation": "1.10.4",
+          "@duskmoon-dev/el-art-gemini-input": "1.10.4",
+          "@duskmoon-dev/el-art-snowball-preloader": "1.10.4",
+          "@duskmoon-dev/el-art-csswitch": "1.10.4"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "packages/art-elements/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-atom",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/atom",
+      "path": "packages/elements/art/atom",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/atom/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-cat-stargazer",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/cat-stargazer",
+      "path": "packages/elements/art/cat-stargazer",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/cat-stargazer/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-circular-gallery",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/circular-gallery",
+      "path": "packages/elements/art/circular-gallery",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/circular-gallery/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-color-spin",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/color-spin",
+      "path": "packages/elements/art/color-spin",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/color-spin/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-csswitch",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/csswitch",
+      "path": "packages/elements/art/csswitch",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-eclipse",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/eclipse",
+      "path": "packages/elements/art/eclipse",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/eclipse/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-flower-animation",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/flower-animation",
+      "path": "packages/elements/art/flower-animation",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/flower-animation/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-gemini-input",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/gemini-input",
+      "path": "packages/elements/art/gemini-input",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/gemini-input/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-moon",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/moon",
+      "path": "packages/elements/art/moon",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/moon/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-mountain",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/mountain",
+      "path": "packages/elements/art/mountain",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/mountain/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-plasma-ball",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/plasma-ball",
+      "path": "packages/elements/art/plasma-ball",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/plasma-ball/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-snow",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/snow",
+      "path": "packages/elements/art/snow",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/snow/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-snowball-preloader",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/snowball-preloader",
+      "path": "packages/elements/art/snowball-preloader",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-sun",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/sun",
+      "path": "packages/elements/art/sun",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/sun/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-art-synthwave-starfield",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "art-elements/synthwave-starfield",
+      "path": "packages/elements/art/synthwave-starfield",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/css-art": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "art-elements/synthwave-starfield/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-base",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "packages/base",
+      "path": "packages/elements/base",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {},
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "packages/base/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-accordion",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/accordion",
+      "path": "packages/elements/components/accordion",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/accordion/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-alert",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/alert",
+      "path": "packages/elements/components/alert",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/alert/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-autocomplete",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/autocomplete",
+      "path": "packages/elements/components/autocomplete",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/core": "1.20.6",
+          "@duskmoon-dev/el-base": "1.10.4"
+        },
+        "peerDependencies": {
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/autocomplete/README.md"
+      ],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-badge",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/badge",
+      "path": "packages/elements/components/badge",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/badge/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-bottom-navigation",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/bottom-navigation",
+      "path": "packages/elements/components/bottom-navigation",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/bottom-navigation/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-bottom-sheet",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/bottom-sheet",
+      "path": "packages/elements/components/bottom-sheet",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/bottom-sheet/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-breadcrumbs",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/breadcrumbs",
+      "path": "packages/elements/components/breadcrumbs",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/breadcrumbs/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-button",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/button",
+      "path": "packages/elements/components/button",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/button/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-card",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/card",
+      "path": "packages/elements/components/card",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/card/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-carousel",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/carousel",
+      "path": "packages/elements/components/carousel",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-cascader",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/cascader",
+      "path": "packages/elements/components/cascader",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/cascader/README.md"
+      ],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-chart",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/chart",
+      "path": "packages/elements/components/chart",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/chart/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-chat",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/chat",
+      "path": "packages/elements/components/chat",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/el-markdown": "1.10.4",
+          "@duskmoon-dev/el-markdown-input": "1.10.4",
+          "@duskmoon-dev/el-tooltip": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/chat/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-chip",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/chip",
+      "path": "packages/elements/components/chip",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/chip/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-circle-menu",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/circle-menu",
+      "path": "packages/elements/components/circle-menu",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-code-block",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/code-block",
+      "path": "packages/elements/components/code-block",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-code-engine",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/code-engine",
+      "path": "packages/elements/components/code-engine",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/code-engine": "^0.3.1"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-console-page",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/console-page",
+      "path": "packages/elements/components/console-page",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-countdown",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/countdown",
+      "path": "packages/elements/components/countdown",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-datepicker",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/datepicker",
+      "path": "packages/elements/components/datepicker",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/core": "1.20.6",
+          "@duskmoon-dev/el-base": "1.10.4"
+        },
+        "peerDependencies": {
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/datepicker/README.md"
+      ],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-datetime",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/datetime",
+      "path": "packages/elements/components/datetime",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/datetime/README.md"
+      ],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-dialog",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/dialog",
+      "path": "packages/elements/components/dialog",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/dialog/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-diff",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/diff",
+      "path": "packages/elements/components/diff",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-drawer",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/drawer",
+      "path": "packages/elements/components/drawer",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/drawer/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-dropdown",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/dropdown",
+      "path": "packages/elements/components/dropdown",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-fab",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/fab",
+      "path": "packages/elements/components/fab",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-file-input",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/file-input",
+      "path": "packages/elements/components/file-input",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-file-upload",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/file-upload",
+      "path": "packages/elements/components/file-upload",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/file-upload/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-filter-group",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/filter-group",
+      "path": "packages/elements/components/filter-group",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-footer",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/footer",
+      "path": "packages/elements/components/footer",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-form",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/form",
+      "path": "packages/elements/components/form",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/form/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-form-group",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/form-group",
+      "path": "packages/elements/components/form-group",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-hero",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/hero",
+      "path": "packages/elements/components/hero",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-home-page",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/home-page",
+      "path": "packages/elements/components/home-page",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-indicator",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/indicator",
+      "path": "packages/elements/components/indicator",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-input",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/input",
+      "path": "packages/elements/components/input",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/input/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-join",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/join",
+      "path": "packages/elements/components/join",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-kbd",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/kbd",
+      "path": "packages/elements/components/kbd",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-link",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/link",
+      "path": "packages/elements/components/link",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-loading",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/loading",
+      "path": "packages/elements/components/loading",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-markdown",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/markdown",
+      "path": "packages/elements/components/markdown",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/core": "1.20.6",
+          "@duskmoon-dev/el-base": "1.10.4",
+          "dompurify": "^3.4.16",
+          "highlight.js": "11.12.0",
+          "marked": "18.0.10",
+          "marked-highlight": "2.2.4"
+        },
+        "peerDependencies": {
+          "mermaid": ">=10.0.0"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/markdown/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-markdown-input",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/markdown-input",
+      "path": "packages/elements/components/markdown-input",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/core": "1.20.6",
+          "@duskmoon-dev/el-base": "1.10.4",
+          "hast-util-sanitize": "5.0.2",
+          "katex": "0.18.2",
+          "rehype-prism-plus": "2.0.2",
+          "rehype-sanitize": "6.0.0",
+          "rehype-stringify": "10.0.1",
+          "remark-breaks": "4.0.0",
+          "remark-frontmatter": "5.0.0",
+          "remark-gfm": "4.0.1",
+          "remark-parse": "11.0.0",
+          "remark-rehype": "11.1.2",
+          "unified": "11.0.5"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/markdown-input/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-mask",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/mask",
+      "path": "packages/elements/components/mask",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-megamenu",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/megamenu",
+      "path": "packages/elements/components/megamenu",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-menu",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/menu",
+      "path": "packages/elements/components/menu",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/menu/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-navbar",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/navbar",
+      "path": "packages/elements/components/navbar",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/navbar/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-navigation",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/navigation",
+      "path": "packages/elements/components/navigation",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-nested-menu",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/nested-menu",
+      "path": "packages/elements/components/nested-menu",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-otp-input",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/otp-input",
+      "path": "packages/elements/components/otp-input",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-pagination",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/pagination",
+      "path": "packages/elements/components/pagination",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/pagination/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-popover",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/popover",
+      "path": "packages/elements/components/popover",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/popover/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-pro-data-grid",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/pro-data-grid",
+      "path": "packages/elements/components/pro-data-grid",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-progress",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/progress",
+      "path": "packages/elements/components/progress",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/progress/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-radial-progress",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/radial-progress",
+      "path": "packages/elements/components/radial-progress",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-range",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/range",
+      "path": "packages/elements/components/range",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-segment-control",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/segment-control",
+      "path": "packages/elements/components/segment-control",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-select",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/select",
+      "path": "packages/elements/components/select",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/select/README.md"
+      ],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-sidebar-layout",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/sidebar-layout",
+      "path": "packages/elements/components/sidebar-layout",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-sign-page",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/sign-page",
+      "path": "packages/elements/components/sign-page",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-slider",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/slider",
+      "path": "packages/elements/components/slider",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/slider/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-stack",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/stack",
+      "path": "packages/elements/components/stack",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-stat",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/stat",
+      "path": "packages/elements/components/stat",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-stepper",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/stepper",
+      "path": "packages/elements/components/stepper",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/stepper/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-swap",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/swap",
+      "path": "packages/elements/components/swap",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-switch",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/switch",
+      "path": "packages/elements/components/switch",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/switch/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-table",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/table",
+      "path": "packages/elements/components/table",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/table/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-tabs",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/tabs",
+      "path": "packages/elements/components/tabs",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/tabs/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-theme-controller",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/theme-controller",
+      "path": "packages/elements/components/theme-controller",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-time-input",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/time-input",
+      "path": "packages/elements/components/time-input",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "src"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-toggle-switch",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/toggle-switch",
+      "path": "packages/elements/components/toggle-switch",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-tooltip",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/tooltip",
+      "path": "packages/elements/components/tooltip",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "elements/tooltip/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/el-validator",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "elements/validator",
+      "path": "packages/elements/components/validator",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/core": "1.20.6"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "@duskmoon-dev/elements",
+      "family": "elements",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-elements",
+      "sourceCommit": "f3911402dde9a4db7c7619553b32eb54da614772",
+      "sourcePath": "packages/elements",
+      "path": "packages/elements/elements",
+      "sourceVersion": "1.10.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/el-base": "1.10.4",
+          "@duskmoon-dev/el-button": "1.10.4",
+          "@duskmoon-dev/el-card": "1.10.4",
+          "@duskmoon-dev/el-input": "1.10.4",
+          "@duskmoon-dev/el-markdown": "1.10.4",
+          "@duskmoon-dev/el-switch": "1.10.4",
+          "@duskmoon-dev/el-alert": "1.10.4",
+          "@duskmoon-dev/el-dialog": "1.10.4",
+          "@duskmoon-dev/el-badge": "1.10.4",
+          "@duskmoon-dev/el-chart": "1.10.4",
+          "@duskmoon-dev/el-chip": "1.10.4",
+          "@duskmoon-dev/el-tooltip": "1.10.4",
+          "@duskmoon-dev/el-progress": "1.10.4",
+          "@duskmoon-dev/el-form": "1.10.4",
+          "@duskmoon-dev/el-slider": "1.10.4",
+          "@duskmoon-dev/el-file-upload": "1.10.4",
+          "@duskmoon-dev/el-autocomplete": "1.10.4",
+          "@duskmoon-dev/el-datepicker": "1.10.4",
+          "@duskmoon-dev/el-datetime": "1.10.4",
+          "@duskmoon-dev/el-select": "1.10.4",
+          "@duskmoon-dev/el-cascader": "1.10.4",
+          "@duskmoon-dev/el-bottom-navigation": "1.10.4",
+          "@duskmoon-dev/el-breadcrumbs": "1.10.4",
+          "@duskmoon-dev/el-drawer": "1.10.4",
+          "@duskmoon-dev/el-menu": "1.10.4",
+          "@duskmoon-dev/el-navbar": "1.10.4",
+          "@duskmoon-dev/el-pagination": "1.10.4",
+          "@duskmoon-dev/el-stepper": "1.10.4",
+          "@duskmoon-dev/el-tabs": "1.10.4",
+          "@duskmoon-dev/el-accordion": "1.10.4",
+          "@duskmoon-dev/el-bottom-sheet": "1.10.4",
+          "@duskmoon-dev/el-popover": "1.10.4",
+          "@duskmoon-dev/el-table": "1.10.4",
+          "@duskmoon-dev/el-markdown-input": "1.10.4",
+          "@duskmoon-dev/el-pro-data-grid": "1.10.4",
+          "@duskmoon-dev/el-code-block": "1.10.4",
+          "@duskmoon-dev/el-form-group": "1.10.4",
+          "@duskmoon-dev/el-navigation": "1.10.4",
+          "@duskmoon-dev/el-nested-menu": "1.10.4",
+          "@duskmoon-dev/el-otp-input": "1.10.4",
+          "@duskmoon-dev/el-segment-control": "1.10.4",
+          "@duskmoon-dev/el-theme-controller": "1.10.4",
+          "@duskmoon-dev/el-time-input": "1.10.4",
+          "@duskmoon-dev/el-code-engine": "1.10.4",
+          "@duskmoon-dev/el-circle-menu": "1.10.4",
+          "@duskmoon-dev/el-chat": "1.10.4",
+          "@duskmoon-dev/el-carousel": "1.10.4",
+          "@duskmoon-dev/el-console-page": "1.10.4",
+          "@duskmoon-dev/el-countdown": "1.10.4",
+          "@duskmoon-dev/el-diff": "1.10.4",
+          "@duskmoon-dev/el-dropdown": "1.10.4",
+          "@duskmoon-dev/el-fab": "1.10.4",
+          "@duskmoon-dev/el-file-input": "1.10.4",
+          "@duskmoon-dev/el-filter-group": "1.10.4",
+          "@duskmoon-dev/el-footer": "1.10.4",
+          "@duskmoon-dev/el-hero": "1.10.4",
+          "@duskmoon-dev/el-home-page": "1.10.4",
+          "@duskmoon-dev/el-indicator": "1.10.4",
+          "@duskmoon-dev/el-join": "1.10.4",
+          "@duskmoon-dev/el-kbd": "1.10.4",
+          "@duskmoon-dev/el-link": "1.10.4",
+          "@duskmoon-dev/el-loading": "1.10.4",
+          "@duskmoon-dev/el-mask": "1.10.4",
+          "@duskmoon-dev/el-megamenu": "1.10.4",
+          "@duskmoon-dev/el-radial-progress": "1.10.4",
+          "@duskmoon-dev/el-range": "1.10.4",
+          "@duskmoon-dev/el-sidebar-layout": "1.10.4",
+          "@duskmoon-dev/el-sign-page": "1.10.4",
+          "@duskmoon-dev/el-stack": "1.10.4",
+          "@duskmoon-dev/el-stat": "1.10.4",
+          "@duskmoon-dev/el-swap": "1.10.4",
+          "@duskmoon-dev/el-toggle-switch": "1.10.4",
+          "@duskmoon-dev/el-validator": "1.10.4"
+        },
+        "peerDependencies": {
+          "mermaid": ">=10.0.0"
+        }
+      },
+      "sourceAssets": [
+        "dist"
+      ],
+      "sourceChecks": [
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "packages/elements/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "1.10.4",
+        "highestStable": "1.10.4",
+        "maximumMajor": 1
+      }
+    },
+    {
+      "name": "duskmoon_phoenix",
+      "family": "phoenix",
+      "registry": "hex",
+      "sourceRepository": "phoenix-duskmoon-ui",
+      "sourceCommit": "b115f533c24587c0b6ea8ca1ec3598d9e782863a",
+      "sourcePath": "apps/phoenix_duskmoon",
+      "path": "phoenix/apps/duskmoon_phoenix",
+      "sourceVersion": "10.1.4",
+      "sourceRuntimeDependencies": {
+        "requirements": {
+          "ex_doc": "~> 0.40",
+          "jason": "~> 1.4",
+          "mdex": "~> 0.14",
+          "mdex_gfm": "~> 0.2",
+          "mdex_mermaid": "~> 0.4",
+          "phoenix": "~> 1.8",
+          "phoenix_html": "~> 4.4",
+          "phoenix_live_view": "~> 1.2"
+        },
+        "optionalRequirements": {
+          "plug": "~> 1.20"
+        }
+      },
+      "sourceAssets": [
+        "lib",
+        "priv/static",
+        "assets"
+      ],
+      "sourceChecks": [
+        "mix test",
+        "mix duskmoon_bundler.build duskmoon_storybook",
+        "mix prepublish",
+        "mix hex.build"
+      ],
+      "sourceDocs": [
+        "apps/phoenix_duskmoon/CHANGELOG.md"
+      ],
+      "sourceLicense": "MIT",
+      "licenseFiles": [
+        "apps/phoenix_duskmoon/LICENSE"
+      ],
+      "previousName": "phoenix_duskmoon",
+      "published": {
+        "status": 200,
+        "latest": "10.1.4",
+        "highestStable": "10.1.4",
+        "maximumMajor": 10,
+        "newNameStatus": 404
+      }
+    },
+    {
+      "name": "duskmoon_phoenix",
+      "family": "phoenix",
+      "registry": "npm",
+      "sourceRepository": "phoenix-duskmoon-ui",
+      "sourceCommit": "b115f533c24587c0b6ea8ca1ec3598d9e782863a",
+      "sourcePath": "apps/phoenix_duskmoon",
+      "path": "phoenix/apps/duskmoon_phoenix",
+      "sourceVersion": "10.1.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/art-elements": "1.10.3",
+          "@duskmoon-dev/components": "0.6.3",
+          "@duskmoon-dev/core": "1.21.5",
+          "@duskmoon-dev/css-art": "1.21.5",
+          "@duskmoon-dev/elements": "1.10.3",
+          "react": "19.3.1",
+          "react-dom": "19.3.1"
+        },
+        "peerDependencies": {
+          "tailwindcss": "^4.3.2",
+          "lexical": "0.53.0",
+          "@lexical/history": "0.53.0",
+          "@lexical/plain-text": "0.53.0"
+        }
+      },
+      "sourceAssets": [
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "package.json",
+        "assets/",
+        "priv/static/",
+        "priv/mdi/",
+        "priv/bsi/"
+      ],
+      "sourceChecks": [
+        "test"
+      ],
+      "sourceDocs": [
+        "apps/phoenix_duskmoon/CHANGELOG.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [
+        "apps/phoenix_duskmoon/LICENSE"
+      ],
+      "previousName": "phoenix_duskmoon",
+      "published": {
+        "status": 200,
+        "latest": "10.1.4",
+        "highestStable": "10.1.4",
+        "maximumMajor": 10,
+        "newNameStatus": 404
+      }
+    },
+    {
+      "name": "@duskmoon-dev/art-components",
+      "family": "react",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-react",
+      "sourceCommit": "1197b9553884542854c35ad61f26d73691cbcf0b",
+      "sourcePath": "packages/art-components",
+      "path": "packages/react/art-components",
+      "sourceVersion": "0.6.4",
+      "sourceRuntimeDependencies": {
+        "peerDependencies": {
+          "@duskmoon-dev/css-art": ">=1.17.0",
+          "react": ">=19.0.0",
+          "react-dom": ">=19.0.0"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "README.md"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "packages/art-components/CHANGELOG.md",
+        "packages/art-components/README.md"
+      ],
+      "sourceLicense": "MIT",
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "0.6.4",
+        "highestStable": "0.6.4",
+        "maximumMajor": 0
+      }
+    },
+    {
+      "name": "@duskmoon-dev/components",
+      "family": "react",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-react",
+      "sourceCommit": "1197b9553884542854c35ad61f26d73691cbcf0b",
+      "sourcePath": "packages/components",
+      "path": "packages/react/components",
+      "sourceVersion": "0.6.4",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "clsx": "^2.1.1",
+          "react-markdown": "^10.1.0",
+          "remark-breaks": "^4.0.0",
+          "remark-gfm": "^4.0.1",
+          "ajv": "^8.20.0",
+          "ajv-formats": "^3.0.1"
+        },
+        "peerDependencies": {
+          "@duskmoon-dev/core": ">=1.21.5",
+          "react": ">=19.0.0",
+          "react-dom": ">=19.0.0",
+          "lexical": "0.53.0",
+          "@lexical/history": "0.53.0",
+          "@lexical/plain-text": "0.53.0"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "README.md"
+      ],
+      "sourceChecks": [
+        "test",
+        "test:a11y",
+        "typecheck"
+      ],
+      "sourceDocs": [
+        "packages/components/CHANGELOG.md",
+        "packages/components/README.md"
+      ],
+      "sourceLicense": null,
+      "licenseFiles": [],
+      "published": {
+        "status": 200,
+        "latest": "0.6.4",
+        "highestStable": "0.6.4",
+        "maximumMajor": 0
+      }
+    }
+  ]
+}

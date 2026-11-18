@@ -1,0 +1,13 @@
+@layer components {
+  [data-dm-menu].menu[popover] {
+    flex-direction: column;
+  }
+  [data-dm-menu][data-placement="top"] { position-area: top; }
+  [data-dm-menu][data-placement="top-start"] { position-area: top span-inline-end; }
+  [data-dm-menu][data-placement="top-end"] { position-area: top span-inline-start; }
+  [data-dm-menu][data-placement="bottom"] { position-area: bottom; }
+  [data-dm-menu][data-placement="bottom-start"] { position-area: bottom span-inline-end; }
+  [data-dm-menu][data-placement="bottom-end"] { position-area: bottom span-inline-start; }
+  [data-dm-menu][data-placement="left"] { position-area: left; }
+  [data-dm-menu][data-placement="right"] { position-area: right; }
+}

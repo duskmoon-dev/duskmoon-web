@@ -1,0 +1,14 @@
+@source "../js/**/*.js";
+@source "../../lib/**/*.exs";
+@source "../../lib/**/*.ex";
+
+@import "tailwindcss";
+@import "@duskmoon-dev/core/base.css";
+
+/* DuskMoon UI design system — syntactic sugar for @duskmoon-dev/core */
+@plugin "@duskmoon-dev/core/plugin";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/themes/moonlight";
+@import "@duskmoon-dev/core/components";
+@import "./split-pane.css";
+@import "./native-menu.css";

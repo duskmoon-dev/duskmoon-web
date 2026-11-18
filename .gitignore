@@ -1,0 +1,30 @@
+# Bun, builds and browser results
+node_modules/
+dist/
+dist-tsc/
+out/
+.next/
+.astro/
+.cache/
+*.tsbuildinfo
+coverage/
+test-results/
+playwright-report/
+.playwright-mcp/
+*.tgz
+*.log
+
+# Machine-local state
+.env
+.env.local
+.env.*.local
+.direnv/
+.devenv/
+.DS_Store
+.trees/
+
+# Local immutable release staging
+.release/
+
+# Next.js generates this declaration for the CSS starter
+/apps/nextjs-starter/next-env.d.ts

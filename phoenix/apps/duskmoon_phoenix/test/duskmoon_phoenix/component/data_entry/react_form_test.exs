@@ -1,0 +1,332 @@
+defmodule DuskmoonPhoenix.Component.DataEntry.ReactFormTest do
+  use ExUnit.Case, async: true
+  use Phoenix.Component
+
+  import Phoenix.LiveViewTest
+  import DuskmoonPhoenix.Component.DataEntry.ReactForm
+
+  defmodule FakeChangeset do
+    defstruct errors: []
+
+    def traverse_errors(%__MODULE__{errors: errors}, fun),
+      do: Enum.into(errors, %{}, fn {field, error} -> {field, [fun.(error)]} end)
+  end
+
+  test "renders nested HEEX and typed initial JSON without Phoenix form attributes" do
+    assigns = %{values: %{enabled: false, profile: %{city: "Shanghai"}}}
+
+    html =
+      rendered_to_string(~H"""
+      <.dm_react_form id="profile" values={@values} phx-change="validate" phx-submit="save">
+        <h3>Profile</h3>
+        <.dm_react_field name={[:profile, :city]} type="text" label="City" />
+        <input name="enabled" type="checkbox" />
+      </.dm_react_form>
+      """)
+
+    document = LazyHTML.from_fragment(html)
+
+    assert LazyHTML.attribute(LazyHTML.query(document, "#profile"), "phx-hook") == [
+             "DuskmoonReactForm"
+           ]
+
+    assert [] = LazyHTML.attribute(LazyHTML.query(document, "#profile"), "phx-update")
+
+    assert ["ignore"] =
+             LazyHTML.attribute(LazyHTML.query(document, "#profile > form"), "phx-update")
+
+    assert LazyHTML.attribute(LazyHTML.query(document, "#profile"), "phx-change") == ["validate"]
+    assert LazyHTML.text(LazyHTML.query(document, "h3")) == "Profile"
+
+    assert [json] =
+             LazyHTML.attribute(LazyHTML.query(document, "#profile"), "data-initial-values")
+
+    assert Jason.decode!(json) == %{"enabled" => false, "profile" => %{"city" => "Shanghai"}}
+
+    assert Enum.empty?(
+             LazyHTML.query(document, "#profile > form[phx-submit], #profile > form[phx-change]")
+           )
+  end
+
+  test "serializes schema JSON without a parent form or overriding upstream defaults" do
+    schema = %{
+      type: "object",
+      required: ["count"],
+      properties: %{
+        count: %{type: "integer", default: 0, minimum: 0},
+        enabled: %{type: "boolean", default: false},
+        name: %{type: "string", title: "Name <&>\"", enum: ["Moon", "Sun"]}
+      }
+    }
+
+    html =
+      render_component(&dm_react_form/1, %{
+        id: "schema-profile",
+        schema: schema,
+        class: "schema-wrapper",
+        form_class: ["grid", nil, [false, "gap-6"]],
+        novalidate: false,
+        "phx-change": "validate",
+        "phx-submit": "save",
+        "phx-target": "#editor"
+      })
+
+    document = LazyHTML.from_fragment(html)
+    root = LazyHTML.query(document, "#schema-profile")
+
+    assert [json] = LazyHTML.attribute(root, "data-schema")
+    assert Jason.decode!(json) == Jason.decode!(Jason.encode!(schema))
+    assert [] = LazyHTML.attribute(root, "data-initial-values")
+    assert ["DuskmoonReactForm"] = LazyHTML.attribute(root, "phx-hook")
+    assert [] = LazyHTML.attribute(root, "phx-update")
+
+    assert ["ignore"] =
+             LazyHTML.attribute(LazyHTML.query(document, "[data-dm-react-schema]"), "phx-update")
+
+    assert ["validate"] = LazyHTML.attribute(root, "phx-change")
+    assert ["save"] = LazyHTML.attribute(root, "phx-submit")
+    assert ["#editor"] = LazyHTML.attribute(root, "phx-target")
+    assert ["schema-wrapper"] = LazyHTML.attribute(root, "class")
+    assert [] = LazyHTML.attribute(root, "form_class")
+
+    assert [] =
+             LazyHTML.attribute(LazyHTML.query(document, "[data-dm-react-schema]"), "class")
+
+    assert ["grid gap-6"] =
+             LazyHTML.attribute(
+               LazyHTML.query(document, "[data-dm-react-schema]"),
+               "data-form-class"
+             )
+
+    assert [] = LazyHTML.attribute(root, "novalidate")
+    assert Enum.empty?(LazyHTML.query(document, "form"))
+
+    assert [_] =
+             Enum.to_list(LazyHTML.query(document, "#schema-profile > [data-dm-react-schema]"))
+
+    assert "Loading interactive form…" ==
+             String.trim(LazyHTML.text(LazyHTML.query(document, "[data-dm-hook-status]")))
+  end
+
+  test "schema mode preserves explicit typed nested values and keeps optional HEEX outside the renderer" do
+    assigns = %{
+      schema: %{
+        type: "object",
+        properties: %{
+          profile: %{
+            type: "object",
+            properties: %{count: %{type: "integer"}, enabled: %{type: "boolean"}}
+          }
+        }
+      },
+      values: %{profile: %{count: 0, enabled: false}}
+    }
+
+    html =
+      rendered_to_string(~H"""
+      <.dm_react_form id="schema-explicit" schema={@schema} values={@values}>
+        <p id="schema-note">Server-owned help</p>
+      </.dm_react_form>
+      """)
+
+    document = LazyHTML.from_fragment(html)
+
+    assert [json] =
+             LazyHTML.attribute(
+               LazyHTML.query(document, "#schema-explicit"),
+               "data-initial-values"
+             )
+
+    assert %{"profile" => %{"count" => 0, "enabled" => false}} = Jason.decode!(json)
+    assert [_] = Enum.to_list(LazyHTML.query(document, "#schema-explicit > #schema-note"))
+    assert Enum.empty?(LazyHTML.query(document, "[data-dm-react-schema] #schema-note, form"))
+  end
+
+  test "classic mode keeps its native form and empty JSON defaults when values are omitted" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.dm_react_form id="classic-default">
+        <input name="notes" value="Draft" />
+        <button type="submit">Save</button>
+      </.dm_react_form>
+      """)
+
+    document = LazyHTML.from_fragment(html)
+
+    assert [json] =
+             LazyHTML.attribute(
+               LazyHTML.query(document, "#classic-default"),
+               "data-initial-values"
+             )
+
+    assert %{} == Jason.decode!(json)
+    assert [] = LazyHTML.attribute(LazyHTML.query(document, "#classic-default"), "data-schema")
+
+    assert [_] =
+             Enum.to_list(LazyHTML.query(document, "#classic-default > form[data-dm-react-form]"))
+
+    assert [_] =
+             Enum.to_list(LazyHTML.query(document, "#classic-default > form[novalidate]"))
+
+    assert [] = LazyHTML.attribute(LazyHTML.query(document, "#classic-default"), "novalidate")
+    assert [] = LazyHTML.attribute(LazyHTML.query(document, "#classic-default > form"), "class")
+
+    assert ["Draft"] =
+             LazyHTML.attribute(LazyHTML.query(document, "form input[name=notes]"), "value")
+
+    assert "Save" == LazyHTML.text(LazyHTML.query(document, "form button[type=submit]"))
+    assert Enum.empty?(LazyHTML.query(document, "[data-dm-react-schema], form form"))
+  end
+
+  test "enables browser constraints on the classic inner form when novalidate is false" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.dm_react_form id="native-validation" novalidate={false} phx-submit="save">
+        <input name="title" required pattern="[A-Z]+" />
+        <input name="email" type="email" required />
+        <input name="importance" type="number" min="0" max="1" step="0.1" />
+        <button type="submit">Save</button>
+      </.dm_react_form>
+      """)
+
+    document = LazyHTML.from_fragment(html)
+
+    assert [_] =
+             Enum.to_list(
+               LazyHTML.query(document, "#native-validation > form[data-dm-react-form]")
+             )
+
+    assert Enum.empty?(LazyHTML.query(document, "[novalidate]"))
+    assert [_] = Enum.to_list(LazyHTML.query(document, "form input[name=title][required]"))
+
+    assert ["[A-Z]+"] =
+             LazyHTML.attribute(LazyHTML.query(document, "input[name=title]"), "pattern")
+
+    assert ["email"] = LazyHTML.attribute(LazyHTML.query(document, "input[name=email]"), "type")
+    assert ["0"] = LazyHTML.attribute(LazyHTML.query(document, "input[name=importance]"), "min")
+    assert ["1"] = LazyHTML.attribute(LazyHTML.query(document, "input[name=importance]"), "max")
+  end
+
+  test "classic form layout classes are independent of the hook wrapper" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.dm_react_form
+        id="layout-form"
+        class={["hidden", "max-w-lg"]}
+        form_class={["flex", "gap-2", "items-end"]}
+        phx-submit="save"
+      >
+        <.dm_react_field name="name" label="Name" class="block flex-1" />
+        <button type="submit">Create</button>
+      </.dm_react_form>
+      """)
+
+    document = LazyHTML.from_fragment(html)
+    wrapper = LazyHTML.query(document, "#layout-form")
+    form = LazyHTML.query(document, "#layout-form > form[data-dm-react-form]")
+
+    assert ["hidden max-w-lg"] = LazyHTML.attribute(wrapper, "class")
+    assert ["flex gap-2 items-end"] = LazyHTML.attribute(form, "class")
+    assert ["DuskmoonReactForm"] = LazyHTML.attribute(wrapper, "phx-hook")
+    assert [] = LazyHTML.attribute(wrapper, "phx-update")
+    assert ["ignore"] = LazyHTML.attribute(form, "phx-update")
+    assert ["save"] = LazyHTML.attribute(wrapper, "phx-submit")
+    assert [] = LazyHTML.attribute(form, "phx-submit")
+    assert [] = LazyHTML.attribute(wrapper, "form_class")
+
+    assert ["block flex-1 dm-react-field"] =
+             LazyHTML.attribute(LazyHTML.query(form, "[data-dm-react-field]"), "class")
+
+    assert "Create" = LazyHTML.text(LazyHTML.query(form, "button[type=submit]"))
+  end
+
+  test "formats changeset errors as JSON and supports success replies" do
+    changeset = %FakeChangeset{errors: [profile: {"is invalid", []}]}
+
+    assert DuskmoonPhoenix.Component.DataEntry.ReactForm.validation_reply(changeset) == %{
+             status: "error",
+             errors: %{profile: ["is invalid"]}
+           }
+
+    assert DuskmoonPhoenix.Component.DataEntry.ReactForm.success_reply("Saved") == %{
+             status: "ok",
+             message: "Saved"
+           }
+  end
+
+  test "serializes supported control attributes and preserves wrapper globals" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.dm_react_field
+        name="count"
+        type="number"
+        label="Seats"
+        disabled
+        placeholder="Enter seats"
+        autocomplete="off"
+        required
+        readonly
+        min={0}
+        max={10}
+        step={2}
+        rows={5}
+        id="seat-field"
+        class="full-width"
+        title="Seat allocation"
+        data-owner="billing"
+      />
+      """)
+
+    document = LazyHTML.from_fragment(html)
+    wrapper = LazyHTML.query(document, "#seat-field")
+    assert [json] = LazyHTML.attribute(wrapper, "data-dm-react-field")
+
+    assert %{
+             "name" => "count",
+             "type" => "number",
+             "label" => "Seats",
+             "disabled" => true,
+             "placeholder" => "Enter seats",
+             "autocomplete" => "off",
+             "required" => true,
+             "readonly" => true,
+             "min" => 0,
+             "max" => 10,
+             "step" => 2,
+             "rows" => 5
+           } = config = Jason.decode!(json)
+
+    refute Map.has_key?(config, "title")
+    refute Map.has_key?(config, "id")
+    refute Map.has_key?(config, "class")
+    refute Map.has_key?(config, "data-owner")
+    assert ["full-width dm-react-field"] = LazyHTML.attribute(wrapper, "class")
+    assert ["Seat allocation"] = LazyHTML.attribute(wrapper, "title")
+    assert ["billing"] = LazyHTML.attribute(wrapper, "data-owner")
+
+    for attribute <- ~w(disabled placeholder autocomplete required readonly min max step rows) do
+      assert [] = LazyHTML.attribute(wrapper, attribute)
+    end
+  end
+
+  test "field defaults preserve enabled editable optional controls" do
+    html = render_component(&dm_react_field/1, %{name: "name"})
+    document = LazyHTML.from_fragment(html)
+
+    assert [json] =
+             LazyHTML.attribute(
+               LazyHTML.query(document, "[data-dm-react-field]"),
+               "data-dm-react-field"
+             )
+
+    assert %{"disabled" => false, "required" => false, "readonly" => false} = Jason.decode!(json)
+  end
+end

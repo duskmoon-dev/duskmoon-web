@@ -1,0 +1,258 @@
+---
+import pkg from '../../../../../packages/css/core/package.json';
+
+interface NavItem {
+  title: string;
+  href?: string;
+  items?: NavItem[];
+  badge?: string;
+}
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const version = `v${pkg.version}`;
+
+const navigation: NavItem[] = [
+  {
+    title: 'Getting Started',
+    items: [
+      { title: 'Installation', href: `${base}docs/en/getting-started/installation/` },
+      { title: 'Quick Start', href: `${base}docs/en/getting-started/quick-start/` },
+      { title: 'Configuration', href: `${base}docs/en/getting-started/configuration/` },
+    ],
+  },
+  {
+    title: 'Layout',
+    items: [
+      { title: 'Grid', href: `${base}docs/en/layout/grid/`, badge: 'new' },
+      { title: 'Sidebar Layout', href: `${base}docs/en/layout/sidebar-layout/`, badge: 'new' },
+      { title: 'Indicator', href: `${base}docs/en/components/indicator/`, badge: 'new' },
+      { title: 'Join', href: `${base}docs/en/components/join/`, badge: 'new' },
+      { title: 'Stack', href: `${base}docs/en/components/stack/`, badge: 'new' },
+      { title: 'Hero', href: `${base}docs/en/components/hero/`, badge: 'new' },
+      { title: 'Footer', href: `${base}docs/en/components/footer/`, badge: 'new' },
+      { title: 'Mask', href: `${base}docs/en/components/mask/`, badge: 'new' },
+    ],
+  },
+  {
+    title: 'Actions',
+    items: [
+      { title: 'Overview', href: `${base}docs/en/components/actions/`, badge: 'new' },
+      { title: 'Button', href: `${base}docs/en/components/button/` },
+      { title: 'Dropdown', href: `${base}docs/en/components/dropdown/`, badge: 'new' },
+      { title: 'FAB / Speed Dial', href: `${base}docs/en/components/fab/`, badge: 'new' },
+      { title: 'Swap', href: `${base}docs/en/components/swap/`, badge: 'new' },
+      { title: 'Theme Controller', href: `${base}docs/en/components/theme-controller/`, badge: 'new' },
+      { title: 'Toggle Button', href: `${base}docs/en/components/toggle/` },
+    ],
+  },
+  {
+    title: 'Forms',
+    items: [
+      { title: 'Form', href: `${base}docs/en/components/form/` },
+      { title: 'Form Group', href: `${base}docs/en/components/form-group/` },
+      { title: 'Fieldset', href: `${base}docs/en/components/form-group/#fieldset` },
+      { title: 'Label', href: `${base}docs/en/components/form-group/#labels` },
+      { title: 'Validator', href: `${base}docs/en/components/validator/` },
+      { title: 'Filter Group', href: `${base}docs/en/components/filter-group/` },
+      { title: 'Input', href: `${base}docs/en/components/input/` },
+      { title: 'Textarea', href: `${base}docs/en/components/textarea/` },
+      { title: 'Select', href: `${base}docs/en/components/select/` },
+      { title: 'Multi-Select', href: `${base}docs/en/components/multi-select/` },
+      { title: 'Cascader', href: `${base}docs/en/components/cascader/` },
+      { title: 'Tree Select', href: `${base}docs/en/components/tree-select/` },
+      { title: 'Autocomplete', href: `${base}docs/en/components/autocomplete/` },
+      { title: 'Checkbox', href: `${base}docs/en/components/checkbox/` },
+      { title: 'Radio', href: `${base}docs/en/components/radio/` },
+      { title: 'Switch / Toggle', href: `${base}docs/en/components/switch/` },
+      { title: 'Range', href: `${base}docs/en/components/range/` },
+      { title: 'Slider', href: `${base}docs/en/components/slider/` },
+      { title: 'Rating', href: `${base}docs/en/components/rating/` },
+      { title: 'Datepicker', href: `${base}docs/en/components/datepicker/` },
+      { title: 'Calendar', href: `${base}docs/en/components/datepicker/#inline-calendar` },
+      { title: 'Time Input', href: `${base}docs/en/components/time-input/` },
+      { title: 'OTP Input', href: `${base}docs/en/components/otp-input/` },
+      { title: 'Segment Control', href: `${base}docs/en/components/segment-control/` },
+      { title: 'File Upload', href: `${base}docs/en/components/file-upload/` },
+      { title: 'File Input', href: `${base}docs/en/components/file-input/` },
+    ],
+  },
+  {
+    title: 'Data Display',
+    items: [
+      { title: 'Stat', href: `${base}docs/en/components/stat/` },
+      { title: 'Kbd', href: `${base}docs/en/components/kbd/` },
+      { title: 'Carousel', href: `${base}docs/en/components/carousel/` },
+      { title: 'Countdown', href: `${base}docs/en/components/countdown/` },
+      { title: 'Diff', href: `${base}docs/en/components/diff/` },
+      { title: 'Card', href: `${base}docs/en/components/card/` },
+      { title: 'Chat', href: `${base}docs/en/components/chat/` },
+      { title: 'Badge', href: `${base}docs/en/components/badge/` },
+      { title: 'Avatar', href: `${base}docs/en/components/avatar/` },
+      { title: 'Chip', href: `${base}docs/en/components/chip/` },
+      { title: 'Code Block', href: `${base}docs/en/components/code-block/`, badge: 'new' },
+      { title: 'Table', href: `${base}docs/en/components/table/` },
+      { title: 'List', href: `${base}docs/en/components/list/` },
+      { title: 'Timeline', href: `${base}docs/en/components/timeline/` },
+      { title: 'Skeleton', href: `${base}docs/en/components/skeleton/` },
+      { title: 'Markdown Body', href: `${base}docs/en/components/markdown-body/` },
+    ],
+  },
+  {
+    title: 'Optional Effects',
+    items: [
+      { title: 'Aura', href: `${base}docs/en/components/aura/` },
+      { title: 'Hover 3D', href: `${base}docs/en/components/hover-3d/` },
+      { title: 'Hover Gallery', href: `${base}docs/en/components/hover-gallery/` },
+      { title: 'Text Rotate', href: `${base}docs/en/components/text-rotate/` },
+    ],
+  },
+  {
+    title: 'Feedback',
+    items: [
+      { title: 'Alert', href: `${base}docs/en/components/alert/` },
+      { title: 'Toast', href: `${base}docs/en/components/toast/` },
+      { title: 'Snackbar', href: `${base}docs/en/components/snackbar/` },
+      { title: 'Dialog', href: `${base}docs/en/components/dialog/` },
+      { title: 'Modal', href: `${base}docs/en/components/modal/` },
+      { title: 'Progress', href: `${base}docs/en/components/progress/` },
+      { title: 'Tooltip', href: `${base}docs/en/components/tooltip/` },
+      { title: 'Popover', href: `${base}docs/en/components/popover/` },
+    ],
+  },
+  {
+    title: 'Navigation',
+    items: [
+      { title: 'Navbar', href: `${base}docs/en/components/navbar/` },
+      { title: 'Megamenu', href: `${base}docs/en/components/megamenu/`, badge: 'new' },
+      { title: 'Link', href: `${base}docs/en/components/link/`, badge: 'new' },
+      { title: 'Tabs', href: `${base}docs/en/components/tabs/` },
+      { title: 'Breadcrumbs', href: `${base}docs/en/components/breadcrumbs/` },
+      { title: 'Pagination', href: `${base}docs/en/components/pagination/` },
+      { title: 'Stepper / Steps', href: `${base}docs/en/components/stepper/` },
+      { title: 'Menu', href: `${base}docs/en/components/menu/` },
+      { title: 'Circle Menu', href: `${base}docs/en/components/circle-menu/`, badge: 'new' },
+      { title: 'Nested Menu', href: `${base}docs/en/components/nested-menu/` },
+      { title: 'Drawer', href: `${base}docs/en/components/drawer/` },
+      { title: 'Bottom Navigation / Dock', href: `${base}docs/en/components/bottom-navigation/` },
+    ],
+  },
+  {
+    title: 'Surfaces',
+    items: [
+      { title: 'App Bar', href: `${base}docs/en/components/appbar/` },
+      { title: 'Accordion', href: `${base}docs/en/components/accordion/` },
+      { title: 'Collapse', href: `${base}docs/en/components/collapse/` },
+      { title: 'Bottom Sheet', href: `${base}docs/en/components/bottom-sheet/` },
+      { title: 'Divider', href: `${base}docs/en/components/divider/` },
+    ],
+  },
+  {
+    title: 'CSS Art',
+    items: [
+      { title: 'Moon', href: `${base}docs/en/css-art/moon/`, badge: 'new' },
+      { title: 'Sun', href: `${base}docs/en/css-art/sun/`, badge: 'new' },
+      { title: 'Mountain', href: `${base}docs/en/css-art/mountain/`, badge: 'new' },
+      { title: 'Atom', href: `${base}docs/en/css-art/atom/`, badge: 'new' },
+      { title: 'Eclipse', href: `${base}docs/en/css-art/eclipse/`, badge: 'new' },
+      { title: 'Plasma Ball', href: `${base}docs/en/css-art/plasma-ball/`, badge: 'new' },
+      { title: 'Snow', href: `${base}docs/en/css-art/snow/`, badge: 'new' },
+      { title: 'Cat Stargazer', href: `${base}docs/en/css-art/cat-stargazer/`, badge: 'new' },
+      { title: 'Color Spin', href: `${base}docs/en/css-art/color-spin/`, badge: 'new' },
+      { title: 'Synthwave & Starfield', href: `${base}docs/en/css-art/synthwave-starfield/`, badge: 'new' },
+      { title: 'Circular Gallery', href: `${base}docs/en/css-art/circular-gallery/`, badge: 'new' },
+      { title: 'Flower Animation', href: `${base}docs/en/css-art/flower-animation/`, badge: 'new' },
+      { title: 'Gemini Input', href: `${base}docs/en/css-art/gemini-input/`, badge: 'new' },
+      { title: 'Snowball Preloader', href: `${base}docs/en/css-art/snowball-preloader/`, badge: 'new' },
+      { title: 'Nintendo CSSwitch', href: `${base}docs/en/css-art/csswitch/`, badge: 'new' },
+    ],
+  },
+  {
+    title: 'Theming',
+    items: [
+      { title: 'Overview', href: `${base}docs/en/theming/overview/` },
+      { title: 'Themes', href: `${base}docs/en/theming/themes/`, badge: 'new' },
+      { title: 'Customization', href: `${base}docs/en/theming/customization/` },
+      { title: 'Color Tokens', href: `${base}docs/en/theming/colors/` },
+    ],
+  },
+  {
+    title: 'API Reference',
+    items: [
+      { title: 'Plugin Options', href: `${base}docs/en/api/plugin-options/` },
+      { title: 'Theme Tokens', href: `${base}docs/en/api/theme-tokens/` },
+    ],
+  },
+  {
+    title: 'Guides',
+    items: [
+      { title: 'Next.js', href: `${base}docs/en/guides/nextjs/` },
+      { title: 'Astro', href: `${base}docs/en/guides/astro/` },
+      { title: 'Vue', href: `${base}docs/en/guides/vue/` },
+      { title: 'React', href: `${base}docs/en/guides/react/` },
+    ],
+  },
+];
+
+function isActive(href: string, current: string): boolean {
+  return current.includes(href) || current === href;
+}
+---
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <a href={base} class="sidebar-logo">
+      <span class="logo-text">@duskmoon-dev/core</span>
+      <span class="logo-version">{version}</span>
+    </a>
+  </div>
+
+  <nav class="sidebar-nav">
+    {navigation.map(section => (
+      <div class="nav-section">
+        <h3 class="nav-section-title">{section.title}</h3>
+        {section.items && (
+          <ul class="nav-list">
+            {section.items.map(item => (
+              <li class="nav-item">
+                <a
+                  href={item.href}
+                  class:list={[
+                    'nav-link',
+                    { active: item.href && isActive(item.href, currentPath) }
+                  ]}
+                >
+                  {item.title}
+                  {item.badge && (
+                    <span class="nav-badge">{item.badge}</span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ))}
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-links">
+      <a href="https://github.com/duskmoon-dev/duskmoonui" target="_blank" rel="noopener" class="sidebar-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        GitHub
+      </a>
+      <a href="https://www.npmjs.com/package/@duskmoon-dev/core" target="_blank" rel="noopener" class="sidebar-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z"/>
+        </svg>
+        npm
+      </a>
+    </div>
+  </div>
+</aside>

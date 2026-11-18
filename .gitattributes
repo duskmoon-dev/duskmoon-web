@@ -1,0 +1,2 @@
+/packages/css/core/tests/visual/snapshots/**/*.png filter=lfs diff=lfs merge=lfs -text
+/packages/react/visual-review-screenshots/*.png filter=lfs diff=lfs merge=lfs -text

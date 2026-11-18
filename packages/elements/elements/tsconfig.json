@@ -1,0 +1,220 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist/types",
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "composite": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"],
+  "references": [
+    {
+      "path": "../base"
+    },
+    {
+      "path": "../components/button"
+    },
+    {
+      "path": "../components/card"
+    },
+    {
+      "path": "../components/input"
+    },
+    {
+      "path": "../components/markdown"
+    },
+    {
+      "path": "../components/switch"
+    },
+    {
+      "path": "../components/alert"
+    },
+    {
+      "path": "../components/dialog"
+    },
+    {
+      "path": "../components/badge"
+    },
+    {
+      "path": "../components/chart"
+    },
+    {
+      "path": "../components/chip"
+    },
+    {
+      "path": "../components/tooltip"
+    },
+    {
+      "path": "../components/progress"
+    },
+    {
+      "path": "../components/form"
+    },
+    {
+      "path": "../components/slider"
+    },
+    {
+      "path": "../components/file-upload"
+    },
+    {
+      "path": "../components/autocomplete"
+    },
+    {
+      "path": "../components/datepicker"
+    },
+    {
+      "path": "../components/datetime"
+    },
+    {
+      "path": "../components/bottom-navigation"
+    },
+    {
+      "path": "../components/breadcrumbs"
+    },
+    {
+      "path": "../components/drawer"
+    },
+    {
+      "path": "../components/menu"
+    },
+    {
+      "path": "../components/navbar"
+    },
+    {
+      "path": "../components/pagination"
+    },
+    {
+      "path": "../components/stepper"
+    },
+    {
+      "path": "../components/tabs"
+    },
+    {
+      "path": "../components/accordion"
+    },
+    {
+      "path": "../components/bottom-sheet"
+    },
+    {
+      "path": "../components/popover"
+    },
+    {
+      "path": "../components/table"
+    },
+    {
+      "path": "../components/form-group"
+    },
+    {
+      "path": "../components/navigation"
+    },
+    {
+      "path": "../components/nested-menu"
+    },
+    {
+      "path": "../components/otp-input"
+    },
+    {
+      "path": "../components/segment-control"
+    },
+    {
+      "path": "../components/theme-controller"
+    },
+    {
+      "path": "../components/time-input"
+    },
+    {
+      "path": "../components/code-engine"
+    },
+    {
+      "path": "../components/circle-menu"
+    },
+    {
+      "path": "../components/chat"
+    },
+    {
+      "path": "../components/carousel"
+    },
+    {
+      "path": "../components/console-page"
+    },
+    {
+      "path": "../components/countdown"
+    },
+    {
+      "path": "../components/diff"
+    },
+    {
+      "path": "../components/dropdown"
+    },
+    {
+      "path": "../components/fab"
+    },
+    {
+      "path": "../components/file-input"
+    },
+    {
+      "path": "../components/filter-group"
+    },
+    {
+      "path": "../components/footer"
+    },
+    {
+      "path": "../components/hero"
+    },
+    {
+      "path": "../components/home-page"
+    },
+    {
+      "path": "../components/indicator"
+    },
+    {
+      "path": "../components/join"
+    },
+    {
+      "path": "../components/kbd"
+    },
+    {
+      "path": "../components/link"
+    },
+    {
+      "path": "../components/loading"
+    },
+    {
+      "path": "../components/mask"
+    },
+    {
+      "path": "../components/megamenu"
+    },
+    {
+      "path": "../components/radial-progress"
+    },
+    {
+      "path": "../components/range"
+    },
+    {
+      "path": "../components/sidebar-layout"
+    },
+    {
+      "path": "../components/sign-page"
+    },
+    {
+      "path": "../components/stack"
+    },
+    {
+      "path": "../components/stat"
+    },
+    {
+      "path": "../components/swap"
+    },
+    {
+      "path": "../components/toggle-switch"
+    },
+    {
+      "path": "../components/validator"
+    }
+  ]
+}

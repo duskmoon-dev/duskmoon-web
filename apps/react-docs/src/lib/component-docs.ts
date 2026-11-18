@@ -1,0 +1,2255 @@
+import fs from "node:fs";
+import path from "node:path";
+import * as ts from "typescript";
+import {
+  componentPageContentFor,
+  type ComponentPageContent,
+} from "./component-page-content";
+import {
+  categoryForTarget,
+  DOC_CATEGORIES,
+  type DocCategoryId,
+} from "./docs-categories";
+import { docsPath } from "./paths";
+import { chatDemoExamples } from "./chat-demo-examples";
+import { dmLayoutDemoExamples } from "./dm-layout-demo-examples";
+
+type Target = {
+  id: string;
+  kind: string;
+  source: string;
+  exportName: string | null;
+  directory: string | null;
+  packageSubpath: string | null;
+  status: string;
+  packageName?: "components" | "art-components";
+  manualScenarios?: string[];
+};
+
+type Manifest = {
+  publicTargets: Target[];
+  internalTargets: Target[];
+};
+
+export type ApiProp = {
+  name: string;
+  type: string;
+  required: boolean;
+  description: string;
+};
+
+export type ApiSection = {
+  name: string;
+  kind: "interface" | "type";
+  extendsText?: string;
+  props: ApiProp[];
+  definition?: string;
+};
+
+export type ComponentDoc = Target & {
+  title: string;
+  route: string;
+  categoryId: DocCategoryId;
+  category: string;
+  intro: string;
+  pageContent: ComponentPageContent;
+  importPath: string;
+  typeFile: string | null;
+  testFile: string | null;
+  apiSource: string | null;
+  testSource: string | null;
+  scenarios: string[];
+  keyProps: string[];
+  api: ApiSection[];
+  demos: DemoSpec[];
+};
+
+export type DemoSpec = {
+  title: string;
+  description: string;
+  code: string;
+  source: "authored" | "test-backed" | "type-driven";
+};
+
+function findRepoRoot() {
+  const candidates = [
+    path.resolve(import.meta.dirname, "../../../.."),
+    path.resolve(import.meta.dirname, "../../../../.."),
+    path.resolve(process.cwd(), "../.."),
+    process.cwd(),
+  ];
+
+  return (
+    candidates.find((candidate) =>
+      fs.existsSync(
+        path.join(
+          candidate,
+          "packages/react/components/scripts/parity/component-api.manifest.json",
+        ),
+      ),
+    ) ?? path.resolve(import.meta.dirname, "../../../..")
+  );
+}
+
+const repoRoot = findRepoRoot();
+const manifestPath = path.join(
+  repoRoot,
+  "packages/react/components/scripts/parity/component-api.manifest.json",
+);
+const componentsRoot = path.join(
+  repoRoot,
+  "packages/react/components/src/components",
+);
+const artComponentsRoot = path.join(repoRoot, "packages/react/art-components/src");
+const artComponentsTest = path.join(
+  repoRoot,
+  "packages/react/art-components/tests/art-components.test.tsx",
+);
+
+// Composer entries share a directory, but their public contracts and live demos
+// differ. Do not select an arbitrary Chat type/test file for these exports.
+const composerDocSources = new Map<
+  string,
+  { typeFile: string; testFile: string; apiNames: string[]; demoTitle: string }
+>([
+  [
+    "chat-session-composer",
+    {
+      typeFile: "ChatSessionComposer.types.ts",
+      testFile: "ChatSessionComposer.test.tsx",
+      apiNames: ["ChatSessionComposerProps", "ChatSessionComposerHandle"],
+      demoTitle: "Semantic Composer and Recovery",
+    },
+  ],
+  [
+    "rich-chat-composer",
+    {
+      typeFile: "ChatSessionComposer.types.ts",
+      testFile: "rich/nodes.test.ts",
+      apiNames: [
+        "RichChatComposerProps",
+        "ChatSessionComposerProps",
+        "RichChatComposerHandle",
+      ],
+      demoTitle: "Rich Composer and Authoritative Queue",
+    },
+  ],
+  [
+    "chat-authoritative-queue",
+    {
+      typeFile: "ComposerQueue.types.ts",
+      testFile: "ChatAuthoritativeQueue.test.tsx",
+      apiNames: ["ChatAuthoritativeQueueProps", "ComposerQueueEditorProps"],
+      demoTitle: "Rich Composer and Authoritative Queue",
+    },
+  ],
+  [
+    "composer-settings",
+    {
+      typeFile: "ComposerQueue.types.ts",
+      testFile: "ComposerSettings.test.tsx",
+      apiNames: [
+        "ComposerSettingsProps",
+        "ComposerSetting",
+        "ComposerSettingChoice",
+        "ComposerSettingRequest",
+        "ComposerSettingResult",
+      ],
+      demoTitle: "Rich Composer and Authoritative Queue",
+    },
+  ],
+]);
+
+function artTarget(
+  id: string,
+  exportName: string,
+  manualScenarios: string[],
+): Target {
+  return {
+    id,
+    kind: "art-component",
+    source: "art-components",
+    exportName,
+    directory: null,
+    packageSubpath: null,
+    status: "implemented",
+    packageName: "art-components",
+    manualScenarios,
+  };
+}
+
+const artComponentTargets: Target[] = [
+  artTarget("art-moon", "ArtMoon", ["Renders crescent and glow variants"]),
+  artTarget("art-sun", "ArtSun", ["Renders rays, sunset, and pulse variants"]),
+  artTarget("art-atom", "ArtAtom", ["Renders electron orbit structure"]),
+  artTarget("art-eclipse", "ArtEclipse", ["Renders layered eclipse structure"]),
+  artTarget("art-mountain", "ArtMountain", [
+    "Renders mountain, tree, and borealis layers",
+  ]),
+  artTarget("art-snowflake", "ArtSnowflake", [
+    "Supports unicode and falling snowflake variants",
+  ]),
+  artTarget("art-plasma-ball", "ArtPlasmaBall", [
+    "Renders interactive plasma rays and switch state",
+  ]),
+  artTarget("art-circular-gallery", "ArtCircularGallery", [
+    "Renders targetable gallery cards",
+  ]),
+  artTarget("art-cat-stargazer", "ArtCatStargazer", [
+    "Renders the stargazing scene structure",
+  ]),
+  artTarget("art-flower-animation", "ArtFlowerAnimation", [
+    "Renders flowers, grass, and animated bubbles",
+  ]),
+  artTarget("art-color-spin", "ArtColorSpin", [
+    "Renders generated color spin segments",
+  ]),
+  artTarget("art-synthwave-starfield", "ArtSynthwaveStarfield", [
+    "Supports pausing the starfield animation",
+  ]),
+  artTarget("art-csswitch", "ArtCsswitch", [
+    "Renders the console body and joycon controls",
+  ]),
+  artTarget("art-snowball-preloader", "ArtSnowballPreloader", [
+    "Renders snowball preloader rings and track",
+  ]),
+  artTarget("art-gemini-input", "ArtGeminiInput", [
+    "Renders textarea controls and action buttons",
+  ]),
+];
+
+function readManifest(): Manifest {
+  return JSON.parse(fs.readFileSync(manifestPath, "utf8")) as Manifest;
+}
+
+function titleCase(id: string) {
+  return id
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function componentName(target: Target) {
+  if (target.exportName) return target.exportName;
+  return target.id
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+}
+
+function sentenceCase(text: string) {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+function humanList(items: string[]) {
+  if (items.length === 0) return "";
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
+}
+
+const semanticColors = [
+  "primary",
+  "secondary",
+  "tertiary",
+  "accent",
+  "neutral",
+  "base",
+  "info",
+  "success",
+  "warning",
+  "error",
+] as const;
+
+const semanticColorComponentIds = new Set([
+  "alert",
+  "auto-complete",
+  "badge",
+  "button",
+  "chat",
+  "checkbox",
+  "divider",
+  "progress",
+  "radio",
+  "rate",
+  "slider",
+  "switch",
+  "tag",
+  "timeline",
+]);
+
+function semanticColorsDeclaration() {
+  return `const colors = [\n${semanticColors.map((color) => `  "${color}"`).join(",\n")}\n] as const;`;
+}
+
+function scenarioPhrase(scenarios: string[]) {
+  return scenarios
+    .slice(0, 3)
+    .map((scenario) =>
+      scenario
+        .replace(
+          /^(renders|supports|applies|exposes|uses|calls|adds|maps|binds|validates)\s+/i,
+          "",
+        )
+        .replace(/\.$/, ""),
+    )
+    .map(sentenceCase);
+}
+
+function introFor(
+  target: Target,
+  name: string,
+  scenarios: string[],
+  keyProps: string[],
+) {
+  const features = scenarioPhrase(scenarios);
+  const featureText = features.length
+    ? ` It is documented here around ${humanList(features).toLowerCase()}.`
+    : "";
+  const propText = keyProps.length
+    ? ` The main API surface centers on ${humanList(keyProps.map((prop) => `\`${prop}\``))}.`
+    : "";
+
+  if (target.kind === "dm-workflow-component") {
+    return `${name} is a DuskMoon-prefixed workflow component exported by this React package.${featureText}${propText}`;
+  }
+
+  if (target.kind === "art-component") {
+    return `${name} wraps a @duskmoon-dev/css-art illustration as a typed React component. Import the art component styles once in the application entry before rendering it.${featureText}${propText}`;
+  }
+
+  if (target.kind === "internal-component") {
+    return `${name} is an internal implementation target used by higher-level DuskMoon workflow components. This standalone page records the maintainer-facing API and scenarios that keep the internal surface explicit.${featureText}${propText}`;
+  }
+
+  if (target.kind === "infrastructure-export") {
+    return `${name} is a compatibility export for theme, render, or helper behavior expected by component consumers.${featureText}${propText}`;
+  }
+
+  return `${name} is a standard DuskMoon React component exported as part of the component library.${featureText}${propText}`;
+}
+
+function findTypeFile(target: Target, name: string) {
+  const composer = composerDocSources.get(target.id);
+  if (composer) return path.join(componentsRoot, "chat", composer.typeFile);
+  if (target.packageName === "art-components") {
+    return path.join(artComponentsRoot, "index.tsx");
+  }
+
+  if (!target.directory) return null;
+
+  const componentDir = path.join(componentsRoot, target.directory);
+  if (!fs.existsSync(componentDir)) return null;
+
+  const direct = path.join(componentDir, `${name}.types.ts`);
+  if (fs.existsSync(direct)) return direct;
+
+  const generatedTypes = fs
+    .readdirSync(componentDir)
+    .find((file) => file.endsWith(".types.ts"));
+  if (generatedTypes) return path.join(componentDir, generatedTypes);
+
+  for (const extension of [".tsx", ".ts"]) {
+    const implementation = path.join(componentDir, `${name}${extension}`);
+    if (fs.existsSync(implementation)) return implementation;
+  }
+
+  return null;
+}
+
+function findTestFile(target: Target, name: string) {
+  const composer = composerDocSources.get(target.id);
+  if (composer) return path.join(componentsRoot, "chat", composer.testFile);
+  if (target.packageName === "art-components") {
+    return artComponentsTest;
+  }
+
+  if (!target.directory) return null;
+
+  const componentDir = path.join(componentsRoot, target.directory);
+  if (!fs.existsSync(componentDir)) return null;
+
+  const direct = path.join(componentDir, `${name}.test.tsx`);
+  if (fs.existsSync(direct)) return direct;
+
+  return (
+    fs
+      .readdirSync(componentDir)
+      .find((file) => file.endsWith(".test.tsx") || file.endsWith(".test.ts"))
+      ?.replace(/^/, `${componentDir}/`) ?? null
+  );
+}
+
+function compactType(typeText: string) {
+  return typeText.replace(/\s+/g, " ").replace(/;$/, "").trim();
+}
+
+function splitInterfaceBody(source: string, interfaceName: string) {
+  const match = new RegExp(
+    `export\\s+interface\\s+${interfaceName}\\b([^\\{]*)\\{`,
+    "m",
+  ).exec(source);
+  if (!match || match.index === undefined) return null;
+
+  const start = match.index + match[0].length;
+  let depth = 1;
+  let index = start;
+
+  while (index < source.length && depth > 0) {
+    const char = source[index];
+    if (char === "{") depth += 1;
+    if (char === "}") depth -= 1;
+    index += 1;
+  }
+
+  return {
+    extendsText: match[1].replace(/^\s*extends\s*/, "").trim(),
+    body: source.slice(start, index - 1),
+  };
+}
+
+function parseProps(body: string): ApiProp[] {
+  const props: ApiProp[] = [];
+  const lines = body.split("\n");
+  let pendingComment = "";
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const rawLine = lines[index].trim();
+    if (!rawLine) continue;
+
+    if (rawLine.startsWith("/**")) {
+      const commentLines = [rawLine];
+      while (!lines[index].includes("*/") && index < lines.length - 1) {
+        index += 1;
+        commentLines.push(lines[index].trim());
+      }
+      pendingComment = commentLines
+        .join(" ")
+        .replace(/\/\*\*|\*\/|\*/g, "")
+        .trim();
+      continue;
+    }
+
+    if (rawLine.startsWith("//")) {
+      pendingComment = rawLine.replace(/^\/\/\s?/, "");
+      continue;
+    }
+
+    const propMatch = /^([A-Za-z_$][\w$-]*)\??:\s*(.+?);?$/.exec(rawLine);
+    if (!propMatch) continue;
+
+    props.push({
+      name: propMatch[1],
+      required: !rawLine.startsWith(`${propMatch[1]}?`),
+      type: compactType(propMatch[2]),
+      description: pendingComment,
+    });
+    pendingComment = "";
+  }
+
+  return props;
+}
+
+function parseApi(typeFile: string | null, name: string): ApiSection[] {
+  if (!typeFile || !fs.existsSync(typeFile)) return [];
+
+  const source = fs.readFileSync(typeFile, "utf8");
+  const preferredNames = [
+    `${name}Props`,
+    `${name}Ref`,
+    `${name}Item`,
+    `${name}ColumnType`,
+    `${name}ColumnsType`,
+  ];
+  const sections: ApiSection[] = [];
+  const interfaceNames = Array.from(
+    source.matchAll(/export\s+interface\s+([A-Za-z_$][\w$]*)/g),
+    (match) => match[1],
+  );
+  const typeNames = Array.from(
+    source.matchAll(/export\s+type\s+([A-Za-z_$][\w$]*)\s*=\s*([^;]+);/g),
+    (match) => ({ name: match[1], definition: compactType(match[2]) }),
+  );
+  const isArtTypeFile = typeFile.startsWith(artComponentsRoot);
+  const orderedInterfaceNames = isArtTypeFile
+    ? preferredNames.filter((item) => interfaceNames.includes(item))
+    : [
+        ...preferredNames.filter((item) => interfaceNames.includes(item)),
+        ...interfaceNames.filter((item) => !preferredNames.includes(item)),
+      ];
+  const orderedTypeNames = isArtTypeFile
+    ? preferredNames.flatMap((item) =>
+        typeNames.filter((typeInfo) => typeInfo.name === item),
+      )
+    : typeNames;
+
+  for (const interfaceName of orderedInterfaceNames) {
+    const parsed = splitInterfaceBody(source, interfaceName);
+    if (!parsed) continue;
+
+    sections.push({
+      name: interfaceName,
+      kind: "interface",
+      extendsText: parsed.extendsText,
+      props: parseProps(parsed.body),
+    });
+  }
+
+  for (const typeInfo of orderedTypeNames) {
+    if (sections.some((section) => section.name === typeInfo.name)) continue;
+    sections.push({
+      name: typeInfo.name,
+      kind: "type",
+      definition: typeInfo.definition,
+      props: [],
+    });
+  }
+
+  return sections;
+}
+
+/** Read readonly properties and multiline callbacks without truncating their types. */
+function parseComposerApi(typeFile: string, names: string[]): ApiSection[] {
+  const source = ts.createSourceFile(
+    typeFile,
+    fs.readFileSync(typeFile, "utf8"),
+    ts.ScriptTarget.Latest,
+    true,
+  );
+  return names.flatMap((name): ApiSection[] => {
+    const statement = source.statements.find(
+      (node) =>
+        (ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node)) &&
+        node.name.text === name,
+    );
+    if (!statement) return [];
+    if (ts.isTypeAliasDeclaration(statement))
+      return [
+        {
+          name,
+          kind: "type",
+          definition: compactType(statement.type.getText(source)),
+          props: [],
+        },
+      ];
+    if (!ts.isInterfaceDeclaration(statement)) return [];
+    return [
+      {
+        name,
+        kind: "interface",
+        extendsText: statement.heritageClauses
+          ?.flatMap((clause) =>
+            clause.types.map((type) => type.getText(source)),
+          )
+          .join(", "),
+        props: statement.members.flatMap((member): ApiProp[] => {
+          if (!ts.isPropertySignature(member) || !member.type) return [];
+          return [
+            {
+              name: member.name.getText(source),
+              required: !member.questionToken,
+              type: compactType(member.type.getText(source)),
+              description: ts
+                .getJSDocCommentsAndTags(member)
+                .map((comment) =>
+                  comment
+                    .getText(source)
+                    .replace(/\/\*\*|\*\/|\*/g, "")
+                    .replace(/\s+/g, " ")
+                    .trim(),
+                )
+                .join(" "),
+            },
+          ];
+        }),
+      },
+    ];
+  });
+}
+
+function keyPropsFromApi(api: ApiSection[]) {
+  return Array.from(
+    new Set(
+      api
+        .flatMap((section) => section.props)
+        .filter((prop) => prop.name !== "children" && prop.name !== "className")
+        .map((prop) => prop.name),
+    ),
+  ).slice(0, 6);
+}
+
+function scenariosFromTest(testFile: string | null) {
+  if (!testFile || !fs.existsSync(testFile)) return [];
+
+  const source = fs.readFileSync(testFile, "utf8");
+  return Array.from(
+    source.matchAll(/\b(?:test|it)\(\s*["'`]([^"'`]+)["'`]/g),
+    (match) => sentenceCase(match[1]),
+  );
+}
+
+function propsObjectFromApi(api: ApiSection[], target: Target) {
+  const propNames = keyPropsFromApi(api);
+  const props: string[] = [];
+
+  if (propNames.includes("items")) {
+    props.push('items={[{ key: "main", label: "Main", title: "Main" }]}');
+  }
+  if (propNames.includes("columns")) {
+    props.push('columns={[{ title: "Name", dataIndex: "name", key: "name" }]}');
+  }
+  if (propNames.includes("dataSource")) {
+    props.push('dataSource={[{ key: 1, name: "DuskMoon" }]}');
+  }
+  if (propNames.includes("rowData")) {
+    props.push('rowData={[{ name: "DuskMoon" }]}');
+  }
+  if (propNames.includes("treeData")) {
+    props.push('treeData={[{ key: "root", title: "Root" }]}');
+  }
+  if (propNames.includes("options")) {
+    props.push('options={[{ label: "Enabled", value: "enabled" }]}');
+  }
+  if (propNames.includes("value")) {
+    props.push('value="enabled"');
+  }
+  if (propNames.includes("defaultValue")) {
+    props.push('defaultValue="enabled"');
+  }
+  if (propNames.includes("total")) {
+    props.push("total={120}");
+  }
+  if (propNames.includes("current")) {
+    props.push("current={1}");
+  }
+  if (propNames.includes("pageSize")) {
+    props.push("pageSize={10}");
+  }
+  if (propNames.includes("title")) {
+    props.push('title="DuskMoon"');
+  }
+  if (propNames.includes("name")) {
+    props.push('name="DuskMoon"');
+  }
+  if (propNames.includes("open")) {
+    props.push("open");
+  }
+  if (propNames.includes("status")) {
+    props.push('status="success"');
+  }
+  if (propNames.includes("color")) {
+    props.push('color="primary"');
+  }
+  if (
+    propNames.includes("appearance") &&
+    !["alert", "button", "card"].includes(target.id)
+  ) {
+    props.push('appearance="tonal"');
+  }
+  if (propNames.includes("onChange")) {
+    props.push("onChange={(value) => console.log(value)}");
+  }
+  if (propNames.includes("onSearch")) {
+    props.push("onSearch={(values) => console.log(values)}");
+  }
+
+  if (target.id === "dm-query") {
+    props.push(`queryItem={[{
+    key: "name",
+    type: "input",
+    label: "Name",
+    name: "name"
+  }]}`);
+  }
+  if (target.id === "dm-search") {
+    props.push(`items={[{
+    key: "name",
+    title: "Name",
+    dataIndex: "name",
+    search: { type: "input" }
+  }]}`);
+  }
+  if (target.id === "button") {
+    props.push('color="primary"', 'appearance="filled"');
+  }
+  if (target.id === "alert") {
+    props.push('color="success"', 'appearance="tonal"');
+  }
+  if (target.id === "card") {
+    props.push('appearance="elevated"');
+  }
+  if (target.id === "upload") {
+    props.push('action="/api/upload"');
+  }
+  if (target.id === "form") {
+    props.push("onFinish={(values) => console.log(values)}");
+  }
+
+  return Array.from(new Set(props)).slice(0, 6);
+}
+
+function artDemoCode(target: Target, name: string) {
+  switch (target.id) {
+    case "art-moon":
+      return `<${name} size="lg" crescent glow />`;
+    case "art-sun":
+      return `<${name} size="lg" rays pulse />`;
+    case "art-atom":
+      return `<${name} size="sm" />`;
+    case "art-eclipse":
+      return `<${name} size="sm" />`;
+    case "art-mountain":
+      return `<${name} size="sm" />`;
+    case "art-snowflake":
+      return `<${name}
+  unicode
+  fall
+  style={{
+    "--art-snowflake-size": "32px",
+    "--art-snowflake-color": "#76d7ff"
+  }}
+/>`;
+    case "art-plasma-ball":
+      return `<${name} size="sm" defaultChecked />`;
+    case "art-circular-gallery":
+      return `<${name}
+  title="Moons"
+  size="sm"
+  items={Array.from({ length: 20 }, (_, index) => ({
+    title: \`Photo \${index + 1}\`,
+    src: \`https://picsum.photos/seed/dm-art-\${index + 1}/600/600\`
+  }))}
+/>`;
+    case "art-cat-stargazer":
+      return `<${name} size="sm" />`;
+    case "art-flower-animation":
+      return `<${name} size="sm" />`;
+    case "art-color-spin":
+      return `<${name} size="sm" />`;
+    case "art-synthwave-starfield":
+      return `<${name} size="sm" paused />`;
+    case "art-csswitch":
+      return `<${name} size="sm" />`;
+    case "art-snowball-preloader":
+      return `<${name}
+  size="sm"
+  style={{ background: "#101827", "--art-snowball-preloader-bg": "#101827" }}
+/>`;
+    case "art-gemini-input":
+      return `<${name}
+  size="lg"
+  placeholder="Ask DuskMoon"
+  defaultValue="Pure CSS art"
+  textareaProps={{ "aria-label": "Message" }}
+/>`;
+    default:
+      return `<${name} />`;
+  }
+}
+
+function accessibleArtDemoCode(target: Target, name: string) {
+  const label = `${titleCase(target.id)} illustration`;
+  const usage = artDemoCode(target, name);
+  const accessibleProps = `\n  decorative={false}\n  aria-label="${label}"`;
+
+  if (usage.endsWith("\n/>")) {
+    return usage.replace(/\n\/>$/, `${accessibleProps}\n/>`);
+  }
+
+  return usage.replace(/\s\/>$/, `${accessibleProps} />`);
+}
+
+function demoCode(
+  target: Target,
+  name: string,
+  api: ApiSection[],
+  scenario?: string,
+) {
+  if (target.kind === "art-component") {
+    return artDemoCode(target, name);
+  }
+
+  const props = propsObjectFromApi(api, target);
+  const scenarioComment = scenario ? `  // ${scenario}\n` : "";
+  const noChildrenComponents = [
+    "input",
+    "input-number",
+    "select",
+    "date-picker",
+    "color-picker",
+    "cascader",
+    "switch",
+    "slider",
+    "rate",
+    "auto-complete",
+    "tree-select",
+    "segmented",
+    "table",
+    "dm-table",
+    "dm-pro-table",
+    "dm-query",
+    "dm-search",
+    "pagination",
+    "dm-pagination",
+  ];
+  const childText = noChildrenComponents.includes(target.id)
+    ? ""
+    : `\n  DuskMoon ${titleCase(target.id)}\n`;
+
+  if (target.id === "chat") {
+    return `<${name}.Agent>
+  <${name}.Work>
+    <${name}.WorkSummary>Worked · 1 tool call</${name}.WorkSummary>
+    <${name}.WorkBody>
+      <${name}.Tool status="success">
+        <${name}.ToolHeader>Check source <${name}.ToolStatus>Done</${name}.ToolStatus></${name}.ToolHeader>
+        <${name}.ToolResult>Source reviewed.</${name}.ToolResult>
+      </${name}.Tool>
+    </${name}.WorkBody>
+  </${name}.Work>
+  <${name}.Content>The answer remains visible when activity is closed.</${name}.Content>
+</${name}.Agent>`;
+  }
+
+  if (target.id === "button") {
+    return `<${name} color="primary">Save changes</${name}>`;
+  }
+
+  if (target.id === "alert") {
+    return `<${name} color="success" appearance="tonal">
+  Release checks passed.
+</${name}>`;
+  }
+
+  if (target.id === "auto-complete") {
+    return `<${name}
+  color="primary"
+  allowClear
+  defaultOpen
+  defaultValue="re"
+  options={[
+    { value: "react", label: "React" },
+    { value: "remix", label: "Remix" },
+    { value: "astro", label: "Astro" }
+  ]}
+/>`;
+  }
+
+  if (target.id === "dm-table" || target.id === "table") {
+    return `<${name}
+  columns={[
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Status", dataIndex: "status", key: "status" },
+    { title: "Owner", dataIndex: "owner", key: "owner" }
+  ]}
+  dataSource={[
+    { key: 1, name: "Design tokens", status: "Ready", owner: "Luna" },
+    { key: 2, name: "Components", status: "Review", owner: "Kai" }
+  ]}
+  pagination={false}
+  bordered
+/>`;
+  }
+
+  if (target.id === "dm-pro-table") {
+    return `<${name}
+  columns={[{ title: "Name", dataIndex: "name", key: "name" }]}
+  rowData={[{ key: 1, name: "DuskMoon" }]}
+/>`;
+  }
+
+  if (target.id === "dm-search") {
+    return `<${name}
+  items={[{
+    key: "name",
+    title: "Name",
+    dataIndex: "name",
+    search: { type: "input" }
+  }]}
+  onSearch={(values) => console.log(values)}
+/>`;
+  }
+
+  if (target.id === "dm-query") {
+    return `<${name}
+  queryItem={[{
+    key: "name",
+    type: "input",
+    label: "Name",
+    name: "name"
+  }]}
+  onSearch={(values) => console.log(values)}
+/>`;
+  }
+
+  if (target.id === "tree") {
+    return `<${name}
+  checkable
+  showLine
+  showIcon
+  defaultExpandAll
+  defaultSelectedKeys={["tokens"]}
+  defaultCheckedKeys={["components"]}
+  treeData={[
+    {
+      key: "workspace",
+      title: "Workspace",
+      icon: "W",
+      children: [
+        { key: "tokens", title: "Design tokens", icon: "T" },
+        { key: "components", title: "Components", icon: "C" },
+        {
+          key: "release",
+          title: "Release",
+          icon: "R",
+          children: [
+            { key: "notes", title: "Notes" },
+            { key: "qa", title: "Visual QA" }
+          ]
+        }
+      ]
+    }
+  ]}
+/>`;
+  }
+
+  if (target.id === "dm-tree" || target.id === "tree") {
+    return `<${name}
+  treeData={[
+    {
+      key: "root",
+      title: "Root Node",
+      children: [
+        { key: "child-1", title: "Child Node 1" },
+        { key: "child-2", title: "Child Node 2" }
+      ]
+    }
+  ]}
+/>`;
+  }
+
+  if (target.id.includes("pagination")) {
+    return `<${name} total={120} current={1} pageSize={10} />`;
+  }
+
+  if (target.id === "anchor") {
+    return `<${name}
+  affix={false}
+  showInkInFixed
+  items={[
+    {
+      href: "#intro",
+      title: "Intro",
+      children: [{ href: "#demos", title: "Demos" }]
+    }
+  ]}
+/>`;
+  }
+
+  if (target.id === "avatar") {
+    return `<${name} className="avatar-primary">DM</${name}>`;
+  }
+
+  if (target.id === "back-top") {
+    return `<${name} visibilityHeight={0}>Back to top</${name}>`;
+  }
+
+  if (target.id === "breadcrumb") {
+    return `<${name}
+  items={[
+    { title: "Home", href: "/" },
+    { title: "Components", href: "/components" },
+    { title: "Breadcrumb" }
+  ]}
+/>`;
+  }
+
+  if (target.id === "carousel") {
+    return `<${name} arrows>
+  <div>Research</div>
+  <div>Design</div>
+  <div>Ship</div>
+</${name}>`;
+  }
+
+  if (target.id === "cascader") {
+    return `<${name}
+  options={[
+    {
+      label: "Design",
+      value: "design",
+      children: [{ label: "Components", value: "components" }]
+    },
+    {
+      label: "Engineering",
+      value: "engineering",
+      children: [{ label: "Release", value: "release" }]
+    }
+  ]}
+  placeholder="Select workflow"
+/>`;
+  }
+
+  if (target.id === "col") {
+    return `<${name}
+  span={12}
+  style={{
+    width: "50%",
+    padding: "12px",
+    background: "var(--color-primary-container)",
+    color: "var(--color-primary)",
+    borderRadius: "6px",
+    fontWeight: 700
+  }}
+>
+  span 12
+</${name}>`;
+  }
+
+  if (target.id === "collapse") {
+    return `<${name}
+  defaultActiveKey="intro"
+  items={[
+    {
+      key: "intro",
+      label: "What is DuskMoon?",
+      children: "DuskMoon React components provide typed, themeable UI primitives."
+    }
+  ]}
+/>`;
+  }
+
+  if (target.id === "descriptions") {
+    return `<${name}
+  title="Release summary"
+  bordered
+  column={2}
+  items={[
+    { key: "status", label: "Status", children: "Ready" },
+    { key: "owner", label: "Owner", children: "DuskMoon" },
+    { key: "version", label: "Version", children: "0.1.2" },
+    { key: "channel", label: "Channel", children: "Stable" }
+  ]}
+/>`;
+  }
+
+  if (target.id === "dropdown") {
+    return `<${name}
+  menu={{
+    items: [
+      { key: "edit", label: "Edit" },
+      { key: "divider", type: "divider" },
+      { key: "delete", label: "Delete", danger: true }
+    ]
+  }}
+>
+  <button type="button">Actions</button>
+</${name}>`;
+  }
+
+  if (target.id === "flex") {
+    return `<${name} gap="middle" wrap align="center">
+  <span>Alpha</span>
+  <span>Beta</span>
+  <span>Gamma</span>
+</${name}>`;
+  }
+
+  if (target.id === "row") {
+    return `<${name} gutter={[12, 12]} align="middle" justify="space-between">
+  <div style={{ flex: "0 0 29.167%" }}>span 7</div>
+  <div style={{ flex: "0 0 29.167%" }}>span 7</div>
+  <div style={{ flex: "0 0 29.167%" }}>span 7</div>
+</${name}>`;
+  }
+
+  if (target.id === "float-button") {
+    return `<${name} type="primary" icon="+" tooltip="Create" />`;
+  }
+
+  if (target.id === "form") {
+    return `<${name}
+  layout="vertical"
+  initialValues={{ project: "DuskMoon" }}
+  onFinish={(values) => console.log(values)}
+>
+  <${name}.Item
+    name="project"
+    label="Project"
+    rules={[{ required: true, message: "Project is required" }]}
+    extra="The name shown in dashboards."
+  >
+    <input placeholder="Project name" />
+  </${name}.Item>
+  <${name}.Item>
+    <button type="submit">Save</button>
+  </${name}.Item>
+</${name}>`;
+  }
+
+  if (target.id === "date-picker") {
+    return `<${name}
+  defaultValue="2026-05-25"
+  size="lg"
+  status="success"
+  onChange={(value) => console.log(value)}
+/>`;
+  }
+
+  if (target.id === "color-picker") {
+    return `<${name}
+  defaultValue="#1677ff"
+  size="large"
+  format="hex"
+  showText
+  onChange={(value, css) => console.log(value, css)}
+/>`;
+  }
+
+  if (target.id === "popover") {
+    return `<${name}
+  title="DuskMoon"
+  content="Popover content"
+  placement="bottom"
+  trigger="click"
+>
+  <button type="button">Open popover</button>
+</${name}>`;
+  }
+
+  if (target.id === "image") {
+    return `<${name}
+  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='100' viewBox='0 0 160 100'%3E%3Crect width='160' height='100' rx='12' fill='%23e58f00'/%3E%3Ccircle cx='118' cy='34' r='20' fill='%23fff7d6'/%3E%3Cpath d='M24 72h112' stroke='%23fff7d6' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E"
+  alt="DuskMoon preview"
+  width={160}
+  height={100}
+  placeholder="Loading image"
+/>`;
+  }
+
+  if (target.id === "input-number") {
+    return `<${name}
+  defaultValue={24}
+  min={0}
+  max={100}
+  step={1}
+  status="success"
+/>`;
+  }
+
+  if (target.id === "layout") {
+    return `<${name} style={{ width: "100%", maxWidth: 640 }}>
+  <${name}.Header>Header</${name}.Header>
+  <${name} hasSider>
+    <${name}.Sider width={160}>Sider</${name}.Sider>
+    <${name}.Content>Content</${name}.Content>
+  </${name}>
+  <${name}.Footer>Footer</${name}.Footer>
+</${name}>`;
+  }
+
+  if (target.id === "list") {
+    return `<${name} bordered>
+  {[
+    { title: "Design tokens", description: "Updated color and spacing scale" },
+    { title: "Components", description: "Reviewed visual states" },
+    { title: "Release", description: "Ready for package validation" }
+  ].map((item) => (
+    <${name}.Item key={item.title} extra="Open">
+      <${name}.Item.Meta
+        title={item.title}
+        description={item.description}
+      />
+    </${name}.Item>
+  ))}
+</${name}>`;
+  }
+
+  if (target.id === "mentions") {
+    return `<${name}
+  defaultValue="@design"
+  placeholder="Mention a teammate"
+  options={[
+    { value: "design", label: "Design team" },
+    { value: "engineering", label: "Engineering" },
+    { value: "release", label: "Release desk" }
+  ]}
+/>`;
+  }
+
+  if (target.id === "menu") {
+    return `<${name}
+  defaultSelectedKeys={["overview"]}
+  defaultOpenKeys={["workspace"]}
+  items={[
+    { key: "overview", label: "Overview", extra: "⌘1" },
+    {
+      key: "workspace",
+      label: "Workspace",
+      children: [
+        { key: "tasks", label: "Tasks" },
+        { key: "reports", label: "Reports" }
+      ]
+    },
+    { type: "divider" },
+    { key: "settings", label: "Settings" }
+  ]}
+/>`;
+  }
+
+  if (target.id === "modal") {
+    return `<${name}
+  defaultOpen
+  title="Release checklist"
+  width={420}
+  onOk={() => console.log("ok")}
+  onCancel={() => console.log("closed")}
+>
+  Review component styles before publishing the package.
+</${name}>`;
+  }
+
+  if (target.id === "progress") {
+    return `<${name}
+  percent={68}
+  showInfo
+  color="success"
+  size="lg"
+/>`;
+  }
+
+  if (target.id === "qr-code") {
+    return `<${name}
+  value="https://duskmoon.dev/components"
+  size={160}
+  color="#111827"
+  bgColor="#ffffff"
+/>`;
+  }
+
+  if (target.id === "rate") {
+    return `<${name}
+  defaultValue={3.5}
+  allowHalf
+  color="warning"
+  size="lg"
+/>`;
+  }
+
+  if (target.id === "segmented") {
+    return `<${name}
+  options={["Overview", "Usage", "API"]}
+  defaultValue="Usage"
+  size="lg"
+/>`;
+  }
+
+  if (target.id === "select") {
+    return `<${name}
+  options={[
+    { label: "React", value: "react" },
+    { label: "Astro", value: "astro" },
+    { label: "TypeScript", value: "typescript" }
+  ]}
+  defaultValue="react"
+  placeholder="Select a stack"
+  allowClear
+/>`;
+  }
+
+  if (target.id === "slider") {
+    return `<${name}
+  defaultValue={48}
+  marks={{ 0: "0", 50: "50", 100: "100" }}
+  tooltip={{ open: true }}
+  color="secondary"
+/>`;
+  }
+
+  if (target.id === "space") {
+    return `<${name} size="middle" wrap split="|">
+  <span>Design</span>
+  <span>Build</span>
+  <span>Ship</span>
+</${name}>`;
+  }
+
+  if (target.id === "statistic") {
+    return `<${name}
+  title="Uptime"
+  value={98.6}
+  precision={1}
+  suffix="%"
+/>`;
+  }
+
+  if (target.id === "steps") {
+    return `<${name}
+  current={1}
+  items={[
+    { title: "Plan", description: "Define scope" },
+    { title: "Build", description: "Implement UI" },
+    { title: "Ship", description: "Release" }
+  ]}
+/>`;
+  }
+
+  if (target.id === "switch") {
+    return `<${name}
+  defaultChecked
+  checkedChildren="On"
+  unCheckedChildren="Off"
+/>`;
+  }
+
+  if (target.id === "tabs") {
+    return `<${name}
+  defaultActiveKey="usage"
+  items={[
+    { key: "overview", label: "Overview", children: "Component status overview." },
+    { key: "usage", label: "Usage", children: "Tabs organize related views." },
+    { key: "api", label: "API", children: "Document props and events." }
+  ]}
+/>`;
+  }
+
+  if (target.id === "time-picker") {
+    return `<${name}
+  defaultValue="09:30:00"
+  format="HH:mm:ss"
+  allowClear
+/>`;
+  }
+
+  if (target.id === "tooltip") {
+    return `<${name}
+  title="Review details"
+  placement="bottom"
+  size="lg"
+  open
+>
+  <button type="button">Review details</button>
+</${name}>`;
+  }
+
+  if (target.id === "timeline") {
+    return `<${name}
+  items={[
+    { label: "09:00", children: "Kickoff and scope review", color: "primary" },
+    { label: "11:30", children: "Design QA completed", color: "success" },
+    { label: "14:00", children: "Release notes prepared", color: "secondary" }
+  ]}
+/>`;
+  }
+
+  if (target.id === "skeleton") {
+    return `<${name}
+  active
+  avatar
+  paragraph={{ rows: 3 }}
+  style={{ width: "420px", maxWidth: "100%" }}
+/>`;
+  }
+
+  if (target.id === "splitter") {
+    return `<${name}
+  defaultSizes={[180, "1fr"]}
+  style={{ width: "100%" }}
+>
+  <${name}.Panel>Navigation</${name}.Panel>
+  <${name}.Panel>Workspace</${name}.Panel>
+</${name}>`;
+  }
+
+  if (target.id === "dm-splitter") {
+    return `<${name}
+  defaultSizes={[180, "1fr"]}
+  gap={8}
+  style={{ width: "100%" }}
+>
+  <${name}.Panel>Navigation</${name}.Panel>
+  <${name}.Panel>Workspace</${name}.Panel>
+</${name}>`;
+  }
+
+  if (target.id === "tour") {
+    return `<${name}
+  open
+  mask={false}
+  steps={[
+    {
+      title: "Welcome",
+      description: "Review the highlighted workflow.",
+      style: {
+        position: "static",
+        left: "auto",
+        top: "auto",
+        transform: "none"
+      }
+    }
+  ]}
+/>`;
+  }
+
+  if (target.id === "transfer") {
+    return `<${name}
+  dataSource={[
+    { key: "tokens", title: "Design tokens", description: "Theme primitives" },
+    { key: "docs", title: "Docs site", description: "Examples and API pages" },
+    { key: "qa", title: "Visual QA", description: "Review queue" },
+    { key: "release", title: "Release notes", description: "Publish checklist" }
+  ]}
+  defaultTargetKeys={["release"]}
+  defaultSelectedKeys={["tokens"]}
+  titles={["Available", "Selected"]}
+  showSearch
+/>`;
+  }
+
+  if (noChildrenComponents.includes(target.id)) {
+    if (props.length === 0) {
+      return `<${name} />`;
+    }
+    return `<${name}
+${scenarioComment}${props.map((prop) => `  ${prop}`).join("\n")}
+/>`;
+  }
+
+  if (props.length === 0) {
+    return `<${name}>${childText.trim() || `${name} demo`}</${name}>`;
+  }
+
+  return `<${name}
+${scenarioComment}${props.map((prop) => `  ${prop}`).join("\n")}
+>${childText}</${name}>`;
+}
+
+function importPathForTarget(target: Target) {
+  if (target.packageName === "art-components") {
+    return "@duskmoon-dev/art-components";
+  }
+
+  return target.packageSubpath
+    ? `@duskmoon-dev/components/${target.packageSubpath.slice(2)}`
+    : "@duskmoon-dev/components";
+}
+
+function relativeSource(filePath: string | null) {
+  return filePath ? path.relative(repoRoot, filePath) : null;
+}
+
+function colorDemoBody(target: Target, name: string) {
+  switch (target.id) {
+    case "alert":
+      return `<div style={{ display: "grid", gap: 12 }}>
+  {(["filled", "outline", "tonal"] as const).map((appearance) => (
+    <section key={appearance} style={{ display: "grid", gap: 8 }}>
+      {colors.map((color) => (
+        <${name} key={color} color={color} appearance={appearance}>
+          {color} alert
+        </${name}>
+      ))}
+    </section>
+  ))}
+</div>`;
+    case "auto-complete":
+      return `<div style={{ display: "grid", gap: 10 }}>
+  {colors.map((color) => (
+    <${name}
+      key={color}
+      color={color}
+      placeholder={\`\${color} search\`}
+      options={options}
+    />
+  ))}
+</div>`;
+    case "badge":
+      return `<div style={{ display: "grid", gap: 12 }}>
+  {(["filled", "outline", "tonal", "ghost"] as const).map((appearance) => (
+    <div key={appearance} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      {colors.map((color) => (
+        <${name} key={color} color={color} appearance={appearance}>
+          {color}
+        </${name}>
+      ))}
+    </div>
+  ))}
+</div>`;
+    case "button":
+      return `<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+  {colors.map((color) => (
+    <${name} key={color} color={color}>
+      {color}
+    </${name}>
+  ))}
+</div>`;
+    case "chat":
+      return `<div style={{ display: "grid", gap: 10 }}>
+  {colors.map((color) => (
+    <${name} key={color}>
+      <${name}.Bubble color={color}>{color} response</${name}.Bubble>
+    </${name}>
+  ))}
+</div>`;
+    case "checkbox":
+      return `<div style={{ display: "grid", gap: 8 }}>
+  {colors.map((color) => (
+    <${name} key={color} color={color} defaultChecked>
+      {color}
+    </${name}>
+  ))}
+</div>`;
+    case "divider":
+      return `<div style={{ display: "grid", gap: 14 }}>
+  {colors.map((color) => (
+    <${name} key={color} color={color}>
+      {color}
+    </${name}>
+  ))}
+</div>`;
+    case "progress":
+      return `<div style={{ display: "grid", gap: 10 }}>
+  {colors.map((color) => (
+    <${name} key={color} color={color} percent={72} showInfo />
+  ))}
+</div>`;
+    case "radio":
+      return `<div style={{ display: "grid", gap: 8 }}>
+  {colors.map((color) => (
+    <${name} key={color} name={\`radio-\${color}\`} color={color} defaultChecked>
+      {color}
+    </${name}>
+  ))}
+</div>`;
+    case "rate":
+      return `<div style={{ display: "grid", gap: 10 }}>
+  {colors.map((color) => (
+    <${name} key={color} color={color} defaultValue={4} readOnly />
+  ))}
+</div>`;
+    case "slider":
+      return `<div style={{ display: "grid", gap: 14 }}>
+  {colors.map((color) => (
+    <${name} key={color} color={color} defaultValue={64} tooltip={{ open: true }} />
+  ))}
+</div>`;
+    case "switch":
+      return `<div style={{ display: "grid", gap: 10 }}>
+  {colors.map((color) => (
+    <${name}
+      key={color}
+      color={color}
+      defaultChecked
+      checkedChildren={color.slice(0, 2)}
+      unCheckedChildren={color.slice(0, 2)}
+    />
+  ))}
+</div>`;
+    case "tag":
+      return `<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+  {colors.map((color) => (
+    <${name} key={color} color={color}>
+      {color}
+    </${name}>
+  ))}
+</div>`;
+    case "timeline":
+      return `<${name}
+  items={colors.map((color, index) => ({
+    label: \`\${index + 1}\`,
+    children: \`\${color} milestone\`,
+    color
+  }))}
+/>`;
+    default:
+      return null;
+  }
+}
+
+function colorDemoFor(
+  target: Target,
+  name: string,
+  importLine: string,
+  componentStyleImport: string,
+): DemoSpec | null {
+  if (!semanticColorComponentIds.has(target.id)) return null;
+
+  const body = colorDemoBody(target, name);
+  if (!body) return null;
+
+  const options =
+    target.id === "auto-complete"
+      ? `\n\nconst options = [\n  { value: "react", label: "React" },\n  { value: "remix", label: "Remix" },\n  { value: "astro", label: "Astro" },\n  { value: "solid", label: "Solid" }\n];`
+      : "";
+
+  return {
+    title: target.id === "auto-complete" ? "Colors and matching" : "Colors",
+    description: `${name} supports the full semantic color palette: ${semanticColors.join(", ")}.`,
+    code: `${componentStyleImport}\n${importLine}\n\n${semanticColorsDeclaration()}${options}\n\nexport function ${name}ColorsDemo() {\n  return (${body});\n}`,
+    source: "authored",
+  };
+}
+
+function buttonFeatureDemos(
+  importPath: string,
+  componentStyleImport: string,
+): DemoSpec[] {
+  const imports = `${componentStyleImport}\nimport { Button } from "${importPath}";`;
+  const appearances = `const appearances = ["filled", "outline", "tonal", "ghost", "text"] as const;`;
+
+  return [
+    {
+      title: "Appearances",
+      description:
+        "Compare the five Button appearances, including outline and ghost treatments.",
+      code: `${imports}\n\n${appearances}\n\nexport function ButtonAppearancesDemo() {\n  return (\n    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>\n      {appearances.map((appearance) => (\n        <Button key={appearance} appearance={appearance}>\n          {appearance}\n        </Button>\n      ))}\n    </div>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Loading states",
+      description:
+        "Loading adds a spinner and disables the button while preserving each appearance and size.",
+      code: `${imports}\n\n${appearances}\n\nexport function ButtonLoadingDemo() {\n  return (\n    <div style={{ display: "grid", gap: 12 }}>\n      {appearances.map((appearance) => (\n        <div key={appearance} style={{ display: "flex", gap: 8, alignItems: "center" }}>\n          <span style={{ minWidth: 68 }}>{appearance}</span>\n          <Button appearance={appearance} isLoading>Saving</Button>\n          <Button appearance={appearance} size="sm" isLoading>Saving</Button>\n          <Button appearance={appearance} size="lg" isLoading>Saving</Button>\n        </div>\n      ))}\n    </div>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Interactive loading",
+      description:
+        "Click Save to show the loading state briefly; the button is disabled until it finishes.",
+      code: `${componentStyleImport}\nimport { useEffect, useRef, useState } from "react";\nimport { Button } from "${importPath}";\n\nexport function InteractiveLoadingDemo() {\n  const [isLoading, setIsLoading] = useState(false);\n  const timeoutRef = useRef<number | null>(null);\n\n  useEffect(() => () => {\n    if (timeoutRef.current !== null) window.clearTimeout(timeoutRef.current);\n  }, []);\n\n  function save() {\n    setIsLoading(true);\n    timeoutRef.current = window.setTimeout(() => {\n      timeoutRef.current = null;\n      setIsLoading(false);\n    }, 900);\n  }\n\n  return (\n    <div style={{ display: "grid", gap: 8, justifyItems: "start" }}>\n      <Button isLoading={isLoading} onClick={save}>Save changes</Button>\n      <span role="status">{isLoading ? "Saving changes…" : "Ready to save"}</span>\n    </div>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Disabled states",
+      description:
+        "Use the native disabled prop to prevent interaction across Button appearances.",
+      code: `${imports}\n\n${appearances}\n\nexport function DisabledButtonsDemo() {\n  return (\n    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>\n      {appearances.map((appearance) => (\n        <Button key={appearance} appearance={appearance} disabled>\n          {appearance}\n        </Button>\n      ))}\n    </div>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Icon buttons",
+      description:
+        "Use leftIcon or rightIcon beside text, and give icon-only buttons an accessible label. Circular buttons use fixed icon sizes.",
+      code: `${imports}\n\nexport function ButtonIconsDemo() {\n  const addIcon = <svg aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" d="M12 5v14M5 12h14" /></svg>;\n  const downloadIcon = <svg aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3" /></svg>;\n  const closeIcon = <svg aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" d="M6 6l12 12M18 6 6 18" /></svg>;\n\n  return (\n    <div style={{ display: "grid", gap: 12 }}>\n      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>\n        <Button leftIcon={addIcon}>Add item</Button>\n        <Button appearance="outline" rightIcon={downloadIcon}>\n          Download\n        </Button>\n      </div>\n      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>\n        <Button shape="circle" aria-label="Close">{closeIcon}</Button>\n        <Button shape="circle" size="sm" appearance="outline" aria-label="Add">{addIcon}</Button>\n        <Button shape="circle" size="lg" appearance="tonal" aria-label="Close">{closeIcon}</Button>\n        <Button shape="square" appearance="outline" aria-label="Add">{addIcon}</Button>\n      </div>\n    </div>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Tooltip composition",
+      description: "Wrap a Button with Tooltip to show help on hover or focus.",
+      code: `${componentStyleImport}\nimport { Button } from "${importPath}";\nimport { Tooltip } from "@duskmoon-dev/components";\n\nexport function TooltipButtonDemo() {\n  return (\n    <Tooltip id="save-help" title="Save your changes" defaultOpen>\n      <Button>Save</Button>\n    </Tooltip>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Confirmation popover form",
+      description:
+        "The action callback runs only after confirmation; cancelling leaves the confirmed count unchanged.",
+      code: `${componentStyleImport}\nimport { useState } from "react";\nimport { Button } from "${importPath}";\n\nexport function ConfirmButtonDemo() {\n  const [deletedCount, setDeletedCount] = useState(0);\n\n  return (\n    <div style={{ display: "grid", gap: 8, justifyItems: "start" }}>\n      <Button\n        color="error"\n        confirm={{\n          title: "Delete this item?",\n          message: "This action cannot be undone.",\n          confirmText: "Delete",\n          cancelText: "Cancel",\n        }}\n        onClick={() => setDeletedCount((count) => count + 1)}\n      >\n        Delete item\n      </Button>\n      <span role="status">Confirmed deletions: {deletedCount}</span>\n    </div>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Custom confirmation content",
+      description:
+        "Pass a component without its own form as confirmation body content; Button keeps the confirmation controls and runs the action only after approval.",
+      code: `${componentStyleImport}\nimport { useState } from "react";\nimport { Button } from "${importPath}";\n\nfunction DeleteConfirmContent() {\n  return <p>Delete this draft and discard its unsaved changes?</p>;\n}\n\nexport function CustomConfirmButtonDemo() {\n  const [deletedCount, setDeletedCount] = useState(0);\n\n  return (\n    <div style={{ display: "grid", gap: 8, justifyItems: "start" }}>\n      <Button\n        color="error"\n        confirm={{ component: <DeleteConfirmContent /> }}\n        onClick={() => setDeletedCount((count) => count + 1)}\n      >\n        Delete draft\n      </Button>\n      <span role="status">Confirmed draft deletions: {deletedCount}</span>\n    </div>\n  );\n}`,
+      source: "authored",
+    },
+  ];
+}
+
+function dropdownFeatureDemos(
+  importLine: string,
+  componentStyleImport: string,
+): DemoSpec[] {
+  const imports = `${componentStyleImport}\nimport React from "react";\n${importLine}\nimport { Button, Tooltip } from "@duskmoon-dev/components";`;
+  const iconsAndMenu = `function UserIcon() {
+  return <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.25" /><path strokeLinecap="round" d="M5.5 20a6.5 6.5 0 0 1 13 0" /></svg>;
+}
+
+const actionMenu = {
+  items: [
+    { key: "overview", label: "Overview", icon: <UserIcon /> },
+    { key: "members", label: "Members", icon: <UserIcon /> },
+    { key: "delete", label: "Delete workspace", danger: true, icon: <UserIcon /> },
+    { key: "invite", label: "Invite member", disabled: true, icon: <UserIcon /> },
+  ]
+};`;
+
+  return [
+    {
+      title: "Split buttons",
+      description:
+        "Use the split button for a primary action alongside a menu of related workspace actions.",
+      code: `${imports}\n\n${iconsAndMenu}\n\nexport function DropdownSplitButtonsDemo() {\n  return (\n    <Dropdown.Button appearance="outline" color="base" menu={actionMenu}>\n      Actions\n    </Dropdown.Button>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Custom trigger icon",
+      description:
+        "Replace the split button trigger content with a custom icon while preserving its click behavior.",
+      code: `${imports}\n\n${iconsAndMenu}\n\nexport function DropdownCustomTriggerIconDemo() {\n  return (\n    <Dropdown.Button\n      appearance="outline"\n      color="base"\n      buttonsRender={(buttons) => [\n        buttons[0],\n        React.cloneElement(buttons[1] as React.ReactElement<{ children?: React.ReactNode }>, { children: <UserIcon /> }),\n      ]}\n      menu={actionMenu}\n    >\n      Actions\n    </Dropdown.Button>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Disabled split button",
+      description:
+        "Disable both parts of the split button when the action menu is unavailable.",
+      code: `${imports}\n\n${iconsAndMenu}\n\nexport function DisabledDropdownSplitButtonDemo() {\n  return (\n    <Dropdown.Button appearance="outline" color="base" disabled menu={actionMenu}>\n      Actions\n    </Dropdown.Button>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Tooltip on trigger",
+      description:
+        "Wrap only the menu trigger with a Tooltip to explain where it leads.",
+      code: `${imports}\n\n${iconsAndMenu}\n\nexport function DropdownTooltipTriggerDemo() {\n  return (\n    <Dropdown.Button\n      appearance="outline"\n      color="base"\n      buttonsRender={(buttons) => [\n        buttons[0],\n        <Tooltip key="trigger" id="dropdown-trigger-help" title="Open workspace actions">\n          {buttons[1]}\n        </Tooltip>,\n      ]}\n      menu={actionMenu}\n    >\n      Actions\n    </Dropdown.Button>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Button and danger",
+      description:
+        "Use a regular Button as a dropdown trigger, and reserve the error color for destructive split actions.",
+      code: `${imports}\n\n${iconsAndMenu}\n\nfunction ChevronDownIcon() {\n  return <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" /></svg>;\n}\n\nexport function DropdownButtonAndDangerDemo() {\n  return (\n    <div className="dropdown-button-danger-preview" style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "flex-start" }}>\n      <Dropdown trigger={["click"]} menu={actionMenu}>\n        <Button appearance="outline" color="base" rightIcon={<ChevronDownIcon />}>\n          Actions\n        </Button>\n      </Dropdown>\n      <Dropdown.Button appearance="outline" color="error" menu={actionMenu}>\n        Delete\n      </Dropdown.Button>\n    </div>\n  );\n}`,
+      source: "authored",
+    },
+    {
+      title: "Menu item states",
+      description:
+        "Combine regular, destructive, and unavailable menu items in one open menu preview.",
+      code: `${imports}\n\n${iconsAndMenu}\n\nexport function DropdownMenuItemStatesDemo() {\n  return (\n    <Dropdown.Button\n      appearance="outline"\n      color="base"\n      defaultOpen\n      menu={actionMenu}\n    >\n      Actions\n    </Dropdown.Button>\n  );\n}`,
+      source: "authored",
+    },
+  ];
+}
+
+function demosFor(
+  target: Target,
+  name: string,
+  api: ApiSection[],
+  scenarios: string[],
+): DemoSpec[] {
+  const importPath = importPathForTarget(target);
+
+  const composer = composerDocSources.get(target.id);
+  if (composer) {
+    const example = chatDemoExamples.find(
+      ({ title }) => title === composer.demoTitle,
+    );
+    if (!example)
+      throw new Error(`Missing live Composer example: ${composer.demoTitle}`);
+    return [{ ...example, source: "authored" }];
+  }
+
+  if (target.id === "markdown") {
+    return [
+      {
+        title: "Front matter, color chips, and line breaks",
+        description:
+          "Render YAML front matter, preview inline CSS colors, and explicitly enable soft line breaks. Bare URLs end before CJK text and full-width punctuation, so `https://example.com，告诉我` links only `https://example.com`; non-ASCII path text after a bare URL is not linked (use `<url>`, `[text](url)` or percent-encoding to keep it).",
+        code: `import "@duskmoon-dev/components/styles.css";
+import { Markdown } from "${importPath}";
+
+const source = \`---
+title: DmMarkdown feature showcase
+tags:
+  - react
+  - markdown
+accent: '#4C86FC'
+---
+# DmMarkdown rendering
+
+DuskMoon Markdown renders source text in the shared typography scope.
+This line demonstrates \\\`breaks={true}\\\`.
+
+## Inline color chips
+
+| Color | Inline code |
+| --- | --- |
+| Brand blue | \\\`#4C86FC\\\` |
+| White | \\\`#fff\\\` |
+| Black | \\\`#000\\\` |
+| Transparent red | \\\`#FF000080\\\` |
+\`;
+
+export function MarkdownFeaturesDemo() {
+  return (
+    <Markdown
+      markdown={source}
+      colorChips
+      frontMatter="render"
+      breaks={true}
+    />
+  );
+}`,
+        source: "authored",
+      },
+    ];
+  }
+
+  const nativeDemos: Record<string, { description: string; code: string }> = {
+    "otp-input": {
+      description:
+        "Type or paste a code into one native input; reset returns the form value to empty.",
+      code: `import { useState } from "react";
+import "@duskmoon-dev/components/styles.css";
+import { OtpInput } from "@duskmoon-dev/components/otp-input";
+
+export function OtpInputDemo() {
+  const [code, setCode] = useState("");
+  return <form onReset={() => setCode("")}>
+    <label htmlFor="demo-otp">Verification code</label>
+    <OtpInput id="demo-otp" name="code" length={6} required
+      aria-describedby="demo-otp-help" onChange={(event) => setCode(event.currentTarget.value)} />
+    <p id="demo-otp-help">Entered {code.length} of 6 digits</p>
+    <button type="reset">Reset</button>
+  </form>;
+}`,
+    },
+    swap: {
+      description:
+        "The native checkbox drives both the visual slot and a visible preference value.",
+      code: `import { useState } from "react";
+import "@duskmoon-dev/components/styles.css";
+import { Swap } from "@duskmoon-dev/components/swap";
+
+export function SwapDemo() {
+  const [dark, setDark] = useState(false);
+  return <div>
+    <Swap aria-label="Use dark appearance" checked={dark}
+      onChange={(event) => setDark(event.currentTarget.checked)}
+      off="☀️" on="🌙" rotate />
+    <p>Appearance: {dark ? "Dark" : "Light"}</p>
+  </div>;
+}`,
+    },
+    fab: {
+      description:
+        "Open the browser-managed action panel and choose a real action.",
+      code: `import { useState } from "react";
+import "@duskmoon-dev/components/styles.css";
+import { Fab, Button } from "@duskmoon-dev/components";
+
+export function FabDemo() {
+  const [action, setAction] = useState("None");
+  return <div style={{ position: "relative", minHeight: 220 }}>
+    <Fab contained speedDial>
+      <Fab.Trigger aria-label="Create" shape="square">+</Fab.Trigger>
+      <Fab.Actions>
+        <Fab.Action><Fab.Label>New message</Fab.Label>
+          <Button type="button" aria-label="New message" onClick={() => setAction("Message")}>✉</Button>
+        </Fab.Action>
+        <Fab.Action><Fab.Label>New note</Fab.Label>
+          <Button type="button" aria-label="New note" onClick={() => setAction("Note")}>✎</Button>
+        </Fab.Action>
+      </Fab.Actions>
+    </Fab>
+    <p>Selected action: {action}</p>
+  </div>;
+}`,
+    },
+    megamenu: {
+      description:
+        "Each trigger opens its own native popover; Escape and light dismissal are browser-managed.",
+      code: `import "@duskmoon-dev/components/styles.css";
+import { Megamenu } from "@duskmoon-dev/components/megamenu";
+
+export function MegamenuDemo() {
+  return <Megamenu aria-label="Product navigation">
+    <Megamenu.Bar>
+      <Megamenu.Item>
+        <Megamenu.Trigger>Products</Megamenu.Trigger>
+        <Megamenu.Panel>
+          <Megamenu.Heading>Products</Megamenu.Heading>
+          <Megamenu.Grid><Megamenu.Group>
+            <a className="link" href="#components">Components</a>
+          </Megamenu.Group></Megamenu.Grid>
+        </Megamenu.Panel>
+      </Megamenu.Item>
+      <li><a className="link" href="#components">All products</a></li>
+    </Megamenu.Bar>
+    <Megamenu.Mobile summary="Products">
+      <a className="link" href="#components">Components</a>
+    </Megamenu.Mobile>
+  </Megamenu>;
+}`,
+    },
+    "console-page": {
+      description:
+        "Cycle three sidebar states and open the native mobile navigation on narrow screens.",
+      code: `import { useState } from "react";
+import "@duskmoon-dev/components/styles.css";
+import { ConsolePage } from "@duskmoon-dev/components/console-page";
+
+export function ConsolePageDemo() {
+  const [state, setState] = useState<"expanded" | "compact" | "hidden">("expanded");
+  const next = { expanded: "compact", compact: "hidden", hidden: "expanded" } as const;
+  return <ConsolePage sidebarState={state}>
+    <ConsolePage.Frame>
+      <ConsolePage.Appbar>
+        <ConsolePage.SidebarToggle onClick={() => setState(next[state])}>☰</ConsolePage.SidebarToggle>
+        <ConsolePage.MobileTrigger aria-label="Open navigation">☰</ConsolePage.MobileTrigger>
+        <ConsolePage.MobileMenu aria-label="Mobile navigation">
+          <a className="menu-item" href="#overview">Overview</a>
+        </ConsolePage.MobileMenu>
+        <strong>Operations</strong>
+      </ConsolePage.Appbar>
+      <ConsolePage.Sidebar><ConsolePage.SidebarBody aria-label="Sections">
+        <a className="drawer-item" href="#overview">Overview</a>
+      </ConsolePage.SidebarBody></ConsolePage.Sidebar>
+      <ConsolePage.Main id="overview">Workspace · {state}</ConsolePage.Main>
+    </ConsolePage.Frame>
+  </ConsolePage>;
+}`,
+    },
+  };
+
+  const nativeDemo = nativeDemos[target.id];
+  if (nativeDemo) {
+    return [
+      {
+        title: "Interactive usage",
+        description: nativeDemo.description,
+        code: nativeDemo.code,
+        source: "authored",
+      },
+    ];
+  }
+
+  if (target.id === "breakpoint") {
+    return [
+      {
+        title: "Type usage",
+        description: `${name} is a TypeScript-only breakpoint union exported from the root package.`,
+        code: `import type { ${name} } from "${importPath}";\n\nconst compact: ${name} = "sm";\nconst desktop: ${name} = "lg";\n\nexport const responsiveBreakpoints: ${name}[] = [compact, desktop];`,
+        source: "type-driven",
+      },
+    ];
+  }
+
+  const usage = demoCode(target, name, api);
+  const importLine =
+    target.kind === "internal-component"
+      ? `// Internal component: packages/react/components/src/components/${target.id}`
+      : `import { ${name} } from "${importPath}";`;
+  const componentStyleImport = `import "@duskmoon-dev/components/styles.css";`;
+  const colorDemo = colorDemoFor(
+    target,
+    name,
+    importLine,
+    componentStyleImport,
+  );
+
+  if (target.id === "tooltip") {
+    return [
+      {
+        title: "Native interest hint",
+        description:
+          "Hover or focus the native button to show a brief noninteractive description. The browser controls hint visibility; the status reflects actual onOpenChange callbacks. Requires browser support for Interest Invokers, hint popovers and CSS Anchor Positioning.",
+        code: `import React, { useState } from "react";
+import "@duskmoon-dev/components/styles.css";
+import { Tooltip } from "@duskmoon-dev/components/tooltip";
+
+export function TooltipInterestPreview() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div data-overlay-tooltip-demo style={{ display: "grid", gap: "0.75rem", justifyItems: "start" }}>
+      <Tooltip
+        title="Review the project settings before publishing."
+        onOpenChange={setOpen}
+      >
+        <button className="btn btn-outlined" type="button">Review settings</button>
+      </Tooltip>
+      <p role="status" aria-atomic="true">Tooltip is {open ? "open" : "closed"}.</p>
+    </div>
+  );
+}`,
+        source: "authored",
+      },
+    ];
+  }
+
+  if (target.id === "popover") {
+    return [
+      {
+        title: "Interactive form",
+        description:
+          "Open a real native Popover, edit the project name and submit the form. Save and cancel close the surface; the status reports actual edited values.",
+        code: 'import React, { useId, useRef, useState } from "react";\nimport "@duskmoon-dev/components/styles.css";\nimport { Popover } from "@duskmoon-dev/components/popover";\n\nexport function PopoverFormPreview() {\n  const [open, setOpen] = useState(false);\n  const [saved, setSaved] = useState("DuskMoon");\n  const [status, setStatus] = useState("No changes saved yet.");\n  const fieldId = useId();\n  const triggerRef = useRef<HTMLButtonElement>(null);\n\n  function close() {\n    setOpen(false);\n    triggerRef.current?.focus();\n  }\n\n  return <div data-overlay-form-demo style={{ display: "grid", gap: "0.75rem", justifyItems: "start" }}>\n    <Popover\n      title="Project settings"\n      trigger="click"\n      placement="bottom"\n      open={open}\n      onOpenChange={setOpen}\n      destroyTooltipOnHide\n      content={\n        <form aria-label="Project settings" onSubmit={(event) => {\n          event.preventDefault();\n          const value = String(new FormData(event.currentTarget).get("project"));\n          setSaved(value);\n          setStatus(`Saved project: ${value}`);\n          close();\n        }} style={{ display: "grid", gap: "0.75rem" }}>\n          <label htmlFor={fieldId}>Project name</label>\n          <input className="input" id={fieldId} name="project" defaultValue={saved} required />\n          <div style={{ display: "flex", gap: "0.5rem" }}>\n            <button className="btn btn-primary btn-sm" type="submit">Save project</button>\n            <button className="btn btn-ghost btn-sm" type="button" onClick={() => { setStatus("Changes canceled."); close(); }}>Cancel changes</button>\n          </div>\n        </form>\n      }\n    >\n      <button ref={triggerRef} className="btn btn-outlined" type="button">Edit project</button>\n    </Popover>\n    <p role="status" aria-atomic="true">{status}</p>\n  </div>;\n}',
+        source: "authored",
+      },
+    ];
+  }
+
+  if (target.id === "popconfirm") {
+    return [
+      {
+        title: "Async confirmation and retry",
+        description:
+          "A real button opens native Popconfirm. Reject the next simulated request to keep the confirmation available, then retry successfully or cancel. Pending controls and outcome counters use actual callbacks.",
+        code: 'import React, { useEffect, useRef, useState } from "react";\nimport "@duskmoon-dev/components/styles.css";\nimport { Popconfirm } from "@duskmoon-dev/components/popconfirm";\n\nexport function PopconfirmAsyncPreview() {\n  const [shouldReject, setShouldReject] = useState(false);\n  const [pending, setPending] = useState(false);\n  const [confirmed, setConfirmed] = useState(0);\n  const [canceled, setCanceled] = useState(0);\n  const [status, setStatus] = useState("Choose whether the next simulated request succeeds.");\n  const timerRef = useRef<number | undefined>(undefined);\n  useEffect(() => () => window.clearTimeout(timerRef.current), []);\n\n  async function confirm() {\n    setPending(true);\n    setStatus("Confirming deletion\u2026");\n    try {\n      await new Promise<void>((resolve) => {\n        timerRef.current = window.setTimeout(resolve, 300);\n      });\n      if (shouldReject) {\n        setShouldReject(false);\n        setStatus("Request rejected. The confirmation remains available; retry or cancel.");\n        throw new Error("Simulated request rejection");\n      }\n      setConfirmed((count) => count + 1);\n      setStatus("Deletion confirmed.");\n    } finally {\n      setPending(false);\n    }\n  }\n\n  return <div data-overlay-confirm-demo style={{ display: "grid", gap: "0.75rem", justifyItems: "start" }}>\n    <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>\n      <input className="checkbox" type="checkbox" checked={shouldReject} disabled={pending} onChange={(event) => setShouldReject(event.currentTarget.checked)} />\n      Reject next request\n    </label>\n    <Popconfirm\n      title="Delete this draft?"\n      description="A simulated request takes a moment. A rejection keeps these actions available."\n      placement="bottom"\n      okText="Delete draft"\n      cancelText="Keep draft"\n      cancelButtonProps={{ disabled: pending }}\n      onConfirm={confirm}\n      onCancel={() => { setCanceled((count) => count + 1); setStatus("Deletion canceled."); }}\n    >\n      <button className="btn btn-outlined" type="button">Review draft deletion</button>\n    </Popconfirm>\n    <p role="status" aria-atomic="true">{status}</p>\n    <p>Confirmed: {confirmed} \u00b7 Canceled: {canceled}</p>\n  </div>;\n}',
+        source: "authored",
+      },
+    ];
+  }
+
+  if (target.id === "chat") {
+    return chatDemoExamples.map((example) => ({
+      ...example,
+      source: "authored",
+    }));
+  }
+
+  if (target.id === "dm-layout") {
+    return dmLayoutDemoExamples.map((example) => ({ ...example }));
+  }
+
+  if (target.id === "modal") {
+    return [
+      {
+        title: "Controlled native modal",
+        description:
+          "Modal uses native showModal and close. A controlled onCancel must update open; its ref and div props remain on the inner modal box. Apply maskClassName to the dialog for ::backdrop styling. Static Modal.confirm/info/success/error/warning handles are retained but do not render a service surface yet.",
+        code: `${componentStyleImport}\nimport { useState } from "react";\n${importLine}\n\nexport function ReleaseChecklist() {\n  const [open, setOpen] = useState(false);\n  return (\n    <>\n      <button type="button" onClick={() => setOpen(true)}>Review release</button>\n      <${name}\n        open={open}\n        title="Release checklist"\n        onCancel={() => setOpen(false)}\n        onOk={() => setOpen(false)}\n        maskClassName="release-mask"\n      >\n        Review component styles before publishing.\n      </${name}>\n    </>\n  );\n}`,
+        source: "authored",
+      },
+    ];
+  }
+
+  if (target.id === "button") {
+    return [
+      ...(colorDemo ? [colorDemo] : []),
+      {
+        title: "Basic usage",
+        description: `Import the component stylesheet and ${name} from its package subpath, then render it with the core props.`,
+        code: `${componentStyleImport}\n${importLine}\n\nexport function Example() {\n  return (${usage});\n}`,
+        source: "authored",
+      },
+      ...buttonFeatureDemos(importPath, componentStyleImport),
+      {
+        title: "Theme aware",
+        description:
+          "Docs previews inherit the DuskMoon data-theme value. Use the header switch to compare light and dark rendering.",
+        code: `<div data-theme="sunshine">\n  ${usage}\n</div>\n\n<div data-theme="moonlight">\n  ${usage}\n</div>`,
+        source: "authored",
+      },
+    ];
+  }
+
+  if (target.kind === "art-component") {
+    return [
+      {
+        title: "Basic usage",
+        description: `Import ${name} and the art component stylesheet before rendering the CSS art scene.`,
+        code: `import "@duskmoon-dev/art-components/styles.css";\n${importLine}\n\nexport function Example() {\n  return (${usage});\n}`,
+        source: "authored",
+      },
+      {
+        title: "Accessible art",
+        description: `Use ${name} as decorative output by default, or pass accessible labeling when the scene is meaningful.`,
+        code: `import "@duskmoon-dev/art-components/styles.css";\n${importLine}\n\nexport function AccessibleArt() {\n  return (${accessibleArtDemoCode(target, name)});\n}`,
+        source: "authored",
+      },
+      ...(target.id === "art-plasma-ball"
+        ? [
+            {
+              title: "Native toggle and disabled state",
+              description:
+                "Activate the ball by click or Space to change its visible power state. The second native checkbox is disabled.",
+              code: `import { useState } from "react";
+import { ArtPlasmaBall } from "@duskmoon-dev/art-components";
+import "@duskmoon-dev/art-components/styles.css";
+
+export function PlasmaPower() {
+  const [checked, setChecked] = useState(false);
+  return (
+    <>
+      <ArtPlasmaBall size="sm" hideBase checked={checked}
+        onCheckedChange={setChecked}
+        inputProps={{ "aria-label": "Power plasma ball" }} />
+      <p role="status">Plasma power: {checked ? "On" : "Off"}</p>
+      <ArtPlasmaBall size="sm" hideBase checked={false}
+        inputProps={{ "aria-label": "Disabled plasma power", disabled: true }} />
+    </>
+  );
+}`,
+              source: "authored" as const,
+            },
+          ]
+        : []),
+      ...(target.id === "art-gemini-input"
+        ? [
+            {
+              title: "Native form and field states",
+              description:
+                "Type multiline text and use Send to submit the native form. Read-only text stays selectable; the disabled field and actions cannot activate.",
+              code: `import { useState } from "react";
+import { ArtGeminiInput } from "@duskmoon-dev/art-components";
+import "@duskmoon-dev/art-components/styles.css";
+
+export function MessageForm() {
+  const [value, setValue] = useState("");
+  const [submitted, setSubmitted] = useState("");
+  const [count, setCount] = useState(0);
+  return (
+    <>
+      <form onSubmit={(event) => {
+        event.preventDefault();
+        setSubmitted(value);
+        setCount((previous) => previous + 1);
+      }}>
+        <ArtGeminiInput size="sm" name="message" required
+          value={value} onChange={(event) => setValue(event.currentTarget.value)}
+          textareaProps={{ "aria-label": "Message to send" }}
+          afterButtonProps={{ type: "submit" }} />
+        <p role="status">Submitted {count}: {submitted}</p>
+      </form>
+      <ArtGeminiInput size="sm" readOnly after={null}
+        beforeButtonProps={{ "aria-label": "Read-only add", disabled: true }}
+        defaultValue="Read-only example"
+        textareaProps={{ "aria-label": "Read-only message" }} />
+      <ArtGeminiInput size="sm" disabled defaultValue="Disabled example"
+        textareaProps={{ "aria-label": "Disabled message" }}
+        beforeButtonProps={{ "aria-label": "Disabled add" }}
+        afterButtonProps={{ "aria-label": "Disabled send" }} />
+    </>
+  );
+}`,
+              source: "authored" as const,
+            },
+          ]
+        : []),
+    ];
+  }
+
+  const scenarioDemos = scenarios.map((scenario) => {
+    const scenarioUsage = demoCode(target, name, api, scenario);
+
+    return {
+      title: scenario,
+      description: `${name} scenario from the component test coverage: ${scenario.toLowerCase()}.`,
+      code: `${componentStyleImport}\n${importLine}\n\nexport function ${name}${scenario
+        .replace(/[^A-Za-z0-9]+/g, " ")
+        .trim()
+        .split(" ")
+        .slice(0, 4)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join("")}Demo() {\n  return (${scenarioUsage});\n}`,
+      source: "test-backed",
+    };
+  });
+
+  if (target.id === "dropdown") {
+    return [
+      {
+        title: "Basic usage",
+        description: `Import the component stylesheet and ${name} from its package subpath, then render it with the core props.`,
+        code: `${componentStyleImport}\n${importLine}\n\nexport function Example() {\n  return (${usage});\n}`,
+        source: "authored",
+      },
+      ...scenarioDemos,
+      ...dropdownFeatureDemos(importLine, componentStyleImport),
+      {
+        title: "Theme aware",
+        description:
+          "Docs previews inherit the DuskMoon data-theme value. Use the header switch to compare light and dark rendering.",
+        code: `<div data-theme="sunshine">\n  ${usage}\n</div>\n\n<div data-theme="moonlight">\n  ${usage}\n</div>`,
+        source: "authored",
+      },
+    ];
+  }
+
+  return [
+    ...(colorDemo ? [colorDemo] : []),
+    {
+      title: "Basic usage",
+      description: `Import the component stylesheet and ${name} from its package subpath, then render it with the core props.`,
+      code: `${componentStyleImport}\n${importLine}\n\nexport function Example() {\n  return (${usage});\n}`,
+      source: "authored",
+    },
+    ...scenarioDemos,
+    {
+      title: "Theme aware",
+      description:
+        "Docs previews inherit the DuskMoon data-theme value. Use the header switch to compare light and dark rendering.",
+      code: `<div data-theme="sunshine">\n  ${usage}\n</div>\n\n<div data-theme="moonlight">\n  ${usage}\n</div>`,
+      source: "authored",
+    },
+  ];
+}
+
+function toDoc(target: Target): ComponentDoc {
+  const name = componentName(target);
+  const typeFile = findTypeFile(target, name);
+  const testFile = findTestFile(target, name);
+  const composer = composerDocSources.get(target.id);
+  const api =
+    composer && typeFile
+      ? parseComposerApi(typeFile, composer.apiNames)
+      : parseApi(typeFile, name);
+  const scenarios =
+    target.manualScenarios?.map(sentenceCase) ?? scenariosFromTest(testFile);
+  const keyProps = keyPropsFromApi(api);
+  const categoryId = categoryForTarget(target);
+  const category = DOC_CATEGORIES.find(({ id }) => id === categoryId)!.title;
+  const pageContent = componentPageContentFor({
+    id: target.id,
+    name,
+    kind: target.kind,
+    category,
+    source: target.source,
+    scenarios,
+    keyProps,
+  });
+
+  return {
+    ...target,
+    title: name,
+    route:
+      target.id === "json-schema-form"
+        ? docsPath("/utilities/form/")
+        : docsPath(`/components/${target.id}`),
+    categoryId,
+    category,
+    intro: pageContent.summary || introFor(target, name, scenarios, keyProps),
+    pageContent,
+    importPath: importPathForTarget(target),
+    typeFile,
+    testFile,
+    apiSource: relativeSource(typeFile),
+    testSource: relativeSource(testFile),
+    scenarios,
+    keyProps,
+    api,
+    demos: demosFor(target, name, api, scenarios),
+  };
+}
+
+export function getComponentDocs() {
+  const manifest = readManifest();
+  return [
+    ...manifest.publicTargets,
+    ...manifest.internalTargets,
+    ...artComponentTargets,
+  ]
+    .filter((target) => target.status === "implemented")
+    .map(toDoc)
+    .sort((a, b) => a.id.localeCompare(b.id));
+}
+
+export function getComponentDoc(id: string) {
+  return getComponentDocs().find((component) => component.id === id);
+}
+
+export function getDocsByCategory() {
+  const docsByCategory = new Map<string, ComponentDoc[]>();
+  const docs = getComponentDocs();
+
+  for (const { title } of DOC_CATEGORIES) {
+    const categoryDocs = docs.filter(
+      (component) => component.category === title,
+    );
+    if (categoryDocs.length > 0) docsByCategory.set(title, categoryDocs);
+  }
+
+  return docsByCategory;
+}

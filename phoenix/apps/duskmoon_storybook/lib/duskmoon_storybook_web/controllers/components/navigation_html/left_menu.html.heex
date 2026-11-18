@@ -1,0 +1,187 @@
+<.dm_breadcrumb class="px-4">
+  <:crumb to={~p"/components/navigation/left-menu"}>Navigation</:crumb>
+  <:crumb>Left Menu</:crumb>
+</.dm_breadcrumb>
+
+<.dm_card class="w-full h-full overflow-auto" body_class="p-4">
+  <:title class="flex flex-row justify-center items-center gap-3">
+    <span class="text-4xl text-primary">Left Menu</span>
+    <span class="text-sm opacity-60">dm_left_menu, dm_left_menu_group</span>
+  </:title>
+
+  <.dm_markdown content={"""
+  ## Overview
+  Sidebar navigation menu with native groups and an optional collapsible icon rail.
+
+  ## Usage
+  ```elixir
+  <.dm_left_menu active="dashboard">
+    <:title>Navigation</:title>
+    <:menu>
+      <.dm_left_menu_group active="dashboard">
+        <:title>Main</:title>
+        <:menu id="dashboard" to="/dashboard">Dashboard</:menu>
+        <:menu id="settings" to="/settings">Settings</:menu>
+      </.dm_left_menu_group>
+    </:menu>
+  </.dm_left_menu>
+  ```
+  """} />
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Collapsible Sidebar</h3>
+  <p class="mb-4">
+    The live example has 24 pages, a sticky sidebar and a bottom collapse button.
+    Scroll the menu, close a group, then navigate or use Back and Forward to check
+    that its state survives. Hover or focus a collapsed link to see its label.
+  </p>
+  <.link href={~p"/components/navigation/left-menu/live/dashboard"} class="btn btn-primary mb-6">
+    Open persistent sidebar example
+  </.link>
+  <.link
+    href={~p"/components/navigation/left-menu/live/dashboard?controlled=true"}
+    class="btn btn-outline mb-6"
+  >
+    Open host-owned state example
+  </.link>
+
+  <.dm_markdown content={"""
+  ## Sticky layout and page navigation
+
+  Register all package hooks using `import * as DuskmoonHooks from "duskmoon_phoenix/hooks"`
+  in your LiveSocket options. The component attaches `DuskmoonLeftMenu` and
+  `DuskmoonLeftMenuNavigation` automatically.
+
+  In the shared **LiveView layout**, pass menu data and the current page directly:
+
+  ```heex
+  <.dm_left_menu
+    id="admin-sidebar"
+    sticky
+    socket={@socket}
+    groups={@menu_groups}
+    active={@active_nav}
+    brand={%{label: "Administration", icon: "view-dashboard"}}
+    footer_text="My application"
+    storage_key="my-app:admin-sidebar-collapsed"
+    class="sticky top-0 h-dvh"
+  />
+  ```
+
+  Each group is a map with string `id`, `label`, optional `open` and `items`.
+  Each item needs string `id`, `label`, `to`, and optionally an MDI `icon`,
+  `disabled`, `class` and `rest`. Use atom keys, unique IDs, and server-filtered
+  menu data. Sticky mode accepts data instead of slots and enables the icon rail.
+  Existing slot-based menus remain available without `sticky`.
+
+  CSS `class="sticky top-0 h-dvh"` positions the menu and bounds its height;
+  `sticky socket={@socket}` keeps its package-owned child alive across LiveView
+  pages. The brand, footer and toggle stay fixed while only the menu body scrolls.
+  CSS sticky remains constrained by its containing block and scrolling ancestors.
+  For a top app bar, adjust both the offset and available height.
+
+  The component owns collapse, group state, navigation scroll restoration and
+  active-item synchronization. Supply the same menu ID and configuration on every
+  destination page; changing only `active` preserves the child. Pass an empty
+  string to clear highlighting. Changing groups, brand or presentation settings
+  changes the configuration hash and remounts the child with current menu data.
+  No application sidebar LiveView, navigation hook or event handler is required.
+
+  For host session persistence, opt into `collapse_controlled`, pass authoritative
+  `collapsed`, omit `storage_key`, and set `collapse_event` to a custom event name.
+  User toggles emit a bubbling CustomEvent with `detail: {id, collapsed}`. The host
+  validates and persists that boolean. Changed controlled values preserve the
+  sticky child. A targeted `duskmoon:left-menu:set-collapsed` DOM event applies
+  `detail: {collapsed: true}` silently, without notification or storage writes.
+  The host-owned example uses parent LiveView assigns and server controls; a real
+  session store belongs to the host application.
+
+  Full HTTP navigation or a reload resets in-memory scroll and group state.
+  Optional `storage_key` persists only the collapsed preference. See the
+  [left-menu guide](https://hexdocs.pm/duskmoon_phoenix/left-menu.html)
+  for the data format, shared layout and browser verification steps.
+
+  """} />
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Menu with Groups</h3>
+  <div class="w-64 bg-base-200 rounded-lg">
+    <.dm_left_menu active="item-1">
+      <:title class="font-bold text-primary">Demo Menu</:title>
+      <:menu>
+        <.dm_left_menu_group active="item-1">
+          <:title>Section A</:title>
+          <:menu id="item-1" to="#">
+            <.dm_mdi name="home" class="w-4 h-4" /> Dashboard
+          </:menu>
+          <:menu id="item-2" to="#">
+            <.dm_mdi name="account" class="w-4 h-4" /> Profile
+          </:menu>
+        </.dm_left_menu_group>
+      </:menu>
+      <:menu>
+        <.dm_left_menu_group active="item-1">
+          <:title>Section B</:title>
+          <:menu id="item-3" to="#">
+            <.dm_mdi name="cog" class="w-4 h-4" /> Settings
+          </:menu>
+          <:menu id="item-4" to="#" disabled={true}>
+            <.dm_mdi name="lock" class="w-4 h-4" /> Locked
+          </:menu>
+        </.dm_left_menu_group>
+      </:menu>
+    </.dm_left_menu>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Menu Link Tooltips</h3>
+  <p class="mb-4">
+    Spread tooltip trigger attributes onto a menu slot to attach hover and keyboard-focus hints
+    to its navigation link. Use the slot's <code>rest</code> map for other global link attributes.
+  </p>
+  <div class="w-64 bg-base-200 rounded-lg">
+    <.dm_tooltip
+      :let={trigger_attrs}
+      id="left-menu-dashboard-hint"
+      content="Dashboard"
+      position="right"
+    >
+      <.dm_left_menu_group active="dashboard">
+        <:title>Workspace</:title>
+        <:menu
+          id="dashboard"
+          to={~p"/components/navigation/left-menu"}
+          rest={%{"aria-label" => "Dashboard"}}
+          {trigger_attrs}
+        >
+          <.dm_mdi name="view-dashboard" class="w-4 h-4" aria-hidden="true" />
+        </:menu>
+      </.dm_left_menu_group>
+    </.dm_tooltip>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Sizes</h3>
+  <div class="flex flex-wrap gap-4">
+    <div class="w-48 bg-base-200 rounded-lg">
+      <.dm_left_menu size="xs">
+        <:title>XS Menu</:title>
+        <:menu>
+          <.dm_left_menu_group>
+            <:title>Items</:title>
+            <:menu id="xs-1" to="#">Item 1</:menu>
+            <:menu id="xs-2" to="#">Item 2</:menu>
+          </.dm_left_menu_group>
+        </:menu>
+      </.dm_left_menu>
+    </div>
+    <div class="w-64 bg-base-200 rounded-lg">
+      <.dm_left_menu size="lg">
+        <:title>LG Menu</:title>
+        <:menu>
+          <.dm_left_menu_group>
+            <:title>Items</:title>
+            <:menu id="lg-1" to="#">Item 1</:menu>
+            <:menu id="lg-2" to="#">Item 2</:menu>
+          </.dm_left_menu_group>
+        </:menu>
+      </.dm_left_menu>
+    </div>
+  </div>
+</.dm_card>

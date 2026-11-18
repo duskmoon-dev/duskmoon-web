@@ -1,0 +1,109 @@
+import Config
+Code.require_file("../scripts/native-policy.exs", __DIR__)
+
+config :duskmoon_storybook,
+  namespace: DuskmoonStorybook,
+  generators: [context_app: false]
+
+config :duskmoon_storybook, DuskmoonStorybookWeb.Endpoint,
+  adapter: Gaoxy.PhoenixAdapter,
+  url: [host: "localhost"],
+  render_errors: [
+    formats: [html: DuskmoonStorybookWeb.ErrorHTML, json: DuskmoonStorybookWeb.ErrorJSON],
+    layout: false
+  ],
+  pubsub_server: DuskmoonStorybook.PubSub,
+  live_view: [signing_salt: "HkF5qV0r"]
+
+config :duskmoon_storybook, DuskmoonStorybookWeb.Storybook,
+  content_path: Path.expand("../apps/duskmoon_storybook/storybook", __DIR__),
+  otp_app: :duskmoon_storybook,
+  title: "Duskmoon Web Storybook",
+  js_path: "/assets/js/app.js",
+  js_script_type: "module",
+  css_path: "/assets/css/app.css"
+
+config :duskmoon_bundler, :duskmoon_phoenix,
+  root: "apps/duskmoon_phoenix/assets",
+  entry: "apps/duskmoon_phoenix/assets/js/duskmoon_phoenix.js",
+  outdir: "apps/duskmoon_phoenix/priv/static/assets",
+  resolve_dirs: [Path.expand("../../node_modules", __DIR__), "apps", "deps"],
+  format: :esm,
+  hash: false,
+  sourcemap: false,
+  tailwind: [
+    css: "apps/duskmoon_phoenix/assets/css/duskmoon_phoenix.css",
+    sources: [
+      %{base: "apps/duskmoon_phoenix/assets", pattern: "**/*.{css,js}"},
+      %{base: "apps/duskmoon_phoenix/lib", pattern: "**/*.{ex,exs,heex}"}
+    ]
+  ],
+  server: [
+    watch_dirs: [
+      "apps/duskmoon_phoenix/assets",
+      "apps/duskmoon_phoenix/lib"
+    ]
+  ]
+
+storybook_resolve_dirs = [
+  Path.expand("../../node_modules", __DIR__),
+  Path.expand("../apps", __DIR__),
+  Path.expand("../deps", __DIR__)
+]
+
+config :duskmoon_bundler, :duskmoon_storybook,
+  root: "apps/duskmoon_storybook/assets",
+  entry: "apps/duskmoon_storybook/assets/js/app.js",
+  outdir: "apps/duskmoon_storybook/priv/static/assets",
+  resolve_dirs: storybook_resolve_dirs,
+  vendor_source: [
+    "@duskmoon-dev/el-chat/register",
+    "@duskmoon-dev/el-markdown",
+    "@duskmoon-dev/el-markdown-input",
+    "@duskmoon-dev/el-markdown-input/register",
+    "@duskmoon-dev/el-markdown/register"
+  ],
+  hash: false,
+  sourcemap: false,
+  tailwind: [
+    css: "apps/duskmoon_storybook/assets/css/app.css",
+    sources: [
+      %{base: "apps/duskmoon_storybook/assets", pattern: "**/*.{css,js}"},
+      %{base: "apps/duskmoon_storybook/lib", pattern: "**/*.{ex,exs,heex}"},
+      %{base: "apps/duskmoon_storybook/storybook", pattern: "**/*.{ex,exs,heex}"},
+      %{base: "apps/duskmoon_storybook/hologram", pattern: "**/*.ex"},
+      %{base: "apps/duskmoon_phoenix/assets", pattern: "**/*.{css,js}"},
+      %{base: "apps/duskmoon_phoenix/lib", pattern: "**/*.{ex,exs,heex}"}
+    ]
+  ],
+  server: [
+    vendor_prebundle: false,
+    watch_dirs: [
+      "apps/duskmoon_storybook/assets",
+      "apps/duskmoon_storybook/lib",
+      "apps/duskmoon_storybook/storybook",
+      "apps/duskmoon_storybook/hologram",
+      "apps/duskmoon_phoenix/assets",
+      "apps/duskmoon_phoenix/lib"
+    ]
+  ]
+
+# A separate graph keeps shared React chunks out of native and Elements routes.
+config :duskmoon_bundler, :duskmoon_storybook_react,
+  root: "apps/duskmoon_storybook/assets",
+  entry: "apps/duskmoon_storybook/assets/js/react_features.js",
+  outdir: "apps/duskmoon_storybook/priv/static/assets/react",
+  asset_url_prefix: "/assets/react",
+  resolve_dirs: storybook_resolve_dirs,
+  format: :esm,
+  hash: false,
+  sourcemap: false
+
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
+
+config :phoenix, :json_library, Jason
+
+import_config "#{config_env()}.exs"
+DuskmoonUI.NativePolicy.validate_config!()

@@ -1,0 +1,176 @@
+name: Web release
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Full immutable main commit SHA
+        required: true
+        type: string
+      version:
+        description: Web version already committed in VERSION
+        required: true
+        type: string
+      publish:
+        description: Publish through the release environment
+        type: boolean
+        default: false
+      recovery_run_id:
+        description: Completed staging workflow run to resume from
+        type: string
+        required: false
+permissions:
+  contents: read
+concurrency:
+  group: web-release-${{ inputs.version }}
+  cancel-in-progress: false
+env:
+  SOURCE_SHA: ${{ inputs.source_sha }}
+  RELEASE_VERSION: ${{ inputs.version }}
+jobs:
+  prepare:
+    if: inputs.recovery_run_id == ''
+    runs-on: ubuntu-26.04
+    timeout-minutes: 45
+    env:
+      HOLOGRAM_START: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_sha }}
+          lfs: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.0'
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '28'
+      - uses: browser-actions/setup-chrome@v2
+        id: chrome
+      - name: Check source and build and test npm workspaces
+        run: |
+          test "$GITHUB_REF" = refs/heads/main
+          test "$GITHUB_SHA" = "$SOURCE_SHA"
+          test "$(node scripts/release.mjs version)" = "$RELEASE_VERSION"
+          node scripts/release.mjs check
+          bun install --frozen-lockfile
+          bun run build:packages
+          bun run test:packages
+          bun run verify:react-boundary
+      - name: Test Phoenix with locked published precompiled toolchain
+        working-directory: phoenix
+        env:
+          MIX_ENV: test
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          mix deps.get --check-locked
+          elixir scripts/check-toolchain.exs
+          scripts/with-precompiled-toolchain.sh mix compile --warnings-as-errors
+          scripts/with-precompiled-toolchain.sh mix storybook.assets
+          scripts/with-precompiled-toolchain.sh mix test
+          bun test --cwd apps/duskmoon_phoenix
+      - name: Build immutable production assets and Hex package
+        working-directory: phoenix
+        env:
+          MIX_ENV: prod
+        run: |
+          scripts/with-precompiled-toolchain.sh mix prepublish
+          scripts/with-precompiled-toolchain.sh mix storybook.assets
+          elixir scripts/check-storybook-assets.exs
+          scripts/with-precompiled-toolchain.sh mix phx.digest
+          scripts/with-precompiled-toolchain.sh mix release storybook
+          elixir scripts/check-release-applications.exs _build/prod/rel/storybook
+          cd apps/duskmoon_phoenix
+          mix hex.build --output "$RUNNER_TEMP/duskmoon_phoenix.tar"
+      - name: Stage artifacts, validate consumers and simulate recovery
+        env:
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          node scripts/release.mjs stage "$RUNNER_TEMP/web" "$SOURCE_SHA" "$RUNNER_TEMP/duskmoon_phoenix.tar"
+          node scripts/verify-consumers.mjs "$RUNNER_TEMP/web"
+          node scripts/release.mjs dry-run "$RUNNER_TEMP/web" "$SOURCE_SHA"
+      - uses: actions/upload-artifact@v6
+        with:
+          name: web-${{ inputs.version }}-${{ inputs.source_sha }}
+          path: ${{ runner.temp }}/web
+          if-no-files-found: error
+          retention-days: 90
+  publish:
+    needs: prepare
+    if: always() && !cancelled() && inputs.publish && (needs.prepare.result == 'success' || (needs.prepare.result == 'skipped' && inputs.recovery_run_id != ''))
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    environment: release
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - name: Check workflow and verified staging run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RECOVERY_RUN: ${{ inputs.recovery_run_id }}
+        run: |
+          test "$GITHUB_REF" = refs/heads/main
+          test "$(node scripts/release.mjs version)" = "$RELEASE_VERSION"
+          if [[ -n "$RECOVERY_RUN" ]]; then
+            [[ "$RECOVERY_RUN" =~ ^[0-9]+$ ]]
+            gh run view "$RECOVERY_RUN" --json headSha,workflowName,status |
+              jq -e --arg sha "$SOURCE_SHA" '.headSha == $sha and .workflowName == "Web release" and .status == "completed"'
+          else
+            test "$GITHUB_SHA" = "$SOURCE_SHA"
+          fi
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor "$SOURCE_SHA" FETCH_HEAD
+      - uses: actions/download-artifact@v7
+        with:
+          name: web-${{ inputs.version }}-${{ inputs.source_sha }}
+          path: ${{ runner.temp }}/web
+          run-id: ${{ inputs.recovery_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify tag, publish missing artifacts and mark completion
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -n "$HEX_API_KEY"
+          tag="v$RELEASE_VERSION"
+          refs=$(git ls-remote origin "refs/tags/$tag" "refs/tags/$tag^{}")
+          if [[ -n "$refs" ]]; then
+            test "$(tail -1 <<<"$refs" | cut -f1)" = "$SOURCE_SHA"
+          fi
+          node scripts/release.mjs publish "$RUNNER_TEMP/web" "$SOURCE_SHA"
+          if ! gh release view "$tag" --json tagName >/dev/null 2>&1; then
+            gh release create "$tag" --target "$SOURCE_SHA" --title "Duskmoon Web $RELEASE_VERSION" \
+              --draft --notes "All npm and Hex distributions were verified against the attached release manifest."
+          fi
+          draft=$(gh release view "$tag" --json isDraft --jq .isDraft)
+          if [[ "$draft" == true ]]; then
+            test "$(gh release view "$tag" --json targetCommitish --jq .targetCommitish)" = "$SOURCE_SHA"
+          fi
+          assets=$(gh release view "$tag" --json assets --jq '.assets[].name')
+          mkdir "$RUNNER_TEMP/registry-release"
+          for file in release.json duskmoonui.js duskmoonui.mjs duskmoonui.css duskmoonui-themes.css; do
+            if grep -Fxq "$file" <<<"$assets"; then
+              gh release download "$tag" --pattern "$file" --dir "$RUNNER_TEMP/registry-release"
+              cmp "$RUNNER_TEMP/web/$file" "$RUNNER_TEMP/registry-release/$file"
+            else
+              test "$draft" = true
+              gh release upload "$tag" "$RUNNER_TEMP/web/$file"
+            fi
+          done
+          if [[ "$draft" == true ]]; then
+            gh release edit "$tag" --draft=false
+          fi

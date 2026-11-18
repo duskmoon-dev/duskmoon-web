@@ -1,0 +1,173 @@
+defmodule Storybook.DataDisplay.Progress do
+  use PhoenixStorybook.Story, :component
+
+  def function, do: &DuskmoonPhoenix.Component.DataDisplay.Progress.dm_progress/1
+  def description, do: "Progress bar component for showing completion status."
+
+  def variations do
+    [
+      %Variation{
+        id: :default,
+        description: "Basic linear progress bar at 75%",
+        attributes: %{value: 75, max: 100}
+      },
+      %Variation{
+        id: :with_label,
+        description: "Progress bar with percentage label",
+        attributes: %{value: 60, max: 100, show_label: true}
+      },
+      %VariationGroup{
+        id: :colors,
+        description: "Color variants",
+        variations: [
+          %Variation{id: :success, attributes: %{value: 30, max: 100, color: "success"}},
+          %Variation{id: :warning, attributes: %{value: 85, max: 100, color: "warning"}},
+          %Variation{id: :error, attributes: %{value: 95, max: 100, color: "error"}}
+        ]
+      },
+      %VariationGroup{
+        id: :sizes,
+        description: "Size variants",
+        variations: [
+          %Variation{id: :xs, attributes: %{value: 50, max: 100, size: "xs", color: "info"}},
+          %Variation{id: :sm, attributes: %{value: 25, max: 100, size: "sm", color: "success", show_label: true}},
+          %Variation{id: :lg, attributes: %{value: 40, max: 100, size: "lg", color: "accent", show_label: true}}
+        ]
+      },
+      %VariationGroup{
+        id: :animations,
+        description: "Animated and indeterminate states",
+        variations: [
+          %Variation{id: :animated, attributes: %{value: 70, max: 100, color: "primary", animated: true}},
+          %Variation{id: :indeterminate, attributes: %{color: "secondary", indeterminate: true}},
+          %Variation{id: :complete, attributes: %{value: 100, max: 100, color: "success", show_label: true}}
+        ]
+      },
+      %VariationGroup{
+        id: :striped,
+        description: "Striped pattern variants",
+        variations: [
+          %Variation{id: :striped_basic, attributes: %{value: 65, max: 100, color: "primary", striped: true}},
+          %Variation{
+            id: :striped_animated,
+            attributes: %{value: 55, max: 100, color: "success", striped: true, animated: true}
+          }
+        ]
+      },
+      %VariationGroup{
+        id: :inline_labels,
+        description: "Inline label positioning",
+        variations: [
+          %Variation{id: :inline, attributes: %{value: 72, max: 100, color: "accent", inline_label: true}},
+          %Variation{
+            id: :inline_striped,
+            attributes: %{value: 80, max: 100, color: "info", inline_label: true, striped: true}
+          }
+        ]
+      },
+      %VariationGroup{
+        id: :circular,
+        description: "Circular progress variants",
+        variations: [
+          %Variation{id: :circular_default, attributes: %{type: "circular", value: 75, max: 100, color: "primary"}},
+          %Variation{
+            id: :circular_label,
+            attributes: %{type: "circular", value: 60, max: 100, color: "success", show_label: true}
+          },
+          %Variation{
+            id: :circular_indeterminate,
+            attributes: %{type: "circular", color: "secondary", indeterminate: true}
+          },
+          %Variation{
+            id: :circular_large,
+            attributes: %{type: "circular", value: 85, max: 100, color: "warning", size: "lg", show_label: true}
+          }
+        ]
+      },
+      %VariationGroup{
+        id: :label_customization,
+        description: "Custom label text and complete text",
+        variations: [
+          %Variation{
+            id: :custom_label_text,
+            description: "Custom progress label text",
+            attributes: %{value: 3, max: 5, color: "primary", show_label: true, label_text: "Steps"}
+          },
+          %Variation{
+            id: :custom_complete_text,
+            description: "Custom completion text appended to percentage",
+            attributes: %{value: 100, max: 100, color: "success", show_label: true, complete_text: "Done"}
+          }
+        ]
+      }
+    ]
+  end
+
+  def modifiers do
+    [
+      %{
+        id: :type,
+        label: "Type",
+        type: :select,
+        options: [
+          {"linear", "Linear"},
+          {"circular", "Circular"}
+        ],
+        default: "linear"
+      },
+      %{
+        id: :color,
+        label: "Color",
+        type: :select,
+        options: [
+          {"primary", "Primary"},
+          {"secondary", "Secondary"},
+          {"tertiary", "Tertiary"},
+          {"accent", "Accent"},
+          {"info", "Info"},
+          {"success", "Success"},
+          {"warning", "Warning"},
+          {"error", "Error"}
+        ],
+        default: "primary"
+      },
+      %{
+        id: :size,
+        label: "Size",
+        type: :select,
+        options: [
+          {"xs", "XS"},
+          {"sm", "SM"},
+          {"md", "MD"},
+          {"lg", "LG"},
+          {"xl", "XL"}
+        ],
+        default: "md"
+      },
+      %{
+        id: :striped,
+        label: "Striped",
+        type: :boolean,
+        default: false
+      },
+      %{
+        id: :animated,
+        label: "Animated",
+        type: :boolean,
+        default: false
+      },
+      %{
+        id: :indeterminate,
+        label: "Indeterminate",
+        type: :boolean,
+        default: false
+      },
+      %{
+        id: :show_label,
+        label: "Show Label",
+        type: :boolean,
+        default: false
+      }
+    ]
+  end
+end

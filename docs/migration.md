@@ -24,3 +24,23 @@ The four import commits have two parents. Their second parent is the verified up
 GitHub resolved the old `duskmoon-dev/custom-elements` name to `duskmoon-dev/duskmoon-elements`. The local target had an unborn `main` and no configured remote. Both Git and the authenticated repository API returned “Repository not found” for the target, so remote history and access remain unverified.
 
 Design and the Bundler toolchain retain their release schedules. The Hologram examples use Core styles and native Hologram actions. The Hologram fork, compiler, and runtime are supplied by Bundler.
+
+## Package and demo relocation
+
+The [package inventory](package-inventory.json) maps every npm and Hex distribution to its original manifest and trees. It records source assets, runtime and peer requirements, validation commands, documentation and license evidence, as well as observed registry versions. Source files with a tracked license retain that license. The imported Elements README identifies MIT. Several upstream Elements and React manifests omit individual license fields and their source trees have no standalone license file.
+
+| Source tree | Destination |
+| --- | --- |
+| Core `packages/{core,css-art}` | `packages/css/{core,css-art}` |
+| Core docs and examples | `apps/css-docs`, `apps/css-demo`, `apps/astro-starter`, `apps/nextjs-starter` |
+| Elements `packages/{base,elements,art-elements}` | `packages/elements/{base,elements,art-elements}` |
+| Elements `elements/*`, `art-elements/*` | `packages/elements/components/*`, `packages/elements/art/*` |
+| Elements docs and playground | `apps/elements-docs`, `apps/elements-playground` |
+| React `packages/{components,art-components}` | `packages/react/{components,art-components}` |
+| React docs and Next.js sample | `apps/react-docs`, `apps/react-nextjs-smoke` |
+| Phoenix `apps/phoenix_duskmoon` | `phoenix/apps/duskmoon_phoenix` |
+| Phoenix Storybook and embedded Hologram demo | `phoenix/apps/duskmoon_storybook` |
+
+The import can be recreated on a clean target with `git fetch --no-tags <source> refs/heads/main:<local-import-ref>`, then `git merge --allow-unrelated-histories -s ours --no-commit <verified-sha>`, `git read-tree --prefix=_migration/<family>/ -u <verified-sha>`, and `git commit`. Use an explicit verified SHA. Core and React visual assets use Git LFS. Fetch their reachable LFS objects from the corresponding original endpoints and verify them on the Web remote when remote access is restored.
+
+Check ancestry with `git merge-base --is-ancestor <source-sha> HEAD`. Check the imported tree with `git rev-parse <import-commit>:_migration/<family>` and compare it to `git rev-parse <source-sha>^{tree}`.

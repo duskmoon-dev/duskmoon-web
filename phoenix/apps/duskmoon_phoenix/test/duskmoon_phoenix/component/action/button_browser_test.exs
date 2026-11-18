@@ -1,0 +1,537 @@
+defmodule DuskmoonPhoenix.Component.Action.ButtonBrowserTest do
+  use ExUnit.Case, async: false
+
+  import Phoenix.LiveViewTest
+  import DuskmoonPhoenix.Component.Action.Button
+
+  alias DuskmoonBundler.Integration.CDPBrowser
+
+  @moduletag :integration
+
+  setup_all do
+    {:ok, browser} = CDPBrowser.start_link()
+    on_exit(fn -> CDPBrowser.stop(browser) end)
+    %{browser: browser}
+  end
+
+  setup %{browser: browser} do
+    {:ok, page} = CDPBrowser.new_page(browser)
+    on_exit(fn -> CDPBrowser.close_page(page) end)
+    %{page: page}
+  end
+
+  test "confirmation closes once through its native command and preserves the action", %{
+    page: page
+  } do
+    component =
+      render_component(&dm_btn/1, %{
+        id: "delete-credential",
+        confirm: "Delete this credential?",
+        "phx-click": "delete_credential",
+        inner_block: %{inner_block: fn _, _ -> "Delete" end}
+      })
+
+    runtime = File.read!(Path.expand("../../../../assets/js/duskmoon_phoenix.js", __DIR__))
+
+    html = """
+    <!doctype html><html lang="en"><body>
+    #{component}<script type="module">#{runtime}</script></body></html>
+    """
+
+    :ok = CDPBrowser.goto(page, "data:text/html;base64," <> Base.encode64(html))
+
+    assert {:ok,
+            %{
+              "actionCount" => 1,
+              "closed" => true,
+              "closeCount" => 1,
+              "commandCount" => 1,
+              "commandSawOpenDialog" => true,
+              "defaultPrevented" => false,
+              "focusReturned" => true
+            }} =
+             CDPBrowser.evaluate(page, """
+             (async () => {
+               const trigger = document.getElementById("delete-credential")
+               const dialog = document.getElementById("confirm-dialog-delete-credential")
+               const action = dialog.querySelector("[data-dm-confirm-action]")
+               const nested = document.createElement("span")
+               nested.textContent = "Confirm deletion"
+               action.append(nested)
+               let actionCount = 0, closeCount = 0, commandCount = 0
+               let commandSawOpenDialog, defaultPrevented
+               document.addEventListener("click", event => {
+                 if (event.composedPath().some(node =>
+                   node.getAttribute?.("phx-click") === "delete_credential"
+                 )) {
+                   actionCount++
+                   defaultPrevented = event.defaultPrevented
+                 }
+               })
+               dialog.addEventListener("command", event => {
+                 if (event.command === "close") {
+                   commandCount++
+                   commandSawOpenDialog = dialog.open
+                 }
+               })
+               dialog.addEventListener("close", () => closeCount++)
+               trigger.focus()
+               trigger.click()
+               const closed = new Promise(resolve => dialog.addEventListener("close", resolve, {once: true}))
+               nested.click()
+               await closed
+               return {
+                 actionCount, closeCount, commandCount, commandSawOpenDialog, defaultPrevented,
+                 closed: !dialog.open,
+                 focusReturned: document.activeElement === trigger
+               }
+             })()
+             """)
+  end
+
+  test "confirmation closes before form reset and custom command defaults", %{page: page} do
+    reset =
+      render_component(&dm_btn/1, %{
+        id: "reset-settings",
+        confirm: "Reset settings?",
+        type: "reset",
+        form: "settings-form",
+        inner_block: %{inner_block: fn _, _ -> "Reset" end}
+      })
+
+    custom =
+      render_component(&dm_btn/1, %{
+        id: "approve-settings",
+        confirm: "Approve settings?",
+        command: "--approve",
+        commandfor: "settings-target",
+        inner_block: %{inner_block: fn _, _ -> "Approve" end}
+      })
+
+    runtime = File.read!(Path.expand("../../../../assets/js/duskmoon_phoenix.js", __DIR__))
+
+    html = """
+    <!doctype html><html lang="en"><body>
+    <form id="settings-form"><input name="title" value="Saved"></form>
+    <div id="settings-target"></div>
+    #{reset}#{custom}<script type="module">#{runtime}</script></body></html>
+    """
+
+    :ok = CDPBrowser.goto(page, "data:text/html;base64," <> Base.encode64(html))
+
+    assert {:ok,
+            %{
+              "customCount" => 1,
+              "customSawClosedDialog" => true,
+              "customSourceMatches" => true,
+              "resetCount" => 1,
+              "resetSawClosedDialog" => true,
+              "value" => "Saved"
+            }} =
+             CDPBrowser.evaluate(page, """
+             (() => {
+               const form = document.getElementById("settings-form")
+               const resetDialog = document.getElementById("confirm-dialog-reset-settings")
+               const customDialog = document.getElementById("confirm-dialog-approve-settings")
+               const customAction = customDialog.querySelector("[data-dm-confirm-action]")
+               let resetCount = 0, customCount = 0
+               let resetSawClosedDialog, customSawClosedDialog, customSourceMatches
+               form.addEventListener("reset", () => {
+                 resetCount++
+                 resetSawClosedDialog = !resetDialog.open
+               })
+               document.getElementById("settings-target").addEventListener("command", event => {
+                 if (event.command === "--approve") {
+                   customCount++
+                   customSawClosedDialog = !customDialog.open
+                   customSourceMatches = event.source === customAction
+                 }
+               })
+               form.elements.title.value = "Edited"
+               document.getElementById("reset-settings").click()
+               resetDialog.querySelector("[data-dm-confirm-action]").click()
+               document.getElementById("approve-settings").click()
+               customAction.click()
+               return {
+                 resetCount, resetSawClosedDialog, value: form.elements.title.value,
+                 customCount, customSawClosedDialog, customSourceMatches
+               }
+             })()
+             """)
+  end
+
+  test "confirm modal traps focus and only confirm dispatches the action", %{page: page} do
+    component =
+      render_component(&dm_btn/1, %{
+        id: "remove",
+        confirm: "Remove?",
+        "phx-click": "remove",
+        type: "submit",
+        form: "remove-form",
+        inner_block: %{inner_block: fn _, _ -> "Remove" end}
+      })
+
+    runtime = File.read!(Path.expand("../../../../assets/js/duskmoon_phoenix.js", __DIR__))
+
+    html =
+      "<!doctype html><html lang=\"en\"><body><form id=\"remove-form\"></form><button id=\"outside\">Outside</button>#{component}<script type=\"module\">#{runtime}</script></body></html>"
+
+    url = "data:text/html;base64," <> Base.encode64(html)
+
+    :ok = CDPBrowser.goto(page, url)
+
+    {:ok, initial_state} =
+      CDPBrowser.evaluate(page, """
+      (() => {
+        const trigger = document.getElementById("remove")
+        const dialog = document.getElementById("confirm-dialog-remove")
+        const outside = document.getElementById("outside")
+        const cancel = dialog.querySelector(".btn-ghost")
+        const form = document.getElementById("remove-form")
+
+        window.destructiveCount = 0
+        window.submitCount = 0
+        document.addEventListener("click", (event) => {
+          const action = event.composedPath().find(
+            (node) => node.getAttribute?.("phx-click") === "remove"
+          )
+          if (action) window.destructiveCount++
+        })
+        form.addEventListener("submit", (event) => {
+          event.preventDefault()
+          window.submitCount++
+        })
+
+        trigger.focus()
+        trigger.click()
+        outside.focus()
+
+        return {
+          openedModally: dialog.open && dialog.matches(":modal"),
+          initialFocusOnCancel: document.activeElement === cancel,
+          outsideFocusBlocked: document.activeElement === cancel
+        }
+      })()
+      """)
+
+    assert initial_state == %{
+             "openedModally" => true,
+             "initialFocusOnCancel" => true,
+             "outsideFocusBlocked" => true
+           }
+
+    {:ok, %{"nodes" => nodes}} =
+      CDPBrowser.command(page, "Accessibility.getFullAXTree", %{}, timeout: 5_000)
+
+    dialog_nodes =
+      Enum.filter(nodes, fn node ->
+        node["ignored"] != true && get_in(node, ["role", "value"]) == "dialog"
+      end)
+
+    assert [%{"name" => %{"value" => "Confirmation"}}] = dialog_nodes
+
+    :ok = dispatch_key(page, "Tab", "Tab", 9, 8)
+
+    assert {:ok, true} =
+             CDPBrowser.evaluate(
+               page,
+               "document.activeElement === document.querySelector('#confirm-dialog-remove .btn-primary')"
+             )
+
+    :ok = dispatch_key(page, "Tab", "Tab", 9)
+
+    assert {:ok, true} =
+             CDPBrowser.evaluate(
+               page,
+               "document.activeElement === document.querySelector('#confirm-dialog-remove .btn-ghost')"
+             )
+
+    :ok = dispatch_key(page, "Tab", "Tab", 9)
+
+    assert {:ok, true} =
+             CDPBrowser.evaluate(page, """
+             document.getElementById("confirm-dialog-remove").open &&
+               document.activeElement !== document.getElementById("outside")
+             """)
+
+    :ok = dispatch_key(page, "Escape", "Escape", 27)
+
+    assert {:ok,
+            %{
+              "closed" => true,
+              "focusReturned" => true,
+              "destructiveCount" => 0,
+              "submitCount" => 0
+            }} =
+             CDPBrowser.evaluate(page, """
+             (() => ({
+               closed: !document.getElementById("confirm-dialog-remove").open,
+               focusReturned: document.activeElement === document.getElementById("remove"),
+               destructiveCount: window.destructiveCount,
+               submitCount: window.submitCount
+             }))()
+             """)
+
+    assert {:ok,
+            %{
+              "closed" => true,
+              "focusReturned" => true,
+              "destructiveCount" => 0,
+              "submitCount" => 0
+            }} =
+             CDPBrowser.evaluate(page, """
+             (() => {
+               const trigger = document.getElementById("remove")
+               const dialog = document.getElementById("confirm-dialog-remove")
+               trigger.focus()
+               trigger.click()
+               dialog.querySelector(".btn-ghost").click()
+               return {
+                 closed: !dialog.open,
+                 focusReturned: document.activeElement === trigger,
+                 destructiveCount: window.destructiveCount,
+                 submitCount: window.submitCount
+               }
+             })()
+             """)
+
+    assert {:ok,
+            %{
+              "closed" => true,
+              "focusReturned" => true,
+              "destructiveCount" => 1,
+              "submitCount" => 1
+            }} =
+             CDPBrowser.evaluate(page, """
+             (() => {
+               const trigger = document.getElementById("remove")
+               const dialog = document.getElementById("confirm-dialog-remove")
+               trigger.focus()
+               trigger.click()
+               dialog.querySelector(".btn-primary").click()
+               return {
+                 closed: !dialog.open,
+                 focusReturned: document.activeElement === trigger,
+                 destructiveCount: window.destructiveCount,
+                 submitCount: window.submitCount
+               }
+             })()
+             """)
+  end
+
+  test "native submit mode submits without the component JavaScript runtime", %{page: page} do
+    save =
+      render_component(&dm_btn/1, %{
+        native_submit: true,
+        id: "save-settings",
+        form: "settings-form",
+        name: "action",
+        value: "save",
+        inner_block: %{inner_block: fn _, _ -> "Save" end}
+      })
+
+    delete =
+      render_component(&dm_btn/1, %{
+        native_submit: true,
+        id: "delete-settings",
+        form: "settings-form",
+        name: "action",
+        value: "delete",
+        confirm: "Delete these settings?",
+        inner_block: %{inner_block: fn _, _ -> "Delete" end}
+      })
+
+    html =
+      "<!doctype html><html lang=\"en\"><body><form id=\"settings-form\">#{save}#{delete}</form></body></html>"
+
+    url = "data:text/html;base64," <> Base.encode64(html)
+
+    :ok = CDPBrowser.goto(page, url)
+
+    assert {:ok,
+            %{
+              "confirmOpened" => true,
+              "directType" => "submit",
+              "submissions" => [
+                %{"name" => "action", "value" => "save"},
+                %{"name" => "action", "value" => "delete"}
+              ]
+            }} =
+             CDPBrowser.evaluate(page, """
+             (() => {
+               const form = document.getElementById("settings-form")
+               const save = document.getElementById("save-settings")
+               const deleteTrigger = document.getElementById("delete-settings")
+               const dialog = document.getElementById("confirm-dialog-delete-settings")
+               const submissions = []
+
+               form.addEventListener("submit", (event) => {
+                 event.preventDefault()
+                 submissions.push({
+                   name: event.submitter.name,
+                   value: event.submitter.value
+                 })
+               })
+
+               save.click()
+               deleteTrigger.click()
+               const confirmOpened = dialog.open && dialog.matches(":modal")
+               dialog.querySelector("[data-dm-confirm-action]").click()
+
+               return {
+                 directType: save.type,
+                 confirmOpened,
+                 submissions
+               }
+             })()
+             """)
+  end
+
+  test "native button submits once with its own value and respects validation", %{
+    page: page
+  } do
+    component =
+      render_component(&dm_btn/1, %{
+        id: "save-element",
+        type: "submit",
+        form: "element-form",
+        name: "action",
+        value: "save",
+        inner_block: %{inner_block: fn _, _ -> "Save" end}
+      })
+
+    loading =
+      render_component(&dm_btn/1, %{
+        id: "loading-submit",
+        type: "submit",
+        form: "element-form",
+        loading: true,
+        inner_block: %{inner_block: fn _, _ -> "Saving" end}
+      })
+
+    html = """
+    <!doctype html><html lang="en"><body>
+    <form id="element-form"><input name="title" required></form>
+    #{component}#{loading}</body></html>
+    """
+
+    :ok = CDPBrowser.goto(page, "data:text/html;base64," <> Base.encode64(html))
+
+    assert {:ok,
+            %{
+              "registered" => false,
+              "native" => true,
+              "invalidCount" => 0,
+              "count" => 1,
+              "submitter" => %{"name" => "action", "value" => "save"}
+            }} =
+             CDPBrowser.evaluate(page, """
+             (() => {
+               const button = document.getElementById("save-element")
+               const form = document.getElementById("element-form")
+               let count = 0
+               let submitter
+               form.addEventListener("submit", event => {
+                 event.preventDefault()
+                 count++
+                 submitter = {name: event.submitter.name, value: event.submitter.value}
+               })
+               button.click()
+               const invalidCount = count
+               form.elements.title.value = "Weekend plan"
+               button.click()
+               button.disabled = true
+               button.click()
+               document.getElementById("loading-submit").click()
+               return {registered: !!customElements.get("el-dm-button"), native: button instanceof HTMLButtonElement, invalidCount, count, submitter}
+             })()
+             """)
+  end
+
+  test "native accessible name follows LiveView label changes", %{
+    page: page
+  } do
+    component =
+      render_component(&dm_btn/1, %{
+        id: "remove-item",
+        "aria-label": "Remove item",
+        inner_block: %{inner_block: fn _, _ -> "×" end}
+      })
+
+    html = """
+    <!doctype html><html lang="en"><body>
+    <span id="remove-label">Delete draft</span>
+    #{component}</body></html>
+    """
+
+    :ok = CDPBrowser.goto(page, "data:text/html;base64," <> Base.encode64(html))
+
+    assert_button_name(page, "Remove item")
+
+    assert {:ok, _} =
+             CDPBrowser.evaluate(page, """
+             document.getElementById("remove-item").setAttribute("aria-label", "Remove draft")
+             """)
+
+    assert_button_name(page, "Remove draft")
+
+    assert {:ok, _} =
+             CDPBrowser.evaluate(page, """
+             document.getElementById("remove-item").setAttribute("aria-labelledby", "remove-label")
+             """)
+
+    assert_button_name(page, "Delete draft")
+
+    assert {:ok, _} =
+             CDPBrowser.evaluate(page, """
+             document.getElementById("remove-label").textContent = "Delete saved draft"
+             """)
+
+    assert_button_name(page, "Delete saved draft")
+
+    assert {:ok, _} =
+             CDPBrowser.evaluate(page, """
+             const replacement = document.createElement("span")
+             replacement.id = "remove-label"
+             replacement.textContent = "Delete replacement draft"
+             document.getElementById("remove-label").replaceWith(replacement)
+             """)
+
+    assert_button_name(page, "Delete replacement draft")
+
+    assert {:ok, _} =
+             CDPBrowser.evaluate(page, """
+             document.getElementById("remove-item").removeAttribute("aria-labelledby")
+             """)
+
+    assert_button_name(page, "Remove draft")
+  end
+
+  defp assert_button_name(page, expected) do
+    {:ok, %{"nodes" => nodes}} =
+      CDPBrowser.command(page, "Accessibility.getFullAXTree", %{}, timeout: 5_000)
+
+    buttons =
+      Enum.filter(nodes, fn node ->
+        node["ignored"] != true && get_in(node, ["role", "value"]) == "button"
+      end)
+
+    assert [%{"name" => %{"value" => ^expected}}] = buttons
+  end
+
+  defp dispatch_key(page, key, code, key_code, modifiers \\ 0) do
+    params = %{
+      "key" => key,
+      "code" => code,
+      "windowsVirtualKeyCode" => key_code,
+      "modifiers" => modifiers
+    }
+
+    with {:ok, _result} <-
+           CDPBrowser.command(page, "Input.dispatchKeyEvent", Map.put(params, "type", "keyDown")),
+         {:ok, _result} <-
+           CDPBrowser.command(page, "Input.dispatchKeyEvent", Map.put(params, "type", "keyUp")) do
+      :ok
+    end
+  end
+end

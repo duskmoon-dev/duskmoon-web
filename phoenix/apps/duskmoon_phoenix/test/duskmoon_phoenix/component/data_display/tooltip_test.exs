@@ -1,0 +1,187 @@
+defmodule DuskmoonPhoenix.Component.DataDisplay.TooltipTest do
+  use ExUnit.Case, async: true
+
+  use Phoenix.Component
+  import DuskmoonPhoenix.Component.Action.Button
+  import Phoenix.LiveViewTest
+  import DuskmoonPhoenix.Component.DataDisplay.Tooltip
+
+  defp inner_block do
+    %{
+      inner_block: fn _, attrs ->
+        escaped_attrs = attrs |> Phoenix.HTML.attributes_escape() |> Phoenix.HTML.safe_to_string()
+        Phoenix.HTML.raw(~s(<button type="button" #{escaped_attrs}>Hover me</button>))
+      end
+    }
+  end
+
+  test "renders a native hint popover linked to an interest invoker" do
+    result =
+      render_component(&dm_tooltip/1, %{
+        id: "save-help",
+        content: "Help text",
+        inner_block: inner_block()
+      })
+
+    assert result =~ ~s[interestfor="save-help-tooltip"]
+    assert result =~ ~s[aria-describedby="save-help-tooltip"]
+    assert result =~ ~s[id="save-help-tooltip"]
+    assert result =~ ~s[popover="hint"]
+    assert result =~ ~s[role="tooltip"]
+    assert result =~ ~s[title="Help text"]
+    refute result =~ "tooltip-content"
+  end
+
+  test "generates a target id when one is omitted" do
+    result =
+      render_component(&dm_tooltip/1, %{
+        content: "Generated",
+        inner_block: inner_block()
+      })
+
+    [_, id] = Regex.run(~r/interestfor="(tooltip-\d+)"/, result)
+    assert result =~ ~s[id="#{id}"]
+  end
+
+  test "renders every position class" do
+    for position <- ~w(top bottom left right) do
+      result =
+        render_component(&dm_tooltip/1, %{
+          content: "Tip",
+          position: position,
+          inner_block: inner_block()
+        })
+
+      assert result =~ "tooltip-#{position}"
+    end
+  end
+
+  test "renders every color class" do
+    for color <- ~w(primary secondary tertiary accent info success warning error) do
+      result =
+        render_component(&dm_tooltip/1, %{
+          content: "#{color} tip",
+          color: color,
+          inner_block: inner_block()
+        })
+
+      css_color = if color == "accent", do: "tertiary", else: color
+      assert result =~ "tooltip-#{css_color}"
+    end
+  end
+
+  test "uses matching CSS anchors" do
+    result =
+      render_component(&dm_tooltip/1, %{
+        id: "anchored",
+        content: "Tip",
+        inner_block: inner_block()
+      })
+
+    assert result =~ "anchor-name: --anchor-anchored-tooltip"
+    assert result =~ "position-anchor: --anchor-anchored-tooltip"
+  end
+
+  test "supports explicitly controlled open state through the LiveView hook" do
+    result =
+      render_component(&dm_tooltip/1, %{
+        content: "Always visible",
+        open: true,
+        inner_block: inner_block()
+      })
+
+    assert result =~ ~s[popover="manual"]
+    assert result =~ ~s[phx-hook="DuskmoonPopover"]
+    assert result =~ ~s[data-open="true"]
+  end
+
+  test "escapes tooltip content" do
+    result =
+      render_component(&dm_tooltip/1, %{
+        content: "Use < and > carefully",
+        inner_block: inner_block()
+      })
+
+    assert result =~ "Use &lt; and &gt; carefully"
+  end
+
+  test "passes class and global attributes to the tooltip surface" do
+    result =
+      render_component(&dm_tooltip/1, %{
+        content: "Tip",
+        class: "custom-tooltip",
+        "data-testid": "my-tooltip",
+        inner_block: inner_block()
+      })
+
+    assert result =~ "custom-tooltip"
+    assert result =~ ~s[data-testid="my-tooltip"]
+  end
+
+  test "dm_btn retains the tooltip anchor alongside its color variant styles" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.dm_tooltip id="save-help" content="Save changes" :let={trigger_attrs}>
+        <.dm_btn variant="info" {trigger_attrs}>Save</.dm_btn>
+      </.dm_tooltip>
+      """)
+      |> LazyHTML.from_fragment()
+
+    [style] = LazyHTML.attribute(LazyHTML.query(html, "button"), "style")
+    assert style =~ "anchor-name: --anchor-save-help-tooltip"
+    assert style =~ "--color-primary: var(--color-info)"
+
+    assert LazyHTML.attribute(LazyHTML.query(html, "[role=tooltip]"), "style") ==
+             ["position-anchor: --anchor-save-help-tooltip"]
+  end
+
+  test "confirm tooltip describes the visible trigger without activating the action" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.dm_tooltip id="delete-help" content="Delete" :let={trigger_attrs}>
+        <.dm_btn
+          id="delete-record"
+          variant="error"
+          {trigger_attrs}
+          aria-label="Delete record"
+          confirm="Delete this record?"
+          phx-click="delete"
+          phx-value-id="123"
+          phx-target="#records"
+        >
+          Delete
+        </.dm_btn>
+      </.dm_tooltip>
+      """)
+      |> LazyHTML.from_fragment()
+
+    trigger = LazyHTML.query(html, "#delete-record")
+    action = LazyHTML.query(html, "[data-dm-confirm-action]")
+
+    assert LazyHTML.attribute(trigger, "interestfor") == ["delete-help-tooltip"]
+    assert LazyHTML.attribute(trigger, "aria-describedby") == ["delete-help-tooltip"]
+    assert LazyHTML.attribute(trigger, "aria-label") == ["Delete record"]
+    assert LazyHTML.attribute(trigger, "title") == ["Delete"]
+    assert [style] = LazyHTML.attribute(trigger, "style")
+    assert style =~ "anchor-name: --anchor-delete-help-tooltip"
+    assert style =~ "--color-primary: var(--color-error)"
+    assert LazyHTML.attribute(trigger, "command") == ["show-modal"]
+    assert LazyHTML.attribute(trigger, "commandfor") == ["confirm-dialog-delete-record"]
+
+    for attribute <- ~w(phx-click phx-value-id phx-target) do
+      assert LazyHTML.attribute(trigger, attribute) == []
+    end
+
+    assert LazyHTML.attribute(action, "phx-click") == ["delete"]
+    assert LazyHTML.attribute(action, "phx-value-id") == ["123"]
+    assert LazyHTML.attribute(action, "phx-target") == ["#records"]
+
+    for attribute <- ~w(interestfor aria-describedby title style) do
+      assert LazyHTML.attribute(action, attribute) == []
+    end
+  end
+end
