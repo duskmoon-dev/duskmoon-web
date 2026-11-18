@@ -1,0 +1,32 @@
+<% sidebar = DemoLayout.sidebar(assigns[:demo_section] || :components) %>
+<main id="demo-layout" class={DemoLayout.classes().main}>
+  <.flash_group flash={@flash} />
+  <.dm_left_menu
+    id={sidebar.id}
+    sticky
+    socket={@socket}
+    groups={sidebar.groups}
+    active={assigns[:active_menu] || ""}
+    brand={sidebar.brand}
+    nav_label={sidebar.label}
+    storage_key={sidebar.storage_key}
+    class={DemoLayout.classes().sidebar}
+  />
+
+  <div id="demo-content" class={DemoLayout.classes().content}>
+    {@inner_content}
+  </div>
+</main>
+
+<.dm_page_footer class={DemoLayout.classes().footer}>
+  <:section
+    :for={section <- DemoLayout.footer_sections()}
+    title={section.title}
+    body_class="text-primary-content/70"
+  >
+    <.link :for={link <- section.links} href={link.href}>{link.label}</.link>
+  </:section>
+  <:copyright title="Copyright - GSMLG.dev">
+    Made with ❤️ for building a better Web.
+  </:copyright>
+</.dm_page_footer>

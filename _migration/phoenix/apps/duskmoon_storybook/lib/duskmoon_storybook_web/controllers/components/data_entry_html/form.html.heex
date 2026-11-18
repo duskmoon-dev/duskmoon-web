@@ -1,0 +1,183 @@
+<.dm_breadcrumb class="px-4">
+  <:crumb to={~p"/components/data-entry/form"}>Data Entry</:crumb>
+  <:crumb>Form</:crumb>
+</.dm_breadcrumb>
+
+<.dm_card class="w-full h-full overflow-auto" body_class="p-4">
+  <:title class="flex flex-row justify-center items-center gap-3">
+    <span class="text-4xl text-primary">Form</span>
+    <span class="text-sm opacity-60">
+      dm_form, dm_label, dm_error, dm_alert, dm_fieldset, dm_form_row, dm_form_grid, dm_form_section, dm_form_divider, dm_form_inline, dm_form_hint, dm_form_counter
+    </span>
+  </:title>
+
+  <% md_content = """
+  ## Overview
+  Form container and helper components including labels, error messages, and alerts.
+
+  ## Usage
+  ```elixir
+  <.dm_form for={@form} phx-submit="save">
+    <.dm_label for="name">Name</.dm_label>
+    <.dm_input name="name" value="" />
+    <.dm_btn variant="primary" type="submit">Save</.dm_btn>
+  </.dm_form>
+  ```
+  """ %>
+  <.dm_markdown content={md_content} />
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Label</h3>
+  <div class="flex flex-col gap-2 max-w-md">
+    <.dm_label>Username</.dm_label>
+    <.dm_label>Email Address</.dm_label>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Error Messages</h3>
+  <div class="flex flex-col gap-2 max-w-md">
+    <.dm_error>This field is required</.dm_error>
+    <.dm_error>Must be at least 8 characters</.dm_error>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Alerts</h3>
+  <div class="flex flex-col gap-4">
+    <.dm_alert variant="info" title="Info">This is an informational alert.</.dm_alert>
+    <.dm_alert variant="success" title="Success">Operation completed successfully.</.dm_alert>
+    <.dm_alert variant="warning" title="Warning">Please review your changes.</.dm_alert>
+    <.dm_alert variant="error" title="Error">An error occurred while saving.</.dm_alert>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Alerts — Filled</h3>
+  <div class="flex flex-col gap-4">
+    <.dm_alert variant="info" filled title="Info">
+      Filled info alert with solid background.
+    </.dm_alert>
+    <.dm_alert variant="success" filled title="Success">Filled success alert.</.dm_alert>
+    <.dm_alert variant="warning" filled title="Warning">Filled warning alert.</.dm_alert>
+    <.dm_alert variant="error" filled title="Error">Filled error alert.</.dm_alert>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Alerts — Outlined</h3>
+  <div class="flex flex-col gap-4">
+    <.dm_alert variant="info" outlined title="Info">
+      Outlined info alert with border emphasis.
+    </.dm_alert>
+    <.dm_alert variant="success" outlined title="Success">Outlined success alert.</.dm_alert>
+    <.dm_alert variant="warning" outlined title="Warning">Outlined warning alert.</.dm_alert>
+    <.dm_alert variant="error" outlined title="Error">Outlined error alert.</.dm_alert>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Alerts — Compact &amp; Dismissible</h3>
+  <div class="flex flex-col gap-4">
+    <.dm_alert variant="info" compact>Compact info alert without title.</.dm_alert>
+    <.dm_alert variant="success" filled compact>Compact filled success alert.</.dm_alert>
+    <.dm_alert variant="warning" dismissible title="Dismissible">
+      Click the close button to dismiss.
+    </.dm_alert>
+    <.dm_alert variant="error" outlined dismissible compact>
+      Compact outlined dismissible error.
+    </.dm_alert>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Fieldset</h3>
+  <div class="flex flex-col gap-4 max-w-lg">
+    <.dm_fieldset legend="Personal Info">
+      <div class="flex flex-col gap-2 p-4">
+        <.dm_input name="fs-name" value="" placeholder="Full name" label="Name" />
+        <.dm_input name="fs-email" type="email" value="" placeholder="Email" label="Email" />
+      </div>
+    </.dm_fieldset>
+    <.dm_fieldset legend="Filled Variant" variant="filled">
+      <div class="flex flex-col gap-2 p-4">
+        <.dm_input name="fs2-name" value="" placeholder="Name" label="Name" />
+      </div>
+    </.dm_fieldset>
+    <.dm_fieldset legend="Card Variant" variant="card">
+      <div class="flex flex-col gap-2 p-4">
+        <.dm_input name="fs3-name" value="" placeholder="Name" label="Name" />
+      </div>
+    </.dm_fieldset>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Form Row</h3>
+  <div class="max-w-lg">
+    <.dm_form_row>
+      <.dm_input name="row-first" value="" placeholder="First name" label="First" />
+      <.dm_input name="row-last" value="" placeholder="Last name" label="Last" />
+    </.dm_form_row>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Form Grid</h3>
+  <div class="max-w-lg">
+    <.dm_form_grid cols={2}>
+      <.dm_input name="grid-city" value="" placeholder="City" label="City" />
+      <.dm_input name="grid-state" value="" placeholder="State" label="State" />
+    </.dm_form_grid>
+    <.dm_form_grid cols={3} class="mt-4">
+      <.dm_input name="grid-day" value="" placeholder="DD" label="Day" />
+      <.dm_input name="grid-month" value="" placeholder="MM" label="Month" />
+      <.dm_input name="grid-year" value="" placeholder="YYYY" label="Year" />
+    </.dm_form_grid>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Form Section</h3>
+  <div class="max-w-lg">
+    <.dm_form_section title="Account" description="Your login credentials.">
+      <div class="flex flex-col gap-2">
+        <.dm_input name="sec-user" value="" placeholder="Username" label="Username" />
+        <.dm_input
+          name="sec-pass"
+          type="password"
+          value=""
+          placeholder="Password"
+          label="Password"
+        />
+      </div>
+    </.dm_form_section>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Form Divider</h3>
+  <div class="max-w-lg flex flex-col gap-4">
+    <.dm_input name="div-email" type="email" value="" placeholder="Email" label="Email" />
+    <.dm_form_divider />
+    <.dm_input name="div-phone" value="" placeholder="Phone" label="Phone" />
+    <.dm_form_divider text="or" />
+    <.dm_input name="div-social" value="" placeholder="Social handle" label="Social" />
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Form Inline</h3>
+  <div class="max-w-lg">
+    <.dm_form_inline>
+      <.dm_input name="inline-search" value="" placeholder="Search..." />
+      <.dm_btn variant="primary">Go</.dm_btn>
+    </.dm_form_inline>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Form Hint</h3>
+  <div class="max-w-md flex flex-col gap-1">
+    <.dm_form_hint>Must be at least 8 characters with one uppercase letter</.dm_form_hint>
+    <.dm_input name="hint-pass" type="password" value="" placeholder="Password" />
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Form Counter</h3>
+  <div class="max-w-md flex flex-col gap-1">
+    <.dm_input name="counter-bio" value="" placeholder="Write a short bio..." />
+    <div class="flex justify-between">
+      <.dm_form_hint>Keep it brief</.dm_form_hint>
+      <.dm_form_counter current={42} max={200} />
+    </div>
+    <div class="flex justify-end mt-4">
+      <.dm_form_counter current={210} max={200} error />
+    </div>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Complete Form Example</h3>
+  <div class="max-w-md">
+    <.dm_form action={~p"/"} method="get" class="flex flex-col gap-4">
+      <.dm_label for="demo-name">Name</.dm_label>
+      <.dm_input name="demo-name" value="" placeholder="Enter your name" />
+      <.dm_label for="demo-email">Email</.dm_label>
+      <.dm_input name="demo-email" type="email" value="" placeholder="Enter your email" />
+      <.dm_btn variant="primary" type="submit">Submit</.dm_btn>
+    </.dm_form>
+  </div>
+</.dm_card>

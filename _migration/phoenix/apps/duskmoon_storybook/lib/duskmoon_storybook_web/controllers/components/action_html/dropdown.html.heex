@@ -1,0 +1,107 @@
+<.dm_breadcrumb class="px-4">
+  <:crumb to={~p"/components/action/dropdown"}>Action</:crumb>
+  <:crumb>Dropdown</:crumb>
+</.dm_breadcrumb>
+
+<.dm_card class="w-full h-full overflow-auto" body_class="p-4">
+  <:title class="flex flex-row justify-center items-center gap-3">
+    <span class="text-4xl text-primary">Dropdown</span>
+    <span class="text-sm opacity-60">dm_dropdown</span>
+  </:title>
+
+  <.dm_markdown content={"""
+  ## Overview
+  Dropdown menu component using the native HTML Popover API with
+  `@duskmoon-dev/core` popover CSS. Click-to-toggle and click-outside-to-dismiss
+  behavior is handled by the browser — no JavaScript required.
+  Register `DuskmoonPopover` from `phoenix_duskmoon/hooks` with your LiveSocket to
+  mirror the native state to the trigger's explicit `aria-expanded` attribute.
+  This works with an external bundle under `script-src 'self'`.
+
+  ## Usage
+  ```elixir
+  <.dm_dropdown>
+    <:trigger>Click me</:trigger>
+    <:content>
+      <button class="popover-menu-item">Item 1</button>
+      <button class="popover-menu-item">Item 2</button>
+    </:content>
+  </.dm_dropdown>
+  ```
+  """} />
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Positions</h3>
+  <div class="flex flex-wrap gap-8 items-start p-8">
+    <.dm_dropdown position="bottom">
+      <:trigger>Bottom</:trigger>
+      <:content>
+        <button class="popover-menu-item">Item 1</button>
+        <button class="popover-menu-item">Item 2</button>
+      </:content>
+    </.dm_dropdown>
+
+    <.dm_dropdown position="top">
+      <:trigger>Top</:trigger>
+      <:content>
+        <button class="popover-menu-item">Item 1</button>
+        <button class="popover-menu-item">Item 2</button>
+      </:content>
+    </.dm_dropdown>
+
+    <.dm_dropdown position="left">
+      <:trigger>Left</:trigger>
+      <:content>
+        <button class="popover-menu-item">Item 1</button>
+        <button class="popover-menu-item">Item 2</button>
+      </:content>
+    </.dm_dropdown>
+
+    <.dm_dropdown position="right">
+      <:trigger>Right</:trigger>
+      <:content>
+        <button class="popover-menu-item">Item 1</button>
+        <button class="popover-menu-item">Item 2</button>
+      </:content>
+    </.dm_dropdown>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Colors</h3>
+  <div class="flex flex-wrap gap-8 items-start p-8">
+    <.dm_dropdown color="primary">
+      <:trigger>Primary</:trigger>
+      <:content>
+        <button class="popover-menu-item">Item 1</button>
+        <button class="popover-menu-item">Item 2</button>
+      </:content>
+    </.dm_dropdown>
+
+    <.dm_dropdown color="secondary">
+      <:trigger>Secondary</:trigger>
+      <:content>
+        <button class="popover-menu-item">Item 1</button>
+        <button class="popover-menu-item">Item 2</button>
+      </:content>
+    </.dm_dropdown>
+
+    <.dm_dropdown color="tertiary">
+      <:trigger>Tertiary</:trigger>
+      <:content>
+        <button class="popover-menu-item">Item 1</button>
+        <button class="popover-menu-item">Item 2</button>
+      </:content>
+    </.dm_dropdown>
+  </div>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">With Divider</h3>
+  <div class="flex flex-wrap gap-8 items-start p-8">
+    <.dm_dropdown>
+      <:trigger>Actions</:trigger>
+      <:content>
+        <button class="popover-menu-item">Edit</button>
+        <button class="popover-menu-item">Duplicate</button>
+        <div class="popover-menu-divider"></div>
+        <button class="popover-menu-item">Delete</button>
+      </:content>
+    </.dm_dropdown>
+  </div>
+</.dm_card>

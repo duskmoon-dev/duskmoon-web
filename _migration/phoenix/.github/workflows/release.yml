@@ -1,0 +1,125 @@
+name: UI Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: U already committed and synchronized in Hex/npm manifests
+        required: true
+        type: string
+      source_sha:
+        description: Immutable 40-character UI commit SHA
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: ui-release-${{ inputs.version }}
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 40
+    env:
+      HOLOGRAM_START: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_sha }}
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '28'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+      - uses: browser-actions/setup-chrome@v2
+        id: chrome
+      - name: Immutable UI-only release plan
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          WORKFLOW_SHA: ${{ github.sha }}
+        run: |
+          test "$WORKFLOW_SHA" = "$SOURCE_SHA" || { echo 'Dispatch workflow ref must point at source_sha' >&2; exit 1; }
+          elixir -r .github/scripts/release_support.exs -e 'ReleaseSupport.clean_source!()'
+          elixir .github/scripts/ui_release.exs plan "$RELEASE_VERSION" "$SOURCE_SHA"
+      - name: Locked toolchain, UI tests and hooks
+        env:
+          MIX_ENV: test
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          mix deps.get --check-locked
+          elixir scripts/check-toolchain.exs
+          mix npm.ci
+          elixir .github/scripts/release_test.exs
+          elixir scripts/native-policy-test.exs
+          elixir scripts/prepare-candidate-test.exs
+          elixir scripts/candidate-integration-test.exs
+          scripts/with-precompiled-toolchain.sh mix compile --warnings-as-errors
+          MIX_ENV='test' scripts/with-precompiled-toolchain.sh mix duskmoon_bundler.build duskmoon_storybook
+          scripts/with-precompiled-toolchain.sh mix test
+          bun test --cwd apps/phoenix_duskmoon
+      - name: UI and Storybook production assets
+        env:
+          MIX_ENV: prod
+        run: |
+          scripts/with-precompiled-toolchain.sh mix prepublish
+          scripts/with-precompiled-toolchain.sh mix duskmoon_bundler.build duskmoon_storybook
+          scripts/with-precompiled-toolchain.sh mix phx.digest
+          scripts/with-precompiled-toolchain.sh mix release storybook
+          elixir scripts/check-release-applications.exs _build/prod/rel/storybook
+          elixir .github/scripts/ui_package.exs stage "$RUNNER_TEMP/ui-package"
+          elixir .github/scripts/ui_package.exs smoke "$RUNNER_TEMP/ui-package"
+      - uses: actions/upload-artifact@v6
+        with:
+          name: verified-ui-package
+          path: ${{ runner.temp }}/ui-package
+  publish:
+    needs: validate
+    environment: release
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_sha }}
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '28'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@v7
+        with:
+          name: verified-ui-package
+          path: ${{ runner.temp }}/ui-package
+      - name: Publish only immutable U outputs
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          GH_TOKEN: ${{ github.token }}
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+        run: |
+          elixir .github/scripts/ui_release.exs publish "$RELEASE_VERSION" "$SOURCE_SHA" "$RUNNER_TEMP/ui-package"
+  alpine:
+    needs: publish
+    uses: ./.github/workflows/alpine-native-smoke.yml
+    with:
+      version: ${{ inputs.version }}
+  storybook:
+    needs: [publish, alpine]
+    uses: ./.github/workflows/docker.yml
+    permissions:
+      contents: read
+      packages: write
+    with:
+      git-ref: ${{ inputs.source_sha }}
+      version: ${{ inputs.version }}
+    secrets: inherit

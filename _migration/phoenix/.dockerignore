@@ -1,0 +1,39 @@
+# Build artifacts
+**/_build/
+**/deps/
+**/cover/
+/doc/
+**/target/
+
+# Node dependencies (rebuilt inside container)
+**/node_modules/
+
+# Development files
+/.devenv*
+/.loki/
+/.trees/
+/.playwright-mcp/
+/.claude/
+/.elixir_ls/
+/.opencode/
+/tmp/
+/screenshots/
+
+# Git
+.git/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+erl_crash.dump
+*.ez
+
+# Docker metadata
+/Dockerfile
+/.dockerignore
+
+# Screenshots and temp images
+*.png

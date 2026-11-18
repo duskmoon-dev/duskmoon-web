@@ -1,0 +1,227 @@
+<.dm_breadcrumb class="px-4">
+  <:crumb to={~p"/components/data-entry/markdown-input"}>Data Entry</:crumb>
+  <:crumb>Markdown Input</:crumb>
+</.dm_breadcrumb>
+
+<.dm_card class="w-full h-full overflow-auto" body_class="p-4 flex flex-col gap-8">
+  <:title class="flex flex-row justify-center items-center gap-3">
+    <span class="text-4xl text-primary">Markdown Input</span>
+    <span class="text-sm opacity-60">dm_markdown_input</span>
+  </:title>
+
+  <% docs = """
+  ## Overview
+
+  A rich markdown editor using the `<el-dm-markdown-input>` custom element.
+  Provides a split Write/Preview interface with syntax highlighting and optional
+  Mermaid diagram support.
+
+  Requires `@duskmoon-dev/el-markdown-input` registered in your app:
+
+  ```js
+  import "@duskmoon-dev/el-markdown-input/register";
+  ```
+
+  ## Usage
+
+  ```elixir
+  # Standalone
+  <.dm_markdown_input name="body" value={@body} />
+
+  # With Phoenix form field
+  <.dm_markdown_input field={@form[:body]} placeholder="Write markdown here…" />
+
+  # With theme and options
+  <.dm_markdown_input
+    field={@form[:content]}
+    theme="atom-one-dark"
+    no_mermaid={true}
+    class="h-96"
+  />
+  ```
+
+  ## Attributes
+
+  | Attribute | Type | Default | Description |
+  |-----------|------|---------|-------------|
+  | `field` | `FormField` | — | Phoenix form field (sets id/name/value automatically) |
+  | `name` | `string` | `nil` | HTML name for form submission |
+  | `value` | `any` | `nil` | Markdown content |
+  | `id` | `any` | `nil` | HTML id |
+  | `placeholder` | `string` | `nil` | Placeholder text |
+  | `theme` | `string` | `nil` | Syntax theme: `github`, `atom-one-dark`, `atom-one-light`, `auto` |
+  | `no_mermaid` | `boolean` | `false` | Disable Mermaid diagram rendering |
+  | `disabled` | `boolean` | `false` | Disable the editor |
+  | `readonly` | `boolean` | `false` | Make the editor read-only |
+  | `upload_url` | `string` | `nil` | POST endpoint for file uploads |
+  | `max_words` | `integer` | `nil` | Soft word cap shown in status bar |
+  | `auto_grow` | `boolean` | `false` | Grow with content; bounds use `--md-editor-min-height` / `--md-editor-max-height` (12rem / 24rem) |
+  | `resize` | `string` | `nil` | Resize behavior: `none`, `vertical`, `horizontal`, `both` |
+  | `live_preview` | `boolean` | `false` | Enable live preview rendering |
+  | `debounce` | `integer` | `nil` | Debounce delay (ms) for preview |
+  | `class` | `any` | `nil` | Additional CSS classes |
+
+  ## Slots
+
+  | Slot | Description |
+  |------|-------------|
+  | `:bottom` | Replaces the entire bottom status bar |
+  | `:bottom_start` | Left section of the bottom bar (default: attach files button) |
+  | `:bottom_end` | Right section of the bottom bar (default: word/char count) |
+  """ %>
+  <.dm_markdown content={docs} />
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">Basic Editor</h2>
+    <.dm_markdown_input
+      id="basic-editor"
+      name="body"
+      value="# Hello\n\nStart writing **markdown** here.\n\n- Item one\n- Item two\n"
+    />
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">Grow with Content</h2>
+    <.dm_markdown_input
+      id="auto-grow-editor"
+      name="growing_body"
+      auto_grow
+      no_preview
+      resize="none"
+      style="--md-editor-min-height: 4rem; --md-editor-max-height: 16rem;"
+      placeholder="Type multiple lines to grow the editor…"
+    />
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">With Placeholder</h2>
+    <.dm_markdown_input
+      id="placeholder-editor"
+      name="content"
+      placeholder="Write your markdown here…"
+    />
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">Dark Theme</h2>
+    <.dm_markdown_input
+      id="dark-editor"
+      name="body_dark"
+      theme="atom-one-dark"
+      value="# Dark Theme\n\n```elixir\ndefmodule Example do\n  def hello, do: :world\nend\n```\n"
+    />
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">Mermaid Diagram</h2>
+    <.dm_markdown_input
+      id="mermaid-editor"
+      name="body_mermaid"
+      value="# Mermaid Support\n\n```mermaid\ngraph LR;\n  A-->B;\n  A-->C;\n  B-->D;\n  C-->D;\n```\n"
+    />
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">Disabled</h2>
+    <.dm_markdown_input
+      id="disabled-editor"
+      name="body_disabled"
+      disabled={true}
+      value="This editor is **disabled**."
+    />
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">Read-only</h2>
+    <.dm_markdown_input
+      id="readonly-editor"
+      name="body_readonly"
+      readonly={true}
+      value="# Read-only content\n\nThis editor is **read-only**.\n"
+    />
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">File Attachments</h2>
+    <p class="text-sm opacity-70 mb-3">
+      Drag-and-drop, paste, or click "Attach files" to add files.
+      Without an <code>upload_url</code>, files are stored locally and submitted
+      as <code>{"{name}_files"}</code> form fields.
+    </p>
+    <.dm_markdown_input
+      id="attach-editor"
+      name="body_attach"
+      value="# File Attachments\n\nTry dragging a file onto this editor.\n"
+    />
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">Word Limit</h2>
+    <p class="text-sm opacity-70 mb-3">
+      The status bar shows a word count with warning at 80% and error at 100% of the limit.
+    </p>
+    <.dm_markdown_input
+      id="wordlimit-editor"
+      name="body_wordlimit"
+      max_words={50}
+      value="# Word Limit Demo\n\nThis editor has a 50-word limit. Try typing more to see the warning and error states.\n"
+    />
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">Custom Bottom Bar</h2>
+    <p class="text-sm opacity-70 mb-3">
+      Use <code>:bottom_start</code>
+      and <code>:bottom_end</code>
+      slots to customize the status bar.
+    </p>
+    <.dm_markdown_input
+      id="custombottom-editor"
+      name="body_custombottom"
+      value="# Custom Bottom Bar\n\nThe bottom bar has custom content in both left and right sections.\n"
+    >
+      <:bottom_start>
+        <.dm_badge size="sm" variant="info">Draft</.dm_badge>
+      </:bottom_start>
+      <:bottom_end>
+        <span class="text-xs opacity-60">Auto-saved</span>
+      </:bottom_end>
+    </.dm_markdown_input>
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">Live Preview</h2>
+    <.dm_markdown_input
+      id="livepreview-editor"
+      name="body_livepreview"
+      live_preview={true}
+      value={"# Live Preview\n\nThis editor shows a live preview as you type.\n\n```elixir\nIO.puts(\"Hello!\")\n```\n"}
+    />
+  </section>
+
+  <section>
+    <h2 class="text-lg font-semibold mb-3">No Preview with Custom Footer</h2>
+    <p class="text-sm opacity-70 mb-3">
+      Write-only mode with <code>no_preview</code> hides the preview tab and toolbar.
+      The bottom bar is fully customized with a submit button and character info.
+    </p>
+    <.dm_markdown_input
+      id="nopreview-editor"
+      name="body_nopreview"
+      no_preview={true}
+      placeholder="Type a message…"
+    >
+      <:bottom_start>
+        <.dm_btn variant="ghost" size="sm" type="button">
+          <.dm_mdi name="paperclip" class="w-4 h-4" />
+        </.dm_btn>
+        <.dm_btn variant="ghost" size="sm" type="button">
+          <.dm_mdi name="emoticon-outline" class="w-4 h-4" />
+        </.dm_btn>
+      </:bottom_start>
+      <:bottom_end>
+        <.dm_btn variant="primary" size="sm" type="button">Send</.dm_btn>
+      </:bottom_end>
+    </.dm_markdown_input>
+  </section>
+</.dm_card>

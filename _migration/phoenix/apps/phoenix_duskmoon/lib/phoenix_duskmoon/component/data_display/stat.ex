@@ -1,0 +1,105 @@
+defmodule PhoenixDuskmoon.Component.DataDisplay.Stat do
+  @moduledoc """
+  Stat component for displaying key metrics and statistics.
+
+  A simple data display component that shows a label, value, and optional
+  description. Uses the upstream Core stat layout and theme colors.
+
+  ## Examples
+
+      <.dm_stat title="Revenue" value="$1.2M" />
+
+      <.dm_stat title="Users" value="2,345" description="↑ 12% from last month" color="success" />
+
+      <.dm_stat title="Errors" value="3" color="error">
+        <:icon><.dm_mdi name="alert-circle" class="w-6 h-6" /></:icon>
+      </.dm_stat>
+  """
+
+  use Phoenix.Component
+  import PhoenixDuskmoon.Component.Helpers, only: [css_color: 1]
+
+  @doc """
+  Renders a stat display with title, value, and optional description.
+
+  ## Examples
+
+      <.dm_stat title="Total Users" value="1,234" />
+      <.dm_stat title="Revenue" value="$45.6K" description="+12.3%" color="success" />
+  """
+  @doc type: :component
+  attr(:id, :any, default: nil, doc: "HTML id attribute")
+  attr(:class, :any, default: nil, doc: "additional CSS classes for the wrapper")
+  attr(:title, :string, required: true, doc: "label/title for the stat")
+  attr(:value, :string, required: true, doc: "the main value to display")
+  attr(:description, :string, default: nil, doc: "optional description or change indicator")
+
+  attr(:color, :string,
+    default: nil,
+    values: [
+      nil,
+      "primary",
+      "secondary",
+      "tertiary",
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "error"
+    ],
+    doc: "value text color variant"
+  )
+
+  attr(:size, :string, default: "md", values: ["sm", "md", "lg"], doc: "stat size")
+  attr(:rest, :global)
+
+  slot(:icon, doc: "Optional icon displayed alongside the value")
+
+  def dm_stat(assigns) do
+    assigns = assign(assigns, :color, css_color(assigns.color))
+
+    ~H"""
+    <dl
+      id={@id}
+      class={[
+        "stat",
+        @color && "stat-#{@color}",
+        @class
+      ]}
+      {@rest}
+    >
+      <dt class={["stat-title", title_size(@size)]}>{@title}</dt>
+      <dd class={["stat-value", value_size(@size)]}>{@value}</dd>
+      <dd :if={@description} class={["stat-desc text-sm", desc_color(@color)]}>
+        {@description}
+      </dd>
+      <dd :if={@icon != []} class={["stat-figure", value_color(@color)]} aria-hidden="true">
+        {render_slot(@icon)}
+      </dd>
+    </dl>
+    """
+  end
+
+  defp title_size("sm"), do: "text-xs"
+  defp title_size("md"), do: "text-sm"
+  defp title_size("lg"), do: "text-base"
+
+  defp value_size("sm"), do: "text-lg"
+  defp value_size("md"), do: "text-2xl"
+  defp value_size("lg"), do: "text-4xl"
+
+  defp value_color(nil), do: nil
+  defp value_color("primary"), do: "text-primary"
+  defp value_color("secondary"), do: "text-secondary"
+  defp value_color("tertiary"), do: "text-tertiary"
+  defp value_color("info"), do: "text-info"
+  defp value_color("success"), do: "text-success"
+  defp value_color("warning"), do: "text-warning"
+  defp value_color("error"), do: "text-error"
+
+  defp desc_color(nil), do: nil
+  defp desc_color("success"), do: "text-success"
+  defp desc_color("error"), do: "text-error"
+  defp desc_color("warning"), do: "text-warning"
+  defp desc_color(_), do: nil
+end

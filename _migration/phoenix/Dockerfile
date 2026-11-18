@@ -1,0 +1,70 @@
+FROM elixir:1.19-otp-28 AS beam
+
+FROM ubuntu:26.04 AS builder
+
+# Keep the upstream Elixir/OTP distribution with the required glibc 2.43 baseline.
+COPY --from=beam /usr/local /usr/local
+
+RUN apt-get update && apt-get install -y --no-install-recommends bash build-essential ca-certificates curl git libncurses6 libssl3t64 nodejs pkg-config unzip xz-utils && rm -rf /var/lib/apt/lists/*
+
+ARG MIX_ENV=prod
+ARG RELEASE_VERSION=1.0.0
+
+ENV LANG=C.UTF-8
+ENV DUSKMOON_NATIVE_MODE=precompiled
+ENV NPM_EX_ALLOWED_REGISTRIES=https://registry.npmjs.org,https://npm.gsmlg.dev,https://nexus.gsmlg.net
+COPY . /build
+WORKDIR /build
+
+RUN <<EOF
+set -ex
+mix local.hex --force
+mix local.rebar --force
+mix deps.get --check-locked
+mix npm.ci
+export MATCH_STRING="s%@version \"[^\"]\+\"%@version \"${RELEASE_VERSION}\"%"
+sed -i "$MATCH_STRING" mix.exs;
+sed -i "$MATCH_STRING" apps/duskmoon_storybook/mix.exs;
+sed -i "$MATCH_STRING" apps/phoenix_duskmoon/mix.exs;
+elixir scripts/check-toolchain.exs
+scripts/with-precompiled-toolchain.sh mix compile --warnings-as-errors
+scripts/with-precompiled-toolchain.sh mix duskmoon_bundler.build duskmoon_storybook --target esnext
+mix phx.digest
+mix release storybook --version "${RELEASE_VERSION}"
+elixir scripts/check-release-applications.exs _build/prod/rel/storybook
+cp -r _build/prod/rel/storybook /app
+EOF
+
+FROM ubuntu:26.04
+
+ARG RELEASE_VERSION=1.0.0
+
+LABEL maintainer="GSMLG <gsmlg.com@gmail.com>"
+LABEL RELEASE_VERSION="${RELEASE_VERSION}"
+
+LABEL org.opencontainers.image.source="https://github.com/duskmoon-dev/phoenix-duskmoon-ui"
+LABEL org.opencontainers.image.description="Duskmoon UI Demo and Storybook"
+LABEL org.opencontainers.image.licenses=MIT
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates openssl libncurses6 libstdc++6 && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV PORT=80
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV REPLACE_OS_VARS=true
+ENV ERL_EPMD_PORT=4369
+ENV ERLCOOKIE=duskmoon_storybook
+ENV HOST=duskmoon-storybook.gsmlg.dev
+ENV POOL_SIZE=10
+ENV PHX_SERVER=true
+ENV HOLOGRAM_ENV=prod
+
+COPY --from=builder /app /app
+
+EXPOSE 80
+
+ENV PATH="/app/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+CMD ["/app/bin/storybook", "start"]

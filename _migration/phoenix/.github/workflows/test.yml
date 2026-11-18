@@ -1,0 +1,49 @@
+name: UI Test
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+env:
+  HOLOGRAM_START: '1'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    name: UI browser and component tests / OTP ${{ matrix.otp }}
+    runs-on: ubuntu-26.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        otp: ['28']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: ${{ matrix.otp }}
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+      - uses: actions/cache@v6
+        with:
+          path: deps
+          key: ${{ github.repository }}-${{ runner.os }}-${{ runner.arch }}-glibc-precompiled-elixir1.18-otp${{ matrix.otp }}-${{ hashFiles('mix.lock', 'mix.exs', 'apps/*/mix.exs') }}
+      - name: Install pinned dependencies
+        run: |
+          mix deps.get --check-locked
+          elixir scripts/check-toolchain.exs
+          mix npm.ci
+      - uses: browser-actions/setup-chrome@v2
+        id: chrome
+      - name: Build Storybook assets for browser tests
+        env:
+          MIX_ENV: test
+        run: scripts/with-precompiled-toolchain.sh mix duskmoon_bundler.build duskmoon_storybook
+      - name: Browser and component regressions
+        env:
+          MIX_ENV: test
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+        run: scripts/with-precompiled-toolchain.sh mix test

@@ -1,0 +1,70 @@
+name: Hologram Integration
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/hologram-example.yml'
+      - 'apps/duskmoon_storybook/**'
+      - 'apps/phoenix_duskmoon/assets/**'
+      - 'config/**'
+      - 'mix.exs'
+      - 'mix.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/scripts/release_support.exs'
+      - 'scripts/with-precompiled-toolchain.sh'
+  pull_request:
+    paths:
+      - '.github/workflows/hologram-example.yml'
+      - 'apps/duskmoon_storybook/**'
+      - 'apps/phoenix_duskmoon/assets/**'
+      - 'config/**'
+      - 'mix.exs'
+      - 'mix.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/scripts/release_support.exs'
+      - 'scripts/with-precompiled-toolchain.sh'
+permissions:
+  contents: read
+concurrency:
+  group: hologram-integration-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  example:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    env:
+      MIX_ENV: test
+      HOLOGRAM_START: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '28'
+      - uses: browser-actions/setup-chrome@v2
+        id: chrome
+      - name: Install locked dependencies
+        run: |
+          mix deps.get --check-locked
+          elixir scripts/check-toolchain.exs
+          mix npm.ci
+      - name: Build Hologram and shared styles
+        run: |
+          scripts/with-precompiled-toolchain.sh mix compile --warnings-as-errors
+          scripts/with-precompiled-toolchain.sh mix duskmoon_bundler.build duskmoon_storybook
+      - name: Check formatting
+        run: scripts/with-precompiled-toolchain.sh mix format --check-formatted
+      - name: Run scoped Hologram tests
+        if: success() || failure()
+        env:
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+        run: scripts/with-precompiled-toolchain.sh mix test apps/duskmoon_storybook/hologram_test
+      - name: Upload theme and mobile screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hologram-integration-screenshots
+          path: _build/test/hologram-screenshots/*.png
+          if-no-files-found: warn

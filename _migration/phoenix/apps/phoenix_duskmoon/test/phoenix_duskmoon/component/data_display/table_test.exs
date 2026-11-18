@@ -1,0 +1,616 @@
+defmodule PhoenixDuskmoon.Component.DataDisplay.TableTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+
+  @test_data [
+    %{name: "Alice", age: 30, city: "New York"},
+    %{name: "Bob", age: 25, city: "Los Angeles"},
+    %{name: "Charlie", age: 35, city: "Chicago"}
+  ]
+
+  defmodule TestComponent do
+    use Phoenix.Component
+    import PhoenixDuskmoon.Component.DataDisplay.Table
+
+    attr(:data, :list, default: [])
+    attr(:border, :boolean, default: false)
+    attr(:zebra, :boolean, default: false)
+    attr(:hover, :boolean, default: false)
+    attr(:compact, :boolean, default: false)
+    attr(:stream, :boolean, default: false)
+    attr(:id, :string, default: nil)
+    attr(:class, :string, default: "")
+    attr(:with_caption, :boolean, default: false)
+    attr(:caption_id, :string, default: nil)
+    attr(:caption_class, :string, default: nil)
+    attr(:with_expand, :boolean, default: false)
+    attr(:expand_id, :string, default: nil)
+    attr(:expand_class, :string, default: nil)
+    attr(:col_classes, :boolean, default: false)
+    attr(:empty, :boolean, default: false)
+    attr(:num_cols, :integer, default: 2)
+    attr(:data_testid, :string, default: nil)
+
+    def render(assigns) do
+      ~H"""
+      <.dm_table
+        id={@id}
+        class={@class}
+        data={if(@empty, do: [], else: @data)}
+        border={@border}
+        zebra={@zebra}
+        hover={@hover}
+        compact={@compact}
+        stream={@stream}
+        data-testid={@data_testid}
+      >
+        <:caption :if={@with_caption} id={@caption_id} class={@caption_class}>Test Caption</:caption>
+        <:col :let={row} label="Name" label_class={if(@col_classes, do: "text-primary")} class={if(@col_classes, do: "font-bold")}>
+          <%= row.name %>
+        </:col>
+        <:col :if={@num_cols >= 2} :let={row} label="Age">
+          <%= row.age %>
+        </:col>
+        <:col :if={@num_cols >= 3} :let={row} label="City">
+          <%= row.city %>
+        </:col>
+        <:expand :if={@with_expand} :let={row} id={@expand_id} class={@expand_class}>
+          Details: <%= row.city %>
+        </:expand>
+      </.dm_table>
+      """
+    end
+  end
+
+  defmodule InteractiveHeaderComponent do
+    use Phoenix.Component
+    import PhoenixDuskmoon.Component.DataDisplay.Table
+
+    attr(:data, :list, default: [])
+
+    def render(assigns) do
+      header =
+        ~H"""
+        <input type="checkbox" aria-label="Select all rows" aria-checked="mixed" />
+        """
+
+      assigns = assign(assigns, :header, header)
+
+      ~H"""
+      <.dm_table data={@data}>
+        <:col :let={row} label="Select row" header={@header}>
+          {row.name}
+        </:col>
+      </.dm_table>
+      """
+    end
+  end
+
+  describe "dm_table component" do
+    test "renders basic table with data" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      assert result =~ ~s[role="table"]
+      assert result =~ "<thead"
+      assert result =~ "<tbody"
+      refute result =~ ~r/<(?:thead|tbody)\b[^>]*\srole=/
+      assert result =~ ~s[role="row"]
+      assert result =~ ~s[role="cell"]
+      assert result =~ "Alice"
+      assert result =~ "Bob"
+      assert result =~ "Charlie"
+    end
+
+    test "renders table headers" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          num_cols: 3
+        })
+
+      assert result =~ ~s[role="columnheader"]
+      assert result =~ ">Name<"
+      assert result =~ ">Age<"
+      assert result =~ ">City<"
+    end
+
+    test "renders interactive column header content while retaining the responsive label" do
+      result =
+        render_component(&InteractiveHeaderComponent.render/1, %{
+          data: @test_data
+        })
+
+      assert result =~ ~s[type="checkbox"]
+      assert result =~ ~s[aria-label="Select all rows"]
+      assert result =~ ~s[aria-checked="mixed"]
+      assert result =~ ~s[data-label="Select row"]
+    end
+
+    test "renders table with custom id and class" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          id: "custom-table",
+          class: "my-table"
+        })
+
+      assert result =~ ~s[id="custom-table"]
+      assert result =~ "my-table"
+    end
+
+    test "renders table with border" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          border: true
+        })
+
+      assert result =~ "border"
+    end
+
+    test "renders table with zebra striping" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          zebra: true
+        })
+
+      assert result =~ "table-zebra"
+    end
+
+    test "renders table with hover effect" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          hover: true
+        })
+
+      assert result =~ "table-hover"
+    end
+
+    test "no hover class by default" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      refute result =~ "table-hover"
+    end
+
+    test "renders compact table" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          compact: true
+        })
+
+      assert result =~ "table-compact"
+    end
+
+    test "renders table with caption" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          with_caption: true
+        })
+
+      assert result =~ "<caption"
+      assert result =~ "Test Caption"
+    end
+
+    test "renders columns with custom classes" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          col_classes: true
+        })
+
+      assert result =~ "text-primary"
+      assert result =~ "font-bold"
+    end
+
+    test "renders empty table with no data" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: [],
+          empty: true
+        })
+
+      assert result =~ ~s[role="table"]
+      assert result =~ "Name"
+      # Should not have data rows
+      refute result =~ "Alice"
+    end
+
+    test "renders table with expand slot" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          with_expand: true
+        })
+
+      assert result =~ "table-row-expand"
+      assert result =~ "Details: New York"
+      assert result =~ "Details: Los Angeles"
+    end
+
+    test "expand row spans all columns" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          with_expand: true,
+          num_cols: 3
+        })
+
+      assert result =~ ~s[colspan="3"]
+    end
+
+    test "columns have data-label attribute" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      assert result =~ ~s[data-label="Name"]
+      assert result =~ ~s[data-label="Age"]
+    end
+
+    test "renders multiple rows correctly" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      # Should have 3 data rows
+      assert String.contains?(result, "Alice")
+      assert String.contains?(result, "Bob")
+      assert String.contains?(result, "Charlie")
+    end
+
+    test "thead is hidden on mobile" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      assert result =~ "hidden md:table-header-group"
+    end
+
+    test "combines multiple styling options" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          border: true,
+          zebra: true,
+          hover: true,
+          compact: true
+        })
+
+      assert result =~ "table-bordered"
+      assert result =~ "table-zebra"
+      assert result =~ "table-hover"
+      assert result =~ "table-compact"
+    end
+
+    test "renders with stream mode enabled" do
+      stream_data = [
+        {"row-1", %{name: "Alice", age: 30, city: "NY"}},
+        {"row-2", %{name: "Bob", age: 25, city: "LA"}}
+      ]
+
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: stream_data,
+          stream: true
+        })
+
+      assert result =~ ~s[phx-update="stream"]
+      assert result =~ ~s[id="row-1"]
+      assert result =~ ~s[id="row-2"]
+      assert result =~ "Alice"
+      assert result =~ "Bob"
+      refute result =~ ~r/<tbody\b[^>]*\srole=/
+    end
+
+    test "renders table without caption by default" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      refute result =~ ~s[role="caption"]
+    end
+
+    test "renders table without expand row by default" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      refute result =~ "table-row-expand"
+    end
+
+    test "renders table with table class" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      assert result =~ "table"
+    end
+
+    test "renders without zebra by default" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      # Check the table element itself, not any CSS style blocks
+      refute result =~ "table-zebra"
+    end
+
+    test "renders with three columns" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          num_cols: 3
+        })
+
+      assert result =~ "Name"
+      assert result =~ "Age"
+      assert result =~ "City"
+    end
+
+    test "non-stream mode does not include phx-update attribute" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      refute result =~ "phx-update"
+    end
+
+    test "stream body has phx-update stream attribute" do
+      stream_data = [{"row-1", %{name: "Alice", age: 30, city: "NY"}}]
+
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: stream_data,
+          stream: true
+        })
+
+      assert result =~ ~s[phx-update="stream"]
+    end
+
+    test "column headers render as th elements (upstream .table th provides font-weight)" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      assert result =~ "<th"
+      assert result =~ ~s[role="columnheader"]
+    end
+
+    test "table rows have role row attribute" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      assert result =~ ~s[role="row"]
+    end
+
+    test "expand row with 2 columns spans 2" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          with_expand: true,
+          num_cols: 2
+        })
+
+      assert result =~ ~s[colspan="2"]
+    end
+
+    test "expand row cell has p-0 class" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          with_expand: true
+        })
+
+      assert result =~ "p-0"
+    end
+
+    test "border applies to table element class" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          border: true,
+          with_expand: true
+        })
+
+      assert result =~ "table-bordered"
+    end
+
+    test "renders table header with sticky positioning" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data
+        })
+
+      assert result =~ "sticky top-0"
+    end
+
+    test "renders single row of data" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: [%{name: "Solo", age: 1, city: "Z"}]
+        })
+
+      assert result =~ "Solo"
+      refute result =~ "Alice"
+    end
+
+    test "renders caption with custom id and class" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          with_caption: true,
+          caption_id: "tbl-caption",
+          caption_class: "text-lg font-bold"
+        })
+
+      assert result =~ ~s[id="tbl-caption"]
+      assert result =~ "text-lg font-bold"
+      assert result =~ "Test Caption"
+    end
+
+    test "renders expand row with custom id and class" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          with_expand: true,
+          expand_id: "expand-row",
+          expand_class: "bg-gray-50"
+        })
+
+      assert result =~ ~s[id="expand-row"]
+      assert result =~ "bg-gray-50"
+      assert result =~ "table-row-expand"
+    end
+
+    test "stream body has interpolated id attribute" do
+      stream_data = [{"row-1", %{name: "Alice", age: 30, city: "NY"}}]
+
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: stream_data,
+          stream: true,
+          id: "my-table"
+        })
+
+      assert result =~ ~s[phx-update="stream"]
+      assert result =~ ~s[id="my-table-stream-body"]
+    end
+
+    test "stream mode renders row ids from tuples" do
+      stream_data = [
+        {"user-1", %{name: "Alice", age: 30, city: "NY"}},
+        {"user-2", %{name: "Bob", age: 25, city: "LA"}},
+        {"user-3", %{name: "Charlie", age: 35, city: "CHI"}}
+      ]
+
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: stream_data,
+          stream: true
+        })
+
+      assert result =~ ~s[id="user-1"]
+      assert result =~ ~s[id="user-2"]
+      assert result =~ ~s[id="user-3"]
+      assert result =~ "Alice"
+      assert result =~ "Bob"
+      assert result =~ "Charlie"
+    end
+
+    test "stream mode applies table-bordered class" do
+      stream_data = [{"row-1", %{name: "Alice", age: 30, city: "NY"}}]
+
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: stream_data,
+          stream: true,
+          border: true
+        })
+
+      assert result =~ "table-bordered"
+    end
+
+    test "stream mode applies column class" do
+      stream_data = [{"row-1", %{name: "Alice", age: 30, city: "NY"}}]
+
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: stream_data,
+          stream: true,
+          col_classes: true
+        })
+
+      assert result =~ "font-bold"
+      assert result =~ "text-primary"
+    end
+
+    test "renders caption with stream mode combined" do
+      stream_data = [{"row-1", %{name: "Alice", age: 30, city: "NY"}}]
+
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: stream_data,
+          stream: true,
+          with_caption: true,
+          caption_id: "stream-cap",
+          caption_class: "stream-caption-cls"
+        })
+
+      assert result =~ ~s[phx-update="stream"]
+      assert result =~ "<caption"
+      assert result =~ "Test Caption"
+      assert result =~ ~s[id="stream-cap"]
+      assert result =~ "stream-caption-cls"
+    end
+
+    test "stream mode renders data-label on cells" do
+      stream_data = [{"row-1", %{name: "Alice", age: 30, city: "NY"}}]
+
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: stream_data,
+          stream: true
+        })
+
+      assert result =~ ~s[data-label="Name"]
+      assert result =~ ~s[data-label="Age"]
+    end
+  end
+
+  describe "table header scope attribute" do
+    test "column headers have scope=col for screen reader navigation" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          num_cols: 1
+        })
+
+      assert result =~ ~s[scope="col"]
+    end
+
+    test "all column headers have scope=col" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          num_cols: 3
+        })
+
+      scope_count = length(String.split(result, ~s[scope="col"])) - 1
+      assert scope_count == 3
+    end
+  end
+
+  describe "rest attributes" do
+    test "renders table with rest attributes" do
+      result =
+        render_component(&TestComponent.render/1, %{
+          data: @test_data,
+          data_testid: "my-table"
+        })
+
+      assert result =~ ~s[data-testid="my-table"]
+    end
+  end
+end

@@ -1,0 +1,458 @@
+import React, {
+	memo,
+	useEffect,
+	useId,
+	useLayoutEffect,
+	useRef,
+	useState,
+} from "react";
+import { Markdown } from "@duskmoon-dev/components/markdown";
+import { Input } from "@duskmoon-dev/components/input";
+import { Button } from "@duskmoon-dev/components/button";
+import { Chat } from "@duskmoon-dev/components/chat";
+import { requestId } from "./protocol.js";
+const h = React.createElement;
+const defaultOptions = {};
+
+const Message = memo(function Message(props) {
+	const {
+		message,
+		bridge,
+		targetId,
+		timeline,
+		options,
+		connected,
+		synchronizing,
+	} = props;
+	const [notice, setNotice] = useState("");
+	const assistant = message.role === "assistant";
+	return h(
+		assistant ? Chat.Agent : Chat,
+		{
+			id: targetId,
+			role: "article",
+			...(assistant
+				? {}
+				: { placement: message.role === "user" ? "end" : "start" }),
+			timeline,
+			"data-message-id": message.id,
+		},
+		options.renderHeader
+			? h(options.renderHeader, props)
+			: h(Chat.Header, null, message.author || message.role),
+		h(
+			assistant ? Chat.Content : Chat.Bubble,
+			{ streaming: message.status === "streaming" },
+			...(message.tools || []).map((tool) =>
+				h(
+					Chat.Tool,
+					{ key: tool.id, status: tool.status || "running" },
+					h(
+						Chat.ToolHeader,
+						null,
+						`${tool.name || tool.id}: ${tool.status || "running"}`,
+					),
+					h(
+						tool.result == null ? Chat.ToolCall : Chat.ToolResult,
+						null,
+						h(
+							"pre",
+							null,
+							JSON.stringify(tool.result ?? tool.input ?? {}, null, 2),
+						),
+					),
+				),
+			),
+			h(Markdown, {
+				className: assistant ? undefined : "chat-bubble-content",
+				markdown: message.content || "",
+			}),
+		),
+		message.status === "streaming" &&
+			h(
+				Chat.Status,
+				{ role: "status" },
+				h(Chat.StatusItem, null, "Generating…"),
+			),
+		message.error && h("p", { role: "alert" }, message.error),
+		options.renderFooter
+			? h(options.renderFooter, props)
+			: h(
+					Chat.Footer,
+					null,
+					h(
+						Chat.Actions,
+						null,
+						h(
+							Button,
+							{
+								type: "button",
+								appearance: "ghost",
+								onClick: async () => {
+									try {
+										await navigator.clipboard.writeText(message.content || "");
+										setNotice("Copied");
+									} catch {
+										setNotice("Copy failed");
+									}
+								},
+							},
+							"Copy",
+						),
+						["error", "cancelled"].includes(message.status) &&
+							h(
+								Button,
+								{
+									type: "button",
+									appearance: "ghost",
+									disabled: !connected || synchronizing,
+									onClick: () =>
+										bridge
+											.send("retry", { message_id: message.id })
+											.catch((error) => setNotice(error.message)),
+								},
+								"Retry",
+							),
+						...(message.actions || []).map((action) =>
+							h(
+								Button,
+								{
+									key: action.id,
+									disabled:
+										action.disabled ||
+										action.eligible === false ||
+										!connected ||
+										synchronizing,
+									type: "button",
+									appearance: "ghost",
+									onClick: () =>
+										bridge
+											.send("action", {
+												message_id: message.id,
+												action: action.id,
+											})
+											.catch((error) => setNotice(error.message)),
+								},
+								action.label,
+							),
+						),
+					),
+				),
+		h("span", { role: "status" }, notice),
+	);
+});
+
+// A composer owns its draft/attachments. This helper only owns admission and UI requests.
+export function useChatSubmission({ bridge, canSubmit }) {
+	const [busy, setBusy] = useState(false);
+	const [notice, setNotice] = useState("");
+	const pending = useRef(false);
+	const alive = useRef(true);
+	useEffect(() => {
+		alive.current = true;
+		return () => {
+			alive.current = false;
+		};
+	}, []);
+	async function submit(payload) {
+		if (!canSubmit || pending.current)
+			throw new Error("Chat is not accepting messages");
+		pending.current = true;
+		setBusy(true);
+		setNotice("");
+		try {
+			const structured =
+				payload.protocolVersion !== undefined || payload.document !== undefined;
+			if (structured) return await bridge.submit(payload);
+			return await bridge.send("send", {
+				request_id: requestId(),
+				...payload,
+			});
+		} catch (error) {
+			if (alive.current) setNotice(error.message);
+			throw error;
+		} finally {
+			pending.current = false;
+			if (alive.current) setBusy(false);
+		}
+	}
+	return { submit, busy, notice };
+}
+
+function DefaultComposer(props) {
+	const { bridge, connected, active, canSubmit } = props;
+	const [draft, setDraft] = useState("");
+	const { submit, busy, notice } = useChatSubmission(props);
+	const [stopNotice, setStopNotice] = useState("");
+	async function onSubmit(event) {
+		event.preventDefault();
+		if (!draft.trim() || busy || !canSubmit) return;
+		const text = draft;
+		try {
+			await submit({ text });
+			setDraft((current) => (current === text ? "" : current));
+		} catch {
+			/* The helper preserves the draft and renders the rejection. */
+		}
+	}
+	return h(
+		React.Fragment,
+		null,
+		(notice || stopNotice) && h("p", { role: "alert" }, notice || stopNotice),
+		h(
+			"form",
+			{ className: "flex gap-2", onSubmit },
+			h(Input, {
+				value: draft,
+				onChange: (event) => setDraft(event.target.value),
+				"aria-label": "Message",
+				placeholder: "Write a message",
+			}),
+			h(
+				Button,
+				{ type: "submit", disabled: busy || !canSubmit || !draft.trim() },
+				"Send",
+			),
+			active &&
+				h(
+					Button,
+					{
+						type: "button",
+						disabled: !connected,
+						onClick: () =>
+							bridge
+								.send("stop", {})
+								.catch((error) => setStopNotice(error.message)),
+					},
+					"Stop",
+				),
+		),
+	);
+}
+
+export function ReactChat({
+	state,
+	bridge,
+	connected,
+	label,
+	options = defaultOptions,
+	adapter,
+}) {
+	const transcriptId = useId();
+	const scroll = useRef(null);
+	const body = useRef(null);
+	const follow = useRef(true);
+	const previousScrollTop = useRef(0);
+	const [sticking, setSticking] = useState(true);
+	const [atBottom, setAtBottom] = useState(true);
+	function jumpToLatest() {
+		const el = scroll.current;
+		el.scrollTo({ top: el.scrollHeight, behavior: "instant" });
+		previousScrollTop.current = el.scrollTop;
+		setAtBottom(true);
+	}
+	function pauseFollowing() {
+		follow.current = false;
+		setSticking(false);
+	}
+	function updateAtBottom() {
+		const el = scroll.current;
+		setAtBottom(el.scrollHeight - el.scrollTop - el.clientHeight < 2);
+	}
+	useLayoutEffect(() => {
+		follow.current = true;
+		setSticking(true);
+		jumpToLatest();
+	}, [state.conversationId, state.instanceGeneration]);
+	useLayoutEffect(() => {
+		if (follow.current) jumpToLatest();
+		else updateAtBottom();
+	}, [state.messages]);
+	useEffect(() => {
+		// Markdown, images, and the composer can resize without a message event.
+		const observer = new ResizeObserver(() => {
+			if (follow.current) jumpToLatest();
+			else updateAtBottom();
+		});
+		observer.observe(scroll.current);
+		observer.observe(body.current);
+		return () => observer.disconnect();
+	}, []);
+	const streaming = state.messages.some(
+		(message) => message.status === "streaming",
+	);
+	const active = state.runtime.active ?? streaming;
+	const canSubmit =
+		connected &&
+		!state.needsSync &&
+		state.admission.canSubmit !== false &&
+		(!active || state.admission.allowWhileStreaming === true);
+	const context = {
+		state,
+		bridge,
+		connected,
+		adapter,
+		scope: state.scope,
+		instanceGeneration: state.instanceGeneration,
+		composer: state.composer,
+		providers: adapter?.providers,
+		synchronizing: state.needsSync,
+		metadata: state.metadata,
+		runtime: state.runtime,
+		admission: state.admission,
+		streaming,
+		active,
+		canSubmit,
+	};
+	const replies = state.messages
+		.filter((message) => message.role === "assistant")
+		.slice(-24);
+	const timelines = new Map(
+		replies.map((message, index) => [message.id, index + 1]),
+	);
+	const targetId = (message) =>
+		`${transcriptId}-message-${encodeURIComponent(message.id)}`;
+	return h(
+		"section",
+		{ className: "flex flex-col gap-3 h-full min-h-0", "aria-label": label },
+		h(
+			"div",
+			{ className: "relative flex-1 min-h-0" },
+			h(
+				Chat.Scroll,
+				{
+					id: transcriptId,
+					ref: scroll,
+					className: "h-full min-h-0",
+					"data-chat-messages": true,
+					onScroll: () => {
+						const el = scroll.current;
+						const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
+						setAtBottom(bottom);
+						// Content growth must not be mistaken for scrolling into history.
+						if (!bottom && el.scrollTop < previousScrollTop.current)
+							pauseFollowing();
+						previousScrollTop.current = el.scrollTop;
+					},
+				},
+				h(
+					Chat.ScrollTrack,
+					{ role: "navigation", "aria-label": "Assistant replies" },
+					replies.map((message) =>
+						h(Chat.ScrollIndicator, {
+							key: message.id,
+							targetId: targetId(message),
+							timeline: timelines.get(message.id),
+							onClick: pauseFollowing,
+						}),
+					),
+				),
+				h(
+					Chat.ScrollBody,
+					{ ref: body, className: "gap-3 pb-16" },
+					state.messages.map((message) =>
+						h(options.renderMessage || Message, {
+							...(options.renderMessage ||
+							options.renderHeader ||
+							options.renderFooter
+								? context
+								: { connected, synchronizing: state.needsSync }),
+							options,
+							key: message.id,
+							message,
+							bridge,
+							targetId: targetId(message),
+							timeline: timelines.get(message.id),
+						}),
+					),
+				),
+			),
+			h(
+				"div",
+				{
+					className: "absolute bottom-3 end-3 z-10 flex gap-2",
+					role: "group",
+					"aria-label": "Transcript scrolling",
+				},
+				h(
+					Button,
+					{
+						type: "button",
+						shape: "circle",
+						color: "base",
+						className: "shadow-md",
+						"aria-label": "Jump to latest",
+						"aria-controls": transcriptId,
+						title: "Jump to latest",
+						disabled: atBottom,
+						onClick: jumpToLatest,
+					},
+					h(
+						"svg",
+						{
+							viewBox: "0 0 24 24",
+							className: "size-5",
+							fill: "none",
+							stroke: "currentColor",
+							strokeWidth: 2,
+							"aria-hidden": true,
+							focusable: false,
+						},
+						h("path", { d: "M12 5v14m-6-6 6 6 6-6" }),
+					),
+				),
+				h(
+					Button,
+					{
+						type: "button",
+						shape: "circle",
+						color: sticking ? "secondary" : "base",
+						className: "shadow-md",
+						"aria-label": "Stick to bottom",
+						"aria-controls": transcriptId,
+						"aria-pressed": sticking,
+						title: sticking ? "Stop sticking to bottom" : "Stick to bottom",
+						onClick: () => {
+							if (follow.current) pauseFollowing();
+							else {
+								follow.current = true;
+								setSticking(true);
+								jumpToLatest();
+							}
+						},
+					},
+					h(
+						"svg",
+						{
+							viewBox: "0 0 24 24",
+							className: "size-5",
+							fill: "none",
+							stroke: "currentColor",
+							strokeWidth: 2,
+							"aria-hidden": true,
+							focusable: false,
+						},
+						h("path", { d: "M12 17v5M9 3h6M10 3v7l-3 4v3h10v-3l-3-4V3" }),
+					),
+				),
+			),
+		),
+		(!connected || state.needsSync) &&
+			h(
+				"p",
+				{ role: "status" },
+				connected
+					? "Synchronizing conversation…"
+					: "Disconnected. Draft preserved.",
+			),
+		options.renderStatus && h(options.renderStatus, context),
+		state.error && h("p", { role: "alert" }, state.error),
+		h(options.Composer || DefaultComposer, {
+			...context,
+			key:
+				state.protocolVersion === 1
+					? state.instanceGeneration
+					: state.conversationId,
+		}),
+	);
+}
