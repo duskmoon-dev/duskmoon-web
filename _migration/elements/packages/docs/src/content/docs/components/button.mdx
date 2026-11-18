@@ -1,0 +1,253 @@
+---
+title: Button
+description: Interactive button component with multiple variants and states
+order: 1
+section: input
+component: "@duskmoon-dev/el-button"
+---
+
+import ComponentDemo from '../../../components/ComponentDemo.astro';
+
+
+# Button
+
+The Button component provides an interactive button with multiple variants, sizes, and states.
+
+## Installation
+
+```bash
+npm install @duskmoon-dev/el-button
+```
+
+## Usage
+
+```javascript
+import '@duskmoon-dev/el-button/register';
+```
+
+```html
+<el-dm-button variant="primary">Click me</el-dm-button>
+```
+
+Use `type="submit"` or `type="reset"` inside a form, or set `form` to an external form's
+ID. Buttons can be removed and reinserted without duplicating submissions or resets.
+
+## Live Demo
+
+<ComponentDemo title="Button Variants">
+  <el-dm-button variant="primary">Primary</el-dm-button>
+  <el-dm-button variant="secondary">Secondary</el-dm-button>
+  <el-dm-button variant="tertiary">Tertiary</el-dm-button>
+  <el-dm-button variant="outline">Outline</el-dm-button>
+  <el-dm-button variant="ghost">Ghost</el-dm-button>
+</ComponentDemo>
+
+<ComponentDemo title="Semantic Colors">
+  <el-dm-button variant="success">Success</el-dm-button>
+  <el-dm-button variant="warning">Warning</el-dm-button>
+  <el-dm-button variant="error">Error</el-dm-button>
+  <el-dm-button variant="info">Info</el-dm-button>
+</ComponentDemo>
+
+## Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `variant` | `'primary' \| 'secondary' \| 'tertiary' \| 'outline' \| 'ghost' \| 'success' \| 'warning' \| 'error' \| 'info'` | `'primary'` | Visual style of the button |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size of the button |
+| `shape` | `'circle' \| 'square'` | — | Optional shape; omitted keeps the default rectangle |
+| `disabled` | `boolean` | `false` | Disables the button |
+| `loading` | `boolean` | `false` | Shows loading state |
+| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | Button type attribute |
+
+## Variants
+
+### Primary
+
+The primary variant is used for main actions.
+
+```html
+<el-dm-button variant="primary">Primary</el-dm-button>
+```
+
+### Secondary
+
+The secondary variant is used for less prominent actions.
+
+```html
+<el-dm-button variant="secondary">Secondary</el-dm-button>
+```
+
+### Outline
+
+The outline variant has a transparent background with a border.
+
+```html
+<el-dm-button variant="outline">Outline</el-dm-button>
+```
+
+### Ghost
+
+The ghost variant is minimal, with no background or border.
+
+```html
+<el-dm-button variant="ghost">Ghost</el-dm-button>
+```
+
+### Tertiary
+
+The tertiary variant provides an alternative accent color.
+
+```html
+<el-dm-button variant="tertiary">Tertiary</el-dm-button>
+```
+
+## Semantic Colors
+
+Semantic color variants communicate status or intent.
+
+### Success
+
+```html
+<el-dm-button variant="success">Success</el-dm-button>
+```
+
+### Warning
+
+```html
+<el-dm-button variant="warning">Warning</el-dm-button>
+```
+
+### Error
+
+```html
+<el-dm-button variant="error">Error</el-dm-button>
+```
+
+### Info
+
+```html
+<el-dm-button variant="info">Info</el-dm-button>
+```
+
+## Sizes
+
+<ComponentDemo title="Button Sizes">
+  <el-dm-button size="sm">Small</el-dm-button>
+  <el-dm-button size="md">Medium</el-dm-button>
+  <el-dm-button size="lg">Large</el-dm-button>
+</ComponentDemo>
+
+```html
+<el-dm-button size="sm">Small</el-dm-button>
+<el-dm-button size="md">Medium</el-dm-button>
+<el-dm-button size="lg">Large</el-dm-button>
+```
+
+## Shapes
+
+Use `shape="circle"` or `shape="square"` for icon buttons, together with an accessible label.
+Omit `shape` for the default rectangular button.
+
+<ComponentDemo>
+  <el-dm-button variant="outline" size="xs" shape="circle" aria-label="Add">
+  <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16">
+    <path d="M8 2v12M2 8h12" stroke="currentColor" />
+  </svg>
+</el-dm-button>
+  <el-dm-button variant="outline" size="xs" shape="square" aria-label="Add">
+  <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16">
+    <path d="M8 2v12M2 8h12" stroke="currentColor" />
+  </svg>
+</el-dm-button>
+</ComponentDemo>
+
+```html
+<el-dm-button variant="outline" size="xs" shape="circle" aria-label="Add">
+  <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16">
+    <path d="M8 2v12M2 8h12" stroke="currentColor" />
+  </svg>
+</el-dm-button>
+<el-dm-button variant="outline" size="xs" shape="square" aria-label="Add">
+  <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16">
+    <path d="M8 2v12M2 8h12" stroke="currentColor" />
+  </svg>
+</el-dm-button>
+```
+
+## States
+
+### Disabled
+
+<ComponentDemo title="Disabled State">
+  <el-dm-button disabled>Disabled</el-dm-button>
+</ComponentDemo>
+
+```html
+<el-dm-button disabled>Disabled</el-dm-button>
+```
+
+### Loading
+
+<ComponentDemo title="Loading State">
+  <el-dm-button loading>Loading</el-dm-button>
+</ComponentDemo>
+
+```html
+<el-dm-button loading>Loading</el-dm-button>
+```
+
+## Events
+
+The button component emits standard DOM events:
+
+| Event | Description |
+|-------|-------------|
+| `click` | Fired when the button is clicked |
+| `focus` | Fired when the button receives focus |
+| `blur` | Fired when the button loses focus |
+
+### Event Handling
+
+```javascript
+const button = document.querySelector('el-dm-button');
+button.addEventListener('click', (event) => {
+  console.log('Button clicked!');
+});
+```
+
+## CSS Custom Properties
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `--btn-padding-x` | `1rem` | Horizontal padding |
+| `--btn-padding-y` | `0.5rem` | Vertical padding |
+| `--btn-border-radius` | `0.375rem` | Border radius |
+| `--btn-font-weight` | `500` | Font weight |
+
+## Accessibility
+
+- The button uses native `<button>` element semantics
+- Host `aria-label` and `aria-labelledby` name the native button and stay synchronized
+- Keyboard navigation is fully supported
+- Focus states are clearly visible
+- Disabled state is properly announced to screen readers
+
+Use `aria-label` for an icon-only button, or reference label elements with `aria-labelledby`:
+
+```html
+<el-dm-button aria-label="Remove email">
+  <svg aria-hidden="true" viewBox="0 0 24 24">
+    <path d="M5 5L19 19M19 5L5 19" />
+  </svg>
+</el-dm-button>
+
+<span id="remove-email-label">Remove email</span>
+<el-dm-button aria-labelledby="remove-email-label">×</el-dm-button>
+```
+
+Label IDs resolve in the host's document or containing shadow root. When a label target exists,
+`aria-labelledby` takes precedence over `aria-label`. Label text and target replacements stay
+synchronized. Modern browsers use ARIA element references across the shadow boundary; older
+browsers use the targets' text content or `aria-label`. Without either attribute, the slotted
+content supplies the accessible name.

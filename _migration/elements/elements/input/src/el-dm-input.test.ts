@@ -1,0 +1,689 @@
+import { expect, test, describe, beforeEach, afterEach } from 'bun:test';
+import { validators } from '@duskmoon-dev/el-base';
+import { ElDmInput, register } from './index';
+
+register();
+
+function createInput(props: Partial<ElDmInput> = {}): ElDmInput {
+  const el = document.createElement('el-dm-input') as ElDmInput;
+  Object.assign(el, props);
+  return el;
+}
+
+describe('ElDmInput', () => {
+  let container: HTMLDivElement;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    container.remove();
+  });
+
+  // --- Registration ---
+  test('is defined', () => {
+    expect(customElements.get('el-dm-input')).toBe(ElDmInput);
+  });
+
+  // --- Rendering ---
+  test('creates a shadow root with container', () => {
+    const el = createInput();
+    container.appendChild(el);
+    const cont = el.shadowRoot?.querySelector('.container');
+    expect(cont).toBeDefined();
+  });
+
+  test('has input element', () => {
+    const el = createInput();
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input).toBeDefined();
+  });
+
+  test('has input-wrapper', () => {
+    const el = createInput();
+    container.appendChild(el);
+    const wrapper = el.shadowRoot?.querySelector('.input-wrapper');
+    expect(wrapper).toBeDefined();
+  });
+
+  test('has prefix slot', () => {
+    const el = createInput();
+    container.appendChild(el);
+    const slot = el.shadowRoot?.querySelector('slot[name="prefix"]');
+    expect(slot).toBeDefined();
+  });
+
+  test('has suffix slot', () => {
+    const el = createInput();
+    container.appendChild(el);
+    const slot = el.shadowRoot?.querySelector('slot[name="suffix"]');
+    expect(slot).toBeDefined();
+  });
+
+  test('keeps the control and focus through input, change, and blur', async () => {
+    const el = createInput({ value: 'Shared workspace' });
+    container.appendChild(el);
+    const input = el.shadowRoot.querySelector('input')!;
+    const events: string[] = [];
+    for (const name of ['dm-focus', 'dm-input', 'dm-change', 'dm-blur']) {
+      el.addEventListener(name, () => events.push(name));
+    }
+    input.focus();
+    expect(el.shadowRoot.querySelector('input')).toBe(input);
+    expect(el.shadowRoot.activeElement).toBe(input);
+    expect(el.shadowRoot.querySelector('.focused')).not.toBeNull();
+    input.value = 'Design "team" & <workspace>';
+    input.setSelectionRange(2, 8, 'backward');
+    input.dispatchEvent(new Event('input'));
+    await Promise.resolve();
+    expect(el.value).toBe(input.value);
+    expect(el.getAttribute('value')).toBe(input.value);
+    expect(el.shadowRoot.querySelector('input')).toBe(input);
+    expect(el.shadowRoot.activeElement).toBe(input);
+    expect([input.selectionStart, input.selectionEnd, input.selectionDirection]).toEqual([
+      2,
+      8,
+      'backward',
+    ]);
+    input.dispatchEvent(new Event('change'));
+    input.blur();
+    await Promise.resolve();
+    expect(el.shadowRoot.querySelector('input')).toBe(input);
+    expect(el.shadowRoot.querySelector('.focused')).toBeNull();
+    expect(events).toEqual(['dm-focus', 'dm-input', 'dm-change', 'dm-blur']);
+  });
+
+  test('preserves selection while updating attributes, labels, helper text, and validation', async () => {
+    const el = createInput({ value: 'Design team' });
+    container.appendChild(el);
+    const input = el.shadowRoot.querySelector('input')!;
+    input.focus();
+    input.setSelectionRange(2, 6, 'backward');
+    el.label = 'Workspace <name>';
+    el.helperText = 'Help & guidance';
+    el.placeholder = 'Enter "name"';
+    el.name = 'workspace';
+    el.required = true;
+    el.size = 'lg';
+    await Promise.resolve();
+    expect(el.shadowRoot.querySelector('input')).toBe(input);
+    expect(el.shadowRoot.activeElement).toBe(input);
+    expect(input.selectionStart).toBe(2);
+    expect(input.selectionEnd).toBe(6);
+    expect(input.selectionDirection).toBe('backward');
+    expect(input.placeholder).toBe('Enter "name"');
+    expect(input.name).toBe('workspace');
+    expect(input.required).toBe(true);
+    expect(input.classList.contains('input-lg')).toBe(true);
+    const label = el.shadowRoot.querySelector('label')!;
+    expect(label.textContent?.trim()).toBe('Workspace <name>');
+    expect(label.htmlFor).toBe(input.id);
+    expect(input.getAttribute('aria-describedby')).toBe('helper');
+    el.setValidators([() => 'Invalid <name>']);
+    input.blur();
+    await Promise.resolve();
+    expect(el.shadowRoot.querySelector('input')).toBe(input);
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+    expect(input.getAttribute('aria-describedby')).toBe('error');
+    expect(el.shadowRoot.querySelector('#error')?.textContent?.trim()).toBe('Invalid <name>');
+    el.label = '';
+    el.validationState = 'valid';
+    el.helperText = '';
+    await Promise.resolve();
+    expect(el.shadowRoot.querySelector('label')).toBeNull();
+    expect(el.shadowRoot.querySelector('#error')).toBeNull();
+    expect(el.shadowRoot.querySelector('#helper')).toBeNull();
+    expect(input.getAttribute('aria-describedby')).toBe('');
+  });
+
+  test('updates programmatic values without losing the control or selection', async () => {
+    const el = createInput({ value: 'abcdef' });
+    container.appendChild(el);
+    const input = el.shadowRoot.querySelector('input')!;
+    input.focus();
+    input.setSelectionRange(1, 4, 'backward');
+    el.value = 'uvwxyz';
+    await Promise.resolve();
+    expect(el.shadowRoot.querySelector('input')).toBe(input);
+    expect(input.value).toBe('uvwxyz');
+    expect(el.shadowRoot.activeElement).toBe(input);
+    expect([input.selectionStart, input.selectionEnd, input.selectionDirection]).toEqual([
+      1,
+      4,
+      'backward',
+    ]);
+  });
+
+  test.each(['text', 'password', 'email', 'number', 'tel', 'url', 'search'] as const)(
+    'updates %s inputs without unsupported selection operations',
+    async (type) => {
+      const el = createInput({ type, value: '42' });
+      container.appendChild(el);
+      const input = el.shadowRoot.querySelector('input')!;
+      el.value = '24';
+      await Promise.resolve();
+      expect(el.shadowRoot.querySelector('input')).toBe(input);
+      expect(input.value).toBe('24');
+    },
+  );
+
+  test('does not duplicate listeners after updates or reconnects', async () => {
+    const el = createInput();
+    container.appendChild(el);
+    const input = el.shadowRoot.querySelector('input')!;
+    let calls = 0;
+    el.addEventListener('dm-input', () => calls++);
+    for (let i = 0; i < 3; i++) {
+      el.placeholder = String(i);
+      await Promise.resolve();
+      el.remove();
+      container.appendChild(el);
+    }
+    input.value = 'Hello';
+    input.dispatchEvent(new Event('input'));
+    await Promise.resolve();
+    expect(el.shadowRoot.querySelector('input')).toBe(input);
+    expect(el.value).toBe('Hello');
+    expect(calls).toBe(1);
+  });
+
+  // --- Properties ---
+  test('defaults type to text', () => {
+    const el = createInput();
+    container.appendChild(el);
+    expect(el.type).toBe('text');
+  });
+
+  test('reflects type attribute', () => {
+    const el = createInput({ type: 'password' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    expect(el.getAttribute('type')).toBe('password');
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('type')).toBe('password');
+  });
+
+  test('reflects value attribute', () => {
+    const el = createInput({ value: 'hello' });
+    container.appendChild(el);
+    expect(el.getAttribute('value')).toBe('hello');
+  });
+
+  test('input gets value', () => {
+    const el = createInput({ value: 'hello' });
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('value')).toBe('hello');
+  });
+
+  test('reflects name attribute', () => {
+    const el = createInput({ name: 'username' });
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('name')).toBe('username');
+  });
+
+  test('reflects placeholder attribute', () => {
+    const el = createInput({ placeholder: 'Enter text' });
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('placeholder')).toBe('Enter text');
+  });
+
+  test('reflects disabled attribute', () => {
+    const el = createInput({ disabled: true });
+    container.appendChild(el);
+    expect(el.hasAttribute('disabled')).toBe(true);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.hasAttribute('disabled')).toBe(true);
+  });
+
+  test('reflects readonly attribute', () => {
+    const el = createInput({ readonly: true });
+    container.appendChild(el);
+    expect(el.hasAttribute('readonly')).toBe(true);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.hasAttribute('readonly')).toBe(true);
+  });
+
+  test('reflects required attribute', () => {
+    const el = createInput({ required: true });
+    container.appendChild(el);
+    expect(el.hasAttribute('required')).toBe(true);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.hasAttribute('required')).toBe(true);
+  });
+
+  test('reflects size attribute', () => {
+    const el = createInput({ size: 'lg' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    expect(el.getAttribute('size')).toBe('lg');
+  });
+
+  // --- Label ---
+  test('renders label when provided', () => {
+    const el = createInput({ label: 'Username' });
+    container.appendChild(el);
+    const label = el.shadowRoot?.querySelector('label');
+    expect(label?.textContent?.trim()).toBe('Username');
+  });
+
+  test('no label element when label not provided', () => {
+    const el = createInput();
+    container.appendChild(el);
+    const label = el.shadowRoot?.querySelector('label');
+    expect(label).toBeNull();
+  });
+
+  test('label has required class when required', () => {
+    const el = createInput({ label: 'Email', required: true });
+    container.appendChild(el);
+    const label = el.shadowRoot?.querySelector('label.required');
+    expect(label).toBeDefined();
+  });
+
+  // --- Validation states ---
+  test('reflects validation-state attribute', () => {
+    const el = createInput({ validationState: 'invalid' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    expect(el.getAttribute('validation-state')).toBe('invalid');
+  });
+
+  test('input-wrapper has invalid class when invalid', () => {
+    const el = createInput({ validationState: 'invalid' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const wrapper = el.shadowRoot?.querySelector('.input-wrapper');
+    expect(wrapper?.classList.contains('invalid')).toBe(true);
+  });
+
+  test('input-wrapper has valid class when valid', () => {
+    const el = createInput({ validationState: 'valid' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const wrapper = el.shadowRoot?.querySelector('.input-wrapper');
+    expect(wrapper?.classList.contains('valid')).toBe(true);
+  });
+
+  test('input-wrapper has disabled class', () => {
+    const el = createInput({ disabled: true });
+    container.appendChild(el);
+    const wrapper = el.shadowRoot?.querySelector('.input-wrapper');
+    expect(wrapper?.classList.contains('disabled')).toBe(true);
+  });
+
+  // --- Error message ---
+  test('shows error message when invalid', () => {
+    const el = createInput({
+      validationState: 'invalid',
+      errorMessage: 'Required field',
+    } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const error = el.shadowRoot?.querySelector('.error');
+    expect(error?.textContent?.trim()).toBe('Required field');
+  });
+
+  test('error has role alert', () => {
+    const el = createInput({
+      validationState: 'invalid',
+      errorMessage: 'Error!',
+    } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const error = el.shadowRoot?.querySelector('[role="alert"]');
+    expect(error).toBeDefined();
+  });
+
+  test('no error when not invalid', () => {
+    const el = createInput({ errorMessage: 'Required field' });
+    container.appendChild(el);
+    const error = el.shadowRoot?.querySelector('.error');
+    expect(error).toBeNull();
+  });
+
+  // --- Helper text ---
+  test('shows helper text', () => {
+    const el = createInput({ helperText: 'Enter your name' });
+    container.appendChild(el);
+    const helper = el.shadowRoot?.querySelector('.helper');
+    expect(helper?.textContent?.trim()).toBe('Enter your name');
+  });
+
+  test('helper hidden when invalid', () => {
+    const el = createInput({
+      helperText: 'Help',
+      validationState: 'invalid',
+      errorMessage: 'Err',
+    } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const helper = el.shadowRoot?.querySelector('.helper');
+    expect(helper).toBeNull();
+  });
+
+  // --- Accessibility ---
+  test('aria-invalid is true when invalid', () => {
+    const el = createInput({ validationState: 'invalid' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('aria-invalid')).toBe('true');
+  });
+
+  test('aria-invalid is false when valid', () => {
+    const el = createInput({ validationState: 'valid' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('aria-invalid')).toBe('false');
+  });
+
+  test('aria-describedby points to error when invalid', () => {
+    const el = createInput({
+      validationState: 'invalid',
+      errorMessage: 'Err',
+    } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('aria-describedby')).toBe('error');
+  });
+
+  test('aria-describedby points to helper when has helperText', () => {
+    const el = createInput({ helperText: 'Help' });
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('aria-describedby')).toBe('helper');
+  });
+
+  // --- Input classes ---
+  test('input has input and input-bordered classes', () => {
+    const el = createInput();
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input.input');
+    expect(input).toBeDefined();
+    expect(input?.classList.contains('input-bordered')).toBe(true);
+  });
+
+  test('input has input-sm class for sm size', () => {
+    const el = createInput({ size: 'sm' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.classList.contains('input-sm')).toBe(true);
+  });
+
+  test('input has input-lg class for lg size', () => {
+    const el = createInput({ size: 'lg' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.classList.contains('input-lg')).toBe(true);
+  });
+
+  test('input has input-error class when invalid', () => {
+    const el = createInput({ validationState: 'invalid' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.classList.contains('input-error')).toBe(true);
+  });
+
+  test('input has input-success class when valid', () => {
+    const el = createInput({ validationState: 'valid' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.classList.contains('input-success')).toBe(true);
+  });
+
+  // --- Public methods ---
+  test('has focus method', () => {
+    const el = createInput();
+    container.appendChild(el);
+    expect(typeof el.focus).toBe('function');
+  });
+
+  test('has blur method', () => {
+    const el = createInput();
+    container.appendChild(el);
+    expect(typeof el.blur).toBe('function');
+  });
+
+  test('has select method', () => {
+    const el = createInput();
+    container.appendChild(el);
+    expect(typeof el.select).toBe('function');
+  });
+
+  // --- Events ---
+  test('dm-input event fires on native input', () => {
+    const el = createInput();
+    container.appendChild(el);
+    let detail: { value: string } | null = null;
+    el.addEventListener('dm-input', ((e: CustomEvent) => {
+      detail = e.detail;
+    }) as EventListener);
+    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+    input.value = 'test';
+    input.dispatchEvent(new Event('input'));
+    expect(detail).toBeDefined();
+  });
+
+  test('dm-change event fires on native change', () => {
+    const el = createInput();
+    container.appendChild(el);
+    let fired = false;
+    el.addEventListener('dm-change', () => {
+      fired = true;
+    });
+    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+    input.dispatchEvent(new Event('change'));
+    expect(fired).toBe(true);
+  });
+
+  test('dm-focus event fires on native focus', () => {
+    const el = createInput();
+    container.appendChild(el);
+    let fired = false;
+    el.addEventListener('dm-focus', () => {
+      fired = true;
+    });
+    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+    input.dispatchEvent(new Event('focus'));
+    expect(fired).toBe(true);
+  });
+
+  test('dm-blur event fires on native blur', () => {
+    const el = createInput();
+    container.appendChild(el);
+    let fired = false;
+    el.addEventListener('dm-blur', () => {
+      fired = true;
+    });
+    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+    input.dispatchEvent(new Event('blur'));
+    expect(fired).toBe(true);
+  });
+
+  // --- Pending indicator ---
+  test('has pending indicator element', () => {
+    const el = createInput();
+    container.appendChild(el);
+    const indicator = el.shadowRoot?.querySelector('.pending-indicator');
+    expect(indicator).toBeDefined();
+  });
+
+  // --- Input types ---
+  test('supports email type', () => {
+    const el = createInput({ type: 'email' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('type')).toBe('email');
+  });
+
+  test('supports number type', () => {
+    const el = createInput({ type: 'number' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('type')).toBe('number');
+  });
+
+  test('supports tel type', () => {
+    const el = createInput({ type: 'tel' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('type')).toBe('tel');
+  });
+
+  test('supports search type', () => {
+    const el = createInput({ type: 'search' } as Partial<ElDmInput>);
+    container.appendChild(el);
+    const input = el.shadowRoot?.querySelector('input');
+    expect(input?.getAttribute('type')).toBe('search');
+  });
+
+  // --- CSS Parts ---
+  test('has container part', () => {
+    const el = createInput();
+    container.appendChild(el);
+    expect(el.shadowRoot?.querySelector('[part="container"]')).toBeDefined();
+  });
+
+  test('has input-wrapper part', () => {
+    const el = createInput();
+    container.appendChild(el);
+    expect(el.shadowRoot?.querySelector('[part="input-wrapper"]')).toBeDefined();
+  });
+
+  test('has input part', () => {
+    const el = createInput();
+    container.appendChild(el);
+    expect(el.shadowRoot?.querySelector('[part="input"]')).toBeDefined();
+  });
+
+  test('has prefix part', () => {
+    const el = createInput();
+    container.appendChild(el);
+    expect(el.shadowRoot?.querySelector('[part="prefix"]')).toBeDefined();
+  });
+
+  test('has suffix part', () => {
+    const el = createInput();
+    container.appendChild(el);
+    expect(el.shadowRoot?.querySelector('[part="suffix"]')).toBeDefined();
+  });
+
+  test('has label part when label provided', () => {
+    const el = createInput({ label: 'Name' });
+    container.appendChild(el);
+    expect(el.shadowRoot?.querySelector('[part="label"]')).toBeDefined();
+  });
+
+  test('has error part when invalid', () => {
+    const el = createInput({
+      validationState: 'invalid',
+      errorMessage: 'Err',
+    } as Partial<ElDmInput>);
+    container.appendChild(el);
+    expect(el.shadowRoot?.querySelector('[part="error"]')).toBeDefined();
+  });
+
+  test('has helper part when has helperText', () => {
+    const el = createInput({ helperText: 'Help' });
+    container.appendChild(el);
+    expect(el.shadowRoot?.querySelector('[part="helper"]')).toBeDefined();
+  });
+
+  // --- Validation API ---
+  describe('validation API', () => {
+    test('has setValidators method', () => {
+      const el = createInput();
+      container.appendChild(el);
+      expect(typeof el.setValidators).toBe('function');
+    });
+
+    test('has validate method', () => {
+      const el = createInput();
+      container.appendChild(el);
+      expect(typeof el.validate).toBe('function');
+    });
+
+    test('validate returns valid when no validators set', () => {
+      const el = createInput({ value: 'hello' });
+      container.appendChild(el);
+      const result = el.validate();
+      expect(result.state).toBe('valid');
+      expect(result.message).toBeUndefined();
+    });
+
+    test('validate returns valid when all validators pass', () => {
+      const el = createInput({ value: 'hello@test.com' });
+      container.appendChild(el);
+      el.setValidators([validators.required('Required'), validators.email('Invalid email')]);
+      const result = el.validate();
+      expect(result.state).toBe('valid');
+    });
+
+    test('validate returns invalid on first failure', () => {
+      const el = createInput({ value: '' });
+      container.appendChild(el);
+      el.setValidators([
+        validators.required('Email is required'),
+        validators.email('Invalid email'),
+      ]);
+      const result = el.validate();
+      expect(result.state).toBe('invalid');
+      expect(result.message).toBe('Email is required');
+    });
+
+    test('validate updates validationState property', () => {
+      const el = createInput({ value: '' });
+      container.appendChild(el);
+      el.setValidators([validators.required('Required')]);
+      el.validate();
+      expect(el.validationState).toBe('invalid');
+    });
+
+    test('validate updates errorMessage property', () => {
+      const el = createInput({ value: '' });
+      container.appendChild(el);
+      el.setValidators([validators.required('Field required')]);
+      el.validate();
+      expect(el.errorMessage).toBe('Field required');
+    });
+
+    test('validate clears error on valid result', () => {
+      const el = createInput({ value: '' });
+      container.appendChild(el);
+      el.setValidators([validators.required('Required')]);
+      el.validate();
+      expect(el.validationState).toBe('invalid');
+
+      el.value = 'filled';
+      el.validate();
+      expect(el.validationState).toBe('valid');
+      expect(el.errorMessage).toBe('');
+    });
+
+    test('auto-validates on blur when validators set', () => {
+      const el = createInput({ value: '' });
+      container.appendChild(el);
+      el.setValidators([validators.required('Required')]);
+      const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+      input.dispatchEvent(new Event('blur'));
+      expect(el.validationState).toBe('invalid');
+      expect(el.errorMessage).toBe('Required');
+    });
+
+    test('does not auto-validate on blur without validators', () => {
+      const el = createInput({ value: '' });
+      container.appendChild(el);
+      const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+      input.dispatchEvent(new Event('blur'));
+      // validationState should remain undefined (not set)
+      expect(el.validationState).not.toBe('invalid');
+    });
+
+    test('setValidators replaces previous validators', () => {
+      const el = createInput({ value: 'ab' });
+      container.appendChild(el);
+      el.setValidators([validators.minLength(5, 'Too short')]);
+      expect(el.validate().state).toBe('invalid');
+
+      el.setValidators([validators.minLength(1, 'Too short')]);
+      expect(el.validate().state).toBe('valid');
+    });
+  });
+});

@@ -1,0 +1,334 @@
+:root {
+  /* Primary colors */
+  --color-primary: oklch(55% 0.2 265);
+  --color-primary-content: white;
+  --color-on-primary: white;
+  --color-primary-container: oklch(90% 0.05 265);
+  --color-on-primary-container: oklch(25% 0.1 265);
+
+  /* Secondary colors */
+  --color-secondary: oklch(50% 0.1 265);
+  --color-secondary-content: white;
+  --color-on-secondary: white;
+
+  /* Tertiary colors */
+  --color-tertiary: oklch(50% 0.12 300);
+  --color-tertiary-content: white;
+  --color-on-tertiary: white;
+
+  /* Surface colors - Light */
+  --color-surface: white;
+  --color-surface-dim: oklch(95% 0.01 260);
+  --color-surface-bright: white;
+  --color-surface-container: oklch(97% 0.01 260);
+  --color-surface-container-low: oklch(98% 0.005 260);
+  --color-surface-container-high: oklch(94% 0.01 260);
+  --color-surface-container-highest: oklch(92% 0.01 260);
+
+  /* On-surface colors */
+  --color-on-surface: oklch(20% 0.02 260);
+  --color-on-surface-variant: oklch(45% 0.02 260);
+
+  /* Outline colors */
+  --color-outline: oklch(70% 0.02 260);
+  --color-outline-variant: oklch(85% 0.01 260);
+
+  /* Semantic colors */
+  --color-success: oklch(55% 0.15 145);
+  --color-warning: oklch(70% 0.15 85);
+  --color-error: oklch(50% 0.2 25);
+  --color-info: oklch(55% 0.15 265);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+  /* Focus */
+  --focus-ring: 0 0 0 2px var(--color-primary);
+  --focus-ring-offset: 0 0 0 2px white, 0 0 0 4px var(--color-primary);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+/* Navigation */
+.breadcrumb {
+  margin-bottom: 1rem;
+}
+
+.breadcrumb a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+/* Typography */
+h1 {
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+h1 code {
+  font-weight: normal;
+  color: #6b7280;
+  font-size: 0.75em;
+}
+
+.subtitle,
+.description {
+  color: #6b7280;
+  margin-bottom: 2rem;
+}
+
+/* Sections */
+section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+  color: #374151;
+  margin: 0 0 1rem 0;
+  font-size: 1.125rem;
+}
+
+/* Demo layouts */
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.demo-row:last-child {
+  margin-bottom: 0;
+}
+
+.demo-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  min-width: 100px;
+}
+
+/* Section headings */
+.section-heading {
+  margin: 2.5rem 0 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--dm-color-on-surface, #333);
+  border-bottom: 2px solid var(--dm-color-outline, #e0e0e0);
+  padding-bottom: 0.5rem;
+}
+
+/* Grid layouts */
+.elements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1rem;
+}
+
+.theme-label {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Form demo */
+.form-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 400px;
+}
+
+/* Element cards (index page) */
+.element-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: block;
+}
+
+.element-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.element-card h2 {
+  color: var(--color-primary);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+}
+
+.element-card code {
+  display: inline-block;
+  background: #f3f4f6;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+.element-card p {
+  color: #6b7280;
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.element-card .arrow {
+  display: inline-block;
+  margin-left: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.element-card:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* Footer */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+footer a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+.theme-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-outline);
+  background: var(--color-surface-container);
+  cursor: pointer;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.2s;
+}
+
+.theme-toggle:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+  --color-primary: oklch(70% 0.15 265);
+  --color-surface: oklch(15% 0.01 260);
+  --color-surface-dim: oklch(12% 0.01 260);
+  --color-surface-container: oklch(20% 0.01 260);
+  --color-surface-container-low: oklch(18% 0.01 260);
+  --color-surface-container-high: oklch(25% 0.01 260);
+  --color-on-surface: oklch(92% 0.01 260);
+  --color-on-surface-variant: oklch(70% 0.02 260);
+  --color-outline: oklch(40% 0.02 260);
+  --color-outline-variant: oklch(30% 0.01 260);
+}
+
+[data-theme="dark"] body {
+  background-color: oklch(12% 0.01 260);
+  color: oklch(92% 0.01 260);
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3 {
+  color: oklch(90% 0.01 260);
+}
+
+[data-theme="dark"] section {
+  background: oklch(18% 0.01 260);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] section h2 {
+  color: oklch(85% 0.01 260);
+}
+
+[data-theme="dark"] .subtitle,
+[data-theme="dark"] .description,
+[data-theme="dark"] .demo-label {
+  color: oklch(65% 0.01 260);
+}
+
+[data-theme="dark"] footer {
+  border-top-color: oklch(30% 0.01 260);
+  color: oklch(55% 0.01 260);
+}
+
+[data-theme="dark"] .element-card {
+  background: oklch(18% 0.01 260);
+  border-color: oklch(30% 0.01 260);
+  color: oklch(90% 0.01 260);
+}
+
+[data-theme="dark"] .element-card code {
+  background: oklch(25% 0.01 260);
+  color: oklch(70% 0.12 265);
+}
+
+[data-theme="dark"] .element-card p {
+  color: oklch(65% 0.01 260);
+}
+
+[data-theme="dark"] .section-heading {
+  color: oklch(90% 0.01 260);
+  border-bottom-color: oklch(30% 0.01 260);
+}

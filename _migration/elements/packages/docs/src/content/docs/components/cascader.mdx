@@ -1,0 +1,319 @@
+---
+title: Cascader
+description: Multi-panel cascading selection for hierarchical data
+order: 17
+section: input
+component: "@duskmoon-dev/el-cascader"
+---
+
+import ComponentDemo from '../../../components/ComponentDemo.astro';
+
+
+# Cascader
+
+The Cascader component provides a multi-panel cascading selection interface for hierarchical data like locations, categories, and organizational structures.
+
+## Installation
+
+```bash
+npm install @duskmoon-dev/el-cascader
+```
+
+## Usage
+
+```javascript
+import '@duskmoon-dev/el-cascader/register';
+```
+
+```html
+<el-dm-cascader
+  placeholder="Select location..."
+></el-dm-cascader>
+```
+
+## Live Demo
+
+<ComponentDemo title="Basic Cascader">
+  <el-dm-cascader
+    placeholder="Select location..."
+    options='[{"value":"usa","label":"United States","children":[{"value":"california","label":"California","children":[{"value":"sf","label":"San Francisco"},{"value":"la","label":"Los Angeles"}]},{"value":"texas","label":"Texas","children":[{"value":"houston","label":"Houston"},{"value":"dallas","label":"Dallas"}]}]},{"value":"china","label":"China","children":[{"value":"beijing","label":"Beijing"},{"value":"shanghai","label":"Shanghai"}]}]'
+  ></el-dm-cascader>
+</ComponentDemo>
+
+<ComponentDemo title="Empty Cascader (No Options)">
+  <el-dm-cascader
+    placeholder="No options provided..."
+  ></el-dm-cascader>
+</ComponentDemo>
+
+## Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `value` | `string` | `''` | Selected path as JSON array |
+| `placeholder` | `string` | `''` | Placeholder text |
+| `disabled` | `boolean` | `false` | Disables the cascader |
+| `multiple` | `boolean` | `false` | Enable multi-path selection |
+| `searchable` | `boolean` | `false` | Enable search filtering |
+| `clearable` | `boolean` | `false` | Show clear button |
+| `change-on-select` | `boolean` | `false` | Emit change on each level selection |
+| `expand-trigger` | `'click' \| 'hover'` | `'click'` | How to expand panels |
+| `separator` | `string` | `' / '` | Display path separator |
+| `show-all-levels` | `boolean` | `true` | Show full path or only leaf label |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size variant |
+| `options` | `string` | `''` | JSON string of cascader options |
+
+## Option Format
+
+Options can be set via HTML attribute or JavaScript:
+
+### Via Attribute (JSON string)
+
+```html
+<el-dm-cascader
+  options='[{"value":"usa","label":"United States","children":[{"value":"ca","label":"California"}]}]'
+></el-dm-cascader>
+```
+
+### Via JavaScript
+
+```typescript
+interface CascaderOption {
+  value: string;              // Unique value
+  label: string;              // Display text
+  disabled?: boolean;         // Disable this option
+  children?: CascaderOption[]; // Child options
+  leaf?: boolean;             // Force as leaf (no async loading)
+}
+```
+
+```javascript
+const cascader = document.querySelector('el-dm-cascader');
+cascader.setOptions([
+  {
+    value: 'usa',
+    label: 'United States',
+    children: [
+      {
+        value: 'california',
+        label: 'California',
+        children: [
+          { value: 'sf', label: 'San Francisco' },
+          { value: 'la', label: 'Los Angeles' }
+        ]
+      }
+    ]
+  }
+]);
+```
+
+## With Clearable
+
+<ComponentDemo title="Clearable Cascader">
+  <el-dm-cascader
+    clearable
+    placeholder="Select and clear..."
+    options='[{"value":"electronics","label":"Electronics","children":[{"value":"phones","label":"Phones","children":[{"value":"iphone","label":"iPhone"},{"value":"android","label":"Android"}]},{"value":"laptops","label":"Laptops"}]},{"value":"clothing","label":"Clothing","children":[{"value":"mens","label":"Men"},{"value":"womens","label":"Women"}]}]'
+  ></el-dm-cascader>
+</ComponentDemo>
+
+```html
+<el-dm-cascader clearable placeholder="Select and clear..."></el-dm-cascader>
+```
+
+## Searchable
+
+<ComponentDemo title="Searchable Cascader">
+  <el-dm-cascader
+    searchable
+    clearable
+    placeholder="Search locations..."
+    options='[{"value":"asia","label":"Asia","children":[{"value":"japan","label":"Japan","children":[{"value":"tokyo","label":"Tokyo"},{"value":"osaka","label":"Osaka"}]},{"value":"korea","label":"South Korea","children":[{"value":"seoul","label":"Seoul"},{"value":"busan","label":"Busan"}]}]},{"value":"europe","label":"Europe","children":[{"value":"uk","label":"United Kingdom","children":[{"value":"london","label":"London"}]},{"value":"france","label":"France","children":[{"value":"paris","label":"Paris"}]}]}]'
+  ></el-dm-cascader>
+</ComponentDemo>
+
+```html
+<el-dm-cascader searchable clearable placeholder="Search locations..."></el-dm-cascader>
+```
+
+## Change on Select
+
+Allow selecting non-leaf nodes:
+
+<ComponentDemo title="Change on Select">
+  <el-dm-cascader
+    change-on-select
+    clearable
+    placeholder="Select any level..."
+    options='[{"value":"dept1","label":"Engineering","children":[{"value":"frontend","label":"Frontend"},{"value":"backend","label":"Backend"},{"value":"devops","label":"DevOps"}]},{"value":"dept2","label":"Design","children":[{"value":"ui","label":"UI Design"},{"value":"ux","label":"UX Research"}]}]'
+  ></el-dm-cascader>
+</ComponentDemo>
+
+```html
+<el-dm-cascader change-on-select clearable placeholder="Select any level..."></el-dm-cascader>
+```
+
+## Hover to Expand
+
+<ComponentDemo title="Hover to Expand">
+  <el-dm-cascader
+    expand-trigger="hover"
+    placeholder="Hover to expand..."
+    options='[{"value":"animals","label":"Animals","children":[{"value":"mammals","label":"Mammals","children":[{"value":"dog","label":"Dog"},{"value":"cat","label":"Cat"}]},{"value":"birds","label":"Birds","children":[{"value":"eagle","label":"Eagle"},{"value":"sparrow","label":"Sparrow"}]}]},{"value":"plants","label":"Plants","children":[{"value":"trees","label":"Trees"},{"value":"flowers","label":"Flowers"}]}]'
+  ></el-dm-cascader>
+</ComponentDemo>
+
+```html
+<el-dm-cascader expand-trigger="hover" placeholder="Hover to expand..."></el-dm-cascader>
+```
+
+## Multiple Selection
+
+<ComponentDemo title="Multiple Selection">
+  <el-dm-cascader
+    multiple
+    clearable
+    placeholder="Select multiple paths..."
+    options='[{"value":"fruits","label":"Fruits","children":[{"value":"citrus","label":"Citrus","children":[{"value":"orange","label":"Orange"},{"value":"lemon","label":"Lemon"}]},{"value":"berries","label":"Berries","children":[{"value":"strawberry","label":"Strawberry"},{"value":"blueberry","label":"Blueberry"}]}]},{"value":"vegetables","label":"Vegetables","children":[{"value":"leafy","label":"Leafy Greens"},{"value":"root","label":"Root Vegetables"}]}]'
+  ></el-dm-cascader>
+</ComponentDemo>
+
+```html
+<el-dm-cascader multiple clearable placeholder="Select multiple paths..."></el-dm-cascader>
+```
+
+## Async Loading
+
+For large datasets, load children dynamically:
+
+```javascript
+const cascader = document.querySelector('el-dm-cascader');
+
+// Set initial options
+cascader.setOptions([
+  { value: 'category1', label: 'Category 1', leaf: false },
+  { value: 'category2', label: 'Category 2', leaf: false }
+]);
+
+// Set async loader
+cascader.setLoadData(async (option) => {
+  // Simulate API call
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  return [
+    { value: `${option.value}-sub1`, label: `${option.label} - Sub 1` },
+    { value: `${option.value}-sub2`, label: `${option.label} - Sub 2` }
+  ];
+});
+```
+
+**Note:** `searchable` cannot be used with async loading since the full tree is not available for searching.
+
+## Custom Separator
+
+<ComponentDemo title="Custom Separator">
+  <el-dm-cascader
+    separator=" > "
+    placeholder="Custom separator..."
+    options='[{"value":"file","label":"File","children":[{"value":"documents","label":"Documents","children":[{"value":"work","label":"Work"},{"value":"personal","label":"Personal"}]},{"value":"photos","label":"Photos"}]},{"value":"settings","label":"Settings","children":[{"value":"account","label":"Account"},{"value":"privacy","label":"Privacy"}]}]'
+  ></el-dm-cascader>
+</ComponentDemo>
+
+```html
+<el-dm-cascader separator=" > " placeholder="Custom separator..."></el-dm-cascader>
+```
+
+## Show Only Leaf Label
+
+<ComponentDemo title="Show Only Leaf Label">
+  <el-dm-cascader
+    show-all-levels="false"
+    placeholder="Shows only last level..."
+    options='[{"value":"region","label":"Region","children":[{"value":"north","label":"North","children":[{"value":"ny","label":"New York"},{"value":"boston","label":"Boston"}]},{"value":"south","label":"South","children":[{"value":"miami","label":"Miami"},{"value":"atlanta","label":"Atlanta"}]}]}]'
+  ></el-dm-cascader>
+</ComponentDemo>
+
+```html
+<el-dm-cascader show-all-levels="false" placeholder="Shows only last level..."></el-dm-cascader>
+```
+
+## Sizes
+
+<ComponentDemo title="Cascader Sizes">
+  <el-dm-cascader
+    size="sm"
+    placeholder="Small..."
+    options='[{"value":"a","label":"Option A","children":[{"value":"a1","label":"A-1"},{"value":"a2","label":"A-2"}]}]'
+  ></el-dm-cascader>
+  <el-dm-cascader
+    size="md"
+    placeholder="Medium..."
+    options='[{"value":"a","label":"Option A","children":[{"value":"a1","label":"A-1"},{"value":"a2","label":"A-2"}]}]'
+  ></el-dm-cascader>
+  <el-dm-cascader
+    size="lg"
+    placeholder="Large..."
+    options='[{"value":"a","label":"Option A","children":[{"value":"a1","label":"A-1"},{"value":"a2","label":"A-2"}]}]'
+  ></el-dm-cascader>
+</ComponentDemo>
+
+```html
+<el-dm-cascader size="sm" placeholder="Small..."></el-dm-cascader>
+<el-dm-cascader size="md" placeholder="Medium..."></el-dm-cascader>
+<el-dm-cascader size="lg" placeholder="Large..."></el-dm-cascader>
+```
+
+## Disabled
+
+<ComponentDemo title="Disabled">
+  <el-dm-cascader
+    disabled
+    placeholder="Disabled..."
+  ></el-dm-cascader>
+</ComponentDemo>
+
+```html
+<el-dm-cascader disabled placeholder="Disabled..."></el-dm-cascader>
+```
+
+## Events
+
+| Event | Description |
+|-------|-------------|
+| `change` | Fired when selection changes |
+| `expand` | Fired when a panel expands |
+| `search` | Fired when search text changes |
+
+### Event Handling
+
+```javascript
+const cascader = document.querySelector('el-dm-cascader');
+
+cascader.addEventListener('change', (event) => {
+  console.log('Selected path:', event.detail.value);
+  console.log('Selected options:', event.detail.selectedOptions);
+  console.log('Path array:', event.detail.path);
+});
+
+cascader.addEventListener('expand', (event) => {
+  console.log('Expanded option:', event.detail.option);
+  console.log('Level:', event.detail.level);
+});
+```
+
+## Keyboard Navigation
+
+- **Arrow Down/Up**: Navigate within panel
+- **Arrow Right**: Expand to next panel
+- **Arrow Left**: Go back to previous panel
+- **Enter**: Select current option
+- **Escape**: Close dropdown
+- **Backspace**: Remove last tag (in multiple mode)
+
+## Accessibility
+
+- Uses `role="combobox"` with proper ARIA attributes
+- `aria-expanded` indicates dropdown state
+- Panel options have `role="option"` with `aria-selected`
+- Loading states announced via `aria-busy`
+- Full keyboard navigation support

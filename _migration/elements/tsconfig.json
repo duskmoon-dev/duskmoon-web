@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "paths": {
+      "@duskmoon-dev/el-base": ["./packages/base/src/index.ts"],
+      "@duskmoon-dev/el-button": ["./elements/button/src/index.ts"],
+      "@duskmoon-dev/el-card": ["./elements/card/src/index.ts"],
+      "@duskmoon-dev/el-input": ["./elements/input/src/index.ts"],
+      "@duskmoon-dev/el-markdown": ["./elements/markdown/src/index.ts"],
+      "@duskmoon-dev/el-table": ["./elements/table/src/index.ts"],
+      "@duskmoon-dev/el-chart": ["./elements/chart/src/index.ts"],
+      "@duskmoon-dev/el-chat": ["./elements/chat/src/index.ts"],
+      "@duskmoon-dev/el-datetime": ["./elements/datetime/src/index.ts"],
+      "@duskmoon-dev/elements": ["./packages/elements/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "*.test.ts"]
+}

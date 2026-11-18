@@ -1,0 +1,33 @@
+{
+  "name": "@duskmoon-dev/playground",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@duskmoon-dev/el-button": "workspace:*",
+    "@duskmoon-dev/el-card": "workspace:*",
+    "@duskmoon-dev/el-chat": "workspace:*",
+    "@duskmoon-dev/el-input": "workspace:*",
+    "@duskmoon-dev/el-markdown": "workspace:*",
+    "@duskmoon-dev/el-art-moon": "workspace:*",
+    "@duskmoon-dev/el-art-sun": "workspace:*",
+    "@duskmoon-dev/el-art-atom": "workspace:*",
+    "@duskmoon-dev/el-art-eclipse": "workspace:*",
+    "@duskmoon-dev/el-art-mountain": "workspace:*",
+    "@duskmoon-dev/el-art-plasma-ball": "workspace:*",
+    "@duskmoon-dev/el-art-cat-stargazer": "workspace:*",
+    "@duskmoon-dev/el-art-color-spin": "workspace:*",
+    "@duskmoon-dev/el-art-synthwave-starfield": "workspace:*",
+    "@duskmoon-dev/el-art-circular-gallery": "workspace:*",
+    "@duskmoon-dev/el-art-snow": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "8.2.1",
+    "vite-plugin-handlebars": "2.0.3"
+  }
+}

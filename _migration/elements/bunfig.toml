@@ -1,0 +1,10 @@
+[install]
+# Use exact versions for reproducibility
+exact = true
+
+[test]
+# Test configuration
+coverage = true
+coverageDir = "./coverage"
+# Use happy-dom for DOM APIs in tests
+preload = ["./test-setup.ts"]

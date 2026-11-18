@@ -1,0 +1,465 @@
+/**
+ * @duskmoon-dev/elements
+ *
+ * All DuskMoon custom elements in one package.
+ * Import this package to get access to all element classes and register functions.
+ *
+ * @example
+ * ```ts
+ * import { ElDmButton, ElDmCard, registerAll } from '@duskmoon-dev/elements';
+ *
+ * // Register all elements
+ * registerAll();
+ *
+ * // Or register individually
+ * import { registerButton, registerCard } from '@duskmoon-dev/elements';
+ * registerButton();
+ * registerCard();
+ * ```
+ */
+
+// Re-export core utilities
+export {
+  BaseElement,
+  css,
+  combineStyles,
+  cssVars,
+  defaultTheme,
+  resetStyles,
+} from '@duskmoon-dev/el-base';
+
+export type {
+  PropertyDefinition,
+  PropertyDefinitions,
+  Size,
+  Variant,
+  ValidationState,
+  BaseElementProps,
+  SizableProps,
+  VariantProps,
+  FormElementProps,
+  ValidatableProps,
+  ValueChangeEventDetail,
+  AttributeConverter,
+} from '@duskmoon-dev/el-base';
+
+// Import elements and register functions
+import { ElDmButton, register as registerButton } from '@duskmoon-dev/el-button';
+import { ElDmCard, register as registerCard } from '@duskmoon-dev/el-card';
+import { ElDmInput, register as registerInput } from '@duskmoon-dev/el-input';
+import {
+  ElDmMarkdown,
+  register as registerMarkdown,
+  github,
+  atomOneDark,
+  atomOneLight,
+} from '@duskmoon-dev/el-markdown';
+import { ElDmSwitch, register as registerSwitch } from '@duskmoon-dev/el-switch';
+import { ElDmAlert, register as registerAlert } from '@duskmoon-dev/el-alert';
+import { ElDmDialog, register as registerDialog } from '@duskmoon-dev/el-dialog';
+import { ElDmBadge, register as registerBadge } from '@duskmoon-dev/el-badge';
+import { ElDmChart, register as registerChart } from '@duskmoon-dev/el-chart';
+import { ElDmChip, register as registerChip } from '@duskmoon-dev/el-chip';
+import { ElDmTooltip, register as registerTooltip } from '@duskmoon-dev/el-tooltip';
+import { ElDmProgress, register as registerProgress } from '@duskmoon-dev/el-progress';
+import { ElDmForm, register as registerForm } from '@duskmoon-dev/el-form';
+import { ElDmSlider, register as registerSlider } from '@duskmoon-dev/el-slider';
+import { ElDmFileUpload, register as registerFileUpload } from '@duskmoon-dev/el-file-upload';
+import { ElDmAutocomplete, register as registerAutocomplete } from '@duskmoon-dev/el-autocomplete';
+import { ElDmDatepicker, register as registerDatepicker } from '@duskmoon-dev/el-datepicker';
+import { ElDmSelect, register as registerSelect } from '@duskmoon-dev/el-select';
+import { ElDmCascader, register as registerCascader } from '@duskmoon-dev/el-cascader';
+
+// Navigation elements
+import {
+  ElDmBottomNavigation,
+  register as registerBottomNavigation,
+} from '@duskmoon-dev/el-bottom-navigation';
+import { ElDmCircleMenu, register as registerCircleMenu } from '@duskmoon-dev/el-circle-menu';
+import { ElDmBreadcrumbs, register as registerBreadcrumbs } from '@duskmoon-dev/el-breadcrumbs';
+import { ElDmDrawer, register as registerDrawer } from '@duskmoon-dev/el-drawer';
+import { ElDmMenu, ElDmMenuItem, register as registerMenu } from '@duskmoon-dev/el-menu';
+import { ElDmNavbar, register as registerNavbar } from '@duskmoon-dev/el-navbar';
+import { ElDmPagination, register as registerPagination } from '@duskmoon-dev/el-pagination';
+import { ElDmStepper, ElDmStep, register as registerStepper } from '@duskmoon-dev/el-stepper';
+import { ElDmTabs, ElDmTab, ElDmTabPanel, register as registerTabs } from '@duskmoon-dev/el-tabs';
+
+// Surface elements
+import {
+  ElDmAccordion,
+  ElDmAccordionItem,
+  register as registerAccordion,
+} from '@duskmoon-dev/el-accordion';
+import { ElDmBottomSheet, register as registerBottomSheet } from '@duskmoon-dev/el-bottom-sheet';
+import { ElDmPopover, register as registerPopover } from '@duskmoon-dev/el-popover';
+
+// Data display elements
+import {
+  DEFAULT_DATETIME_FORMAT,
+  ElDmDatetime,
+  register as registerDatetime,
+} from '@duskmoon-dev/el-datetime';
+import { ElDmTable, ElDmTableColumn, register as registerTable } from '@duskmoon-dev/el-table';
+import {
+  ElDmProDataGrid,
+  registerProDataGrid,
+  ElDmGridColumn,
+  registerGridColumn,
+  ElDmGridColumnGroup,
+  registerGridColumnGroup,
+} from '@duskmoon-dev/el-pro-data-grid';
+import {
+  ElDmMarkdownInput,
+  register as registerMarkdownInput,
+  MarkdownInputHook,
+} from '@duskmoon-dev/el-markdown-input';
+import { ElDmCodeBlock, register as registerCodeBlock } from '@duskmoon-dev/el-code-block';
+
+// New elements
+import { ElDmFormGroup, register as registerFormGroup } from '@duskmoon-dev/el-form-group';
+import { ElDmNavigation, register as registerNavigation } from '@duskmoon-dev/el-navigation';
+import { ElDmNestedMenu, register as registerNestedMenu } from '@duskmoon-dev/el-nested-menu';
+import { ElDmOtpInput, register as registerOtpInput } from '@duskmoon-dev/el-otp-input';
+import {
+  ElDmSegmentControl,
+  register as registerSegmentControl,
+} from '@duskmoon-dev/el-segment-control';
+import {
+  ElDmThemeController,
+  register as registerThemeController,
+} from '@duskmoon-dev/el-theme-controller';
+import { ElDmTimeInput, register as registerTimeInput } from '@duskmoon-dev/el-time-input';
+import {
+  ElDmChat,
+  ElDmChatBubble,
+  ElDmChatInput,
+  ElDmChatReasoning,
+  ElDmChatScroll,
+  ElDmChatTool,
+  ElDmChatTyping,
+  ElDmChatWork,
+  ElDmChatQueue,
+  register as registerChat,
+} from '@duskmoon-dev/el-chat';
+
+// DuskMoonUI 1.19 component elements
+import { ElDmCarousel, register as registerCarousel } from '@duskmoon-dev/el-carousel';
+import { ElDmConsolePage, register as registerConsolePage } from '@duskmoon-dev/el-console-page';
+import { ElDmCountdown, register as registerCountdown } from '@duskmoon-dev/el-countdown';
+import { ElDmDiff, register as registerDiff } from '@duskmoon-dev/el-diff';
+import { ElDmDropdown, register as registerDropdown } from '@duskmoon-dev/el-dropdown';
+import { ElDmFab, register as registerFab } from '@duskmoon-dev/el-fab';
+import { ElDmFileInput, register as registerFileInput } from '@duskmoon-dev/el-file-input';
+import { ElDmFilterGroup, register as registerFilterGroup } from '@duskmoon-dev/el-filter-group';
+import { ElDmFooter, register as registerFooter } from '@duskmoon-dev/el-footer';
+import { ElDmHero, register as registerHero } from '@duskmoon-dev/el-hero';
+import { ElDmHomePage, register as registerHomePage } from '@duskmoon-dev/el-home-page';
+import { ElDmIndicator, register as registerIndicator } from '@duskmoon-dev/el-indicator';
+import { ElDmJoin, register as registerJoin } from '@duskmoon-dev/el-join';
+import { ElDmKbd, register as registerKbd } from '@duskmoon-dev/el-kbd';
+import { ElDmLink, register as registerLink } from '@duskmoon-dev/el-link';
+import { ElDmLoading, register as registerLoading } from '@duskmoon-dev/el-loading';
+import { ElDmMask, register as registerMask } from '@duskmoon-dev/el-mask';
+import { ElDmMegamenu, register as registerMegamenu } from '@duskmoon-dev/el-megamenu';
+import {
+  ElDmRadialProgress,
+  register as registerRadialProgress,
+} from '@duskmoon-dev/el-radial-progress';
+import { ElDmRange, register as registerRange } from '@duskmoon-dev/el-range';
+import {
+  ElDmSidebarLayout,
+  register as registerSidebarLayout,
+} from '@duskmoon-dev/el-sidebar-layout';
+import { ElDmSignPage, register as registerSignPage } from '@duskmoon-dev/el-sign-page';
+import { ElDmStack, register as registerStack } from '@duskmoon-dev/el-stack';
+import { ElDmStat, register as registerStat } from '@duskmoon-dev/el-stat';
+import { ElDmSwap, register as registerSwap } from '@duskmoon-dev/el-swap';
+import { ElDmToggleSwitch, register as registerToggleSwitch } from '@duskmoon-dev/el-toggle-switch';
+import { ElDmValidator, register as registerValidator } from '@duskmoon-dev/el-validator';
+
+// Re-export all elements
+export { ElDmButton, registerButton };
+export { ElDmCard, registerCard };
+export type { CardVariant, CardPadding } from '@duskmoon-dev/el-card';
+export { ElDmInput, registerInput };
+export { ElDmMarkdown, registerMarkdown, github, atomOneDark, atomOneLight };
+export type { MarkdownTheme } from '@duskmoon-dev/el-markdown';
+export { ElDmSwitch, registerSwitch };
+export type { SwitchSize, SwitchColor } from '@duskmoon-dev/el-switch';
+export { ElDmAlert, registerAlert };
+export type { AlertType, AlertVariant } from '@duskmoon-dev/el-alert';
+export { ElDmDialog, registerDialog };
+export type { DialogSize } from '@duskmoon-dev/el-dialog';
+export { ElDmBadge, registerBadge };
+export type { BadgeVariant, BadgeColor, BadgeSize } from '@duskmoon-dev/el-badge';
+export { ElDmChart, registerChart };
+export type {
+  ChartColor,
+  ChartData,
+  ChartDataset,
+  ChartOptions,
+  ChartSize,
+  ChartType,
+  ChartVariant,
+} from '@duskmoon-dev/el-chart';
+export { ElDmChip, registerChip };
+export type { ChipVariant, ChipColor, ChipSize } from '@duskmoon-dev/el-chip';
+export { ElDmTooltip, registerTooltip };
+export type { TooltipPosition, TooltipTrigger } from '@duskmoon-dev/el-tooltip';
+export { ElDmProgress, registerProgress };
+export type { ProgressColor, ProgressSize } from '@duskmoon-dev/el-progress';
+export { ElDmForm, registerForm };
+export type { FormValidationState } from '@duskmoon-dev/el-form';
+export { ElDmSlider, registerSlider };
+export type { SliderSize, SliderColor } from '@duskmoon-dev/el-slider';
+export { ElDmFileUpload, registerFileUpload };
+export type { FileUploadSize, UploadedFile } from '@duskmoon-dev/el-file-upload';
+export { ElDmAutocomplete, registerAutocomplete };
+export type { AutocompleteSize, AutocompleteOption } from '@duskmoon-dev/el-autocomplete';
+export { ElDmDatepicker, registerDatepicker };
+export type { DatepickerSize } from '@duskmoon-dev/el-datepicker';
+export { ElDmSelect, registerSelect };
+export type {
+  SelectOption,
+  TreeSelectOption,
+  SelectChangeEventDetail,
+  SelectSearchEventDetail,
+  SelectExpandEventDetail,
+} from '@duskmoon-dev/el-select';
+export { ElDmCascader, registerCascader };
+export type {
+  CascaderOption,
+  LoadDataFn,
+  CascaderChangeEventDetail,
+  CascaderExpandEventDetail,
+  CascaderSearchEventDetail,
+} from '@duskmoon-dev/el-cascader';
+
+// Navigation elements
+export { ElDmBottomNavigation, registerBottomNavigation };
+export { ElDmCircleMenu, registerCircleMenu };
+export type { CircleMenuColor, CircleMenuSize } from '@duskmoon-dev/el-circle-menu';
+export type { BottomNavigationItem } from '@duskmoon-dev/el-bottom-navigation';
+export { ElDmBreadcrumbs, registerBreadcrumbs };
+export type { BreadcrumbItem, NavigateEventDetail } from '@duskmoon-dev/el-breadcrumbs';
+export { ElDmDrawer, registerDrawer };
+export type { DrawerPosition } from '@duskmoon-dev/el-drawer';
+export { ElDmMenu, ElDmMenuItem, registerMenu };
+export { ElDmNavbar, registerNavbar };
+export type { NavbarColor } from '@duskmoon-dev/el-navbar';
+export { ElDmPagination, registerPagination };
+export { ElDmStepper, ElDmStep, registerStepper };
+export type { StepData, StepperOrientation, StepperColor } from '@duskmoon-dev/el-stepper';
+export { ElDmTabs, ElDmTab, ElDmTabPanel, registerTabs };
+export type { TabsVariant, TabsOrientation } from '@duskmoon-dev/el-tabs';
+
+// Surface elements
+export { ElDmAccordion, ElDmAccordionItem, registerAccordion };
+export { ElDmBottomSheet, registerBottomSheet };
+export { ElDmPopover, registerPopover };
+export type { PopoverPlacement, PopoverTrigger } from '@duskmoon-dev/el-popover';
+
+// Data display elements
+export { DEFAULT_DATETIME_FORMAT, ElDmDatetime, registerDatetime };
+export { ElDmTable, ElDmTableColumn, registerTable };
+export type {
+  TableColumn,
+  TableRow,
+  SortDirection,
+  SelectionMode,
+  TableSortEventDetail,
+  TableSelectEventDetail,
+  TablePageEventDetail,
+  TableRowClickEventDetail,
+} from '@duskmoon-dev/el-table';
+export {
+  ElDmProDataGrid,
+  registerProDataGrid,
+  ElDmGridColumn,
+  registerGridColumn,
+  ElDmGridColumnGroup,
+  registerGridColumnGroup,
+};
+export type {
+  Row,
+  SortItem,
+  CellChange,
+  ColumnDef,
+  FilterModel,
+  CellRange,
+  CellRangeParams,
+  SortChangeDetail,
+  FilterChangeDetail,
+  PageChangeDetail,
+  SelectionChangeDetail,
+} from '@duskmoon-dev/el-pro-data-grid';
+export { ElDmMarkdownInput, registerMarkdownInput, MarkdownInputHook };
+export type { Suggestion } from '@duskmoon-dev/el-markdown-input';
+export { ElDmCodeBlock, registerCodeBlock };
+export type { ElDmCodeEngine, CodeEngineTheme } from '@duskmoon-dev/el-code-engine';
+
+// New elements
+export { ElDmFormGroup, registerFormGroup };
+export { ElDmNavigation, registerNavigation };
+export { ElDmNestedMenu, registerNestedMenu };
+export { ElDmOtpInput, registerOtpInput };
+export type { OtpInputColor } from '@duskmoon-dev/el-otp-input';
+export { ElDmSegmentControl, registerSegmentControl };
+export type { SegmentControlColor } from '@duskmoon-dev/el-segment-control';
+export { ElDmThemeController, registerThemeController };
+export { ElDmTimeInput, registerTimeInput };
+export type { TimeInputColor } from '@duskmoon-dev/el-time-input';
+export {
+  ElDmChat,
+  ElDmChatBubble,
+  ElDmChatInput,
+  ElDmChatReasoning,
+  ElDmChatScroll,
+  ElDmChatTool,
+  ElDmChatTyping,
+  ElDmChatWork,
+  ElDmChatQueue,
+  registerChat,
+};
+export type {
+  ChatAlign,
+  ChatComposerColor,
+  ChatQueueItem,
+  ChatQueueActionEventDetail,
+  ChatBubbleColor,
+  ChatBubbleSize,
+  ChatBubbleVariant,
+  ChatNavigateEventDetail,
+  ChatQuickActionEventDetail,
+  ChatSendEventDetail,
+  ChatTimeline,
+  ChatToolStatus,
+} from '@duskmoon-dev/el-chat';
+
+// DuskMoonUI 1.19 component elements
+export { ElDmCarousel, registerCarousel };
+export { ElDmConsolePage, registerConsolePage };
+export { ElDmCountdown, registerCountdown };
+export { ElDmDiff, registerDiff };
+export { ElDmDropdown, registerDropdown };
+export { ElDmFab, registerFab };
+export { ElDmFileInput, registerFileInput };
+export { ElDmFilterGroup, registerFilterGroup };
+export { ElDmFooter, registerFooter };
+export { ElDmHero, registerHero };
+export { ElDmHomePage, registerHomePage };
+export { ElDmIndicator, registerIndicator };
+export { ElDmJoin, registerJoin };
+export { ElDmKbd, registerKbd };
+export { ElDmLink, registerLink };
+export { ElDmLoading, registerLoading };
+export { ElDmMask, registerMask };
+export { ElDmMegamenu, registerMegamenu };
+export { ElDmRadialProgress, registerRadialProgress };
+export { ElDmRange, registerRange };
+export { ElDmSidebarLayout, registerSidebarLayout };
+export { ElDmSignPage, registerSignPage };
+export { ElDmStack, registerStack };
+export { ElDmStat, registerStat };
+export { ElDmSwap, registerSwap };
+export { ElDmToggleSwitch, registerToggleSwitch };
+export { ElDmValidator, registerValidator };
+
+/**
+ * Register the optional code engine element without eagerly evaluating its editor stack.
+ */
+export function registerCodeEngine(): void {
+  void import('@duskmoon-dev/el-code-engine')
+    .then(({ register }) => register())
+    .catch(() => undefined);
+}
+
+/**
+ * Register all DuskMoon custom elements
+ *
+ * @example
+ * ```ts
+ * import { registerAll } from '@duskmoon-dev/elements';
+ * registerAll();
+ * ```
+ */
+export function registerAll(): void {
+  registerButton();
+  registerCard();
+  registerInput();
+  registerMarkdown();
+  registerSwitch();
+  registerAlert();
+  registerDialog();
+  registerBadge();
+  registerChart();
+  registerChip();
+  registerTooltip();
+  registerProgress();
+  registerForm();
+  registerSlider();
+  registerFileUpload();
+  registerAutocomplete();
+  registerDatepicker();
+  // Navigation elements
+  registerBottomNavigation();
+  registerCircleMenu();
+  registerBreadcrumbs();
+  registerDrawer();
+  registerMenu();
+  registerNavbar();
+  registerPagination();
+  registerStepper();
+  registerTabs();
+  // Surface elements
+  registerAccordion();
+  registerBottomSheet();
+  registerPopover();
+  // Data display elements
+  registerDatetime();
+  registerTable();
+  registerProDataGrid();
+  registerGridColumn();
+  registerGridColumnGroup();
+  registerMarkdownInput();
+  registerSelect();
+  registerCascader();
+  registerCodeBlock();
+  registerCodeEngine();
+  // New elements
+  registerFormGroup();
+  registerNavigation();
+  registerNestedMenu();
+  registerOtpInput();
+  registerSegmentControl();
+  registerThemeController();
+  registerTimeInput();
+  registerChat();
+  registerCarousel();
+  registerConsolePage();
+  registerCountdown();
+  registerDiff();
+  registerDropdown();
+  registerFab();
+  registerFileInput();
+  registerFilterGroup();
+  registerFooter();
+  registerHero();
+  registerHomePage();
+  registerIndicator();
+  registerJoin();
+  registerKbd();
+  registerLink();
+  registerLoading();
+  registerMask();
+  registerMegamenu();
+  registerRadialProgress();
+  registerRange();
+  registerSidebarLayout();
+  registerSignPage();
+  registerStack();
+  registerStat();
+  registerSwap();
+  registerToggleSwitch();
+  registerValidator();
+}
