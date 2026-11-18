@@ -1,0 +1,22 @@
+{
+  "name": "@duskmoon-dev/docs",
+  "version": "0.6.4",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0 --port 4334",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/react": "6.0.2",
+    "@duskmoon-dev/art-components": "workspace:*",
+    "@duskmoon-dev/components": "workspace:*",
+    "@duskmoon-dev/core": "1.21.5",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "astro": "7.1.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  }
+}

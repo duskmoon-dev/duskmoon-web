@@ -1,0 +1,60 @@
+{
+  "name": "Button",
+  "htmlElement": "button",
+  "baseClass": "btn",
+  "axes": {
+    "color": {
+      "values": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "tertiary": "btn-tertiary",
+        "info": "btn-info",
+        "success": "btn-success",
+        "warning": "btn-warning",
+        "error": "btn-error"
+      },
+      "default": "primary"
+    },
+    "appearance": {
+      "values": {
+        "filled": "",
+        "outline": "btn-outline",
+        "tonal": "btn-tonal",
+        "ghost": "btn-ghost",
+        "text": "btn-text"
+      },
+      "default": "filled"
+    },
+    "shape": {
+      "values": {
+        "rect": "",
+        "circle": "btn-circle btn-icon",
+        "square": "btn-square"
+      },
+      "default": "rect"
+    },
+    "size": {
+      "values": {
+        "xs": "btn-xs",
+        "sm": "btn-sm",
+        "md": "btn-md",
+        "lg": "btn-lg"
+      },
+      "default": "md"
+    }
+  },
+  "booleanModifiers": {
+    "block": "btn-block",
+    "isLoading": "btn-loading"
+  },
+  "compoundModifiers": [
+    { "when": { "shape": "circle", "size": "xs" }, "className": "btn-icon-sm" },
+    { "when": { "shape": "circle", "size": "sm" }, "className": "btn-icon-sm" },
+    { "when": { "shape": "circle", "size": "lg" }, "className": "btn-icon-lg" }
+  ],
+  "reactProps": [
+    "leftIcon?: React.ReactNode",
+    "rightIcon?: React.ReactNode",
+    "confirm?: boolean | { title?: React.ReactNode; component?: React.ReactElement; message?: React.ReactNode; description?: React.ReactNode; confirmText?: React.ReactNode; cancelText?: React.ReactNode }"
+  ]
+}

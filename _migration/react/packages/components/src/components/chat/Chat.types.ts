@@ -1,0 +1,343 @@
+import type { ChatRequestProps } from "./ChatRequest";
+import type {
+  ChatComposerContextProps,
+  ChatComposerContextItemProps,
+  ChatComposerContextEndProps,
+  ChatComposerConnectionProps,
+} from "./ChatComposerContext";
+import type {
+  ComponentProps,
+  ForwardRefExoticComponent,
+  RefAttributes,
+  ReactNode,
+} from "react";
+
+import type { TextAreaProps } from "../input";
+import type { ComposerScope } from "./Composer.types";
+import type {
+  ComposerAttachmentIntakePolicy,
+  ComposerAttachmentRejection,
+} from "./ComposerAttachment.types";
+
+export type ChatPlacement = "start" | "end";
+export type ChatTimeline =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17
+  | 18
+  | 19
+  | 20
+  | 21
+  | 22
+  | 23
+  | 24;
+
+export type ChatBubbleColor =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "accent"
+  | "neutral"
+  | "base"
+  | "info"
+  | "success"
+  | "warning"
+  | "error";
+
+export type ChatBubbleSize = "xs" | "sm" | "md" | "lg";
+
+export type ChatToolState = "pending" | "running" | "success" | "error";
+
+export interface ChatProps extends ComponentProps<"div"> {
+  /** Position the turn at the start or end of the conversation row. */
+  placement?: ChatPlacement;
+  /** Pair an assistant row with a scroll indicator (slots 1–24). */
+  timeline?: ChatTimeline;
+  "data-chat-tl"?: string | number;
+}
+
+export type ChatAvatarProps = ComponentProps<"div">;
+export type ChatHeaderProps = ComponentProps<"div">;
+export type ChatFooterProps = ComponentProps<"div">;
+export type ChatStatusProps = ComponentProps<"div">;
+export type ChatStatusItemProps = ComponentProps<"span">;
+export type ChatStatusValueProps = ComponentProps<"span">;
+export interface ChatActionsProps extends ComponentProps<"div"> {
+  /** Reveal actions on message hover or keyboard focus. */
+  hover?: boolean;
+}
+export type ChatScrollProps = ComponentProps<"div">;
+export type ChatScrollBodyProps = ComponentProps<"div">;
+export type ChatScrollTrackProps = ComponentProps<"div">;
+export interface ChatScrollIndicatorProps extends ComponentProps<"button"> {
+  targetId: string;
+  timeline: ChatTimeline;
+}
+
+export interface ChatBubbleProps extends ComponentProps<"div"> {
+  /** Apply a semantic DuskMoon color to the bubble. */
+  color?: ChatBubbleColor;
+  /** Control the bubble padding and font size. @default "md" */
+  size?: ChatBubbleSize;
+  /** Use the saturated form of the selected color. */
+  filled?: boolean;
+  /** Show the live streaming caret after the bubble content. */
+  streaming?: boolean;
+  /** Collapse sent user messages exceeding six rendered lines. */
+  collapsible?: boolean;
+  expanded?: boolean;
+  defaultExpanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
+}
+
+export type ChatAgentProps = Omit<ChatProps, "placement">;
+export interface ChatContentProps extends ComponentProps<"div"> {
+  streaming?: boolean;
+}
+export type ChatWorkProps = ComponentProps<"details">;
+export type ChatWorkSummaryProps = ComponentProps<"summary">;
+export type ChatWorkBodyProps = ComponentProps<"div">;
+export type ChatInputAreaProps = ComponentProps<"div">;
+export type ChatComposerColor =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "info"
+  | "success"
+  | "warning"
+  | "error";
+export interface ChatComposerFormProps extends ComponentProps<"form"> {
+  color?: ChatComposerColor;
+  ghost?: boolean;
+}
+export type ChatComposerInputProps = ComponentProps<"textarea">;
+export type ChatComposerActionsProps = ComponentProps<"div">;
+export type ChatComposerHintProps = ComponentProps<"kbd">;
+
+export interface ChatQueueItem {
+  id: string;
+  text: string;
+  attachment?: { src: string; alt: string };
+}
+
+export interface ChatQueueProps extends Omit<
+  ComponentProps<"section">,
+  "children"
+> {
+  items: readonly ChatQueueItem[];
+  /** Stable identity of the next message; defaults to the first item. */
+  activeId?: string;
+  /** The application owns pending state and removes messages after acknowledgment. */
+  pendingIds?: readonly string[];
+  steerDisabled?: boolean;
+  /** Optional authoritative controls; legacy Steer/Remove remain the default. */
+  renderItemActions?: (
+    item: ChatQueueItem,
+    index: number,
+    pending: boolean,
+  ) => ReactNode;
+  renderItemContent?: (item: ChatQueueItem, index: number) => ReactNode;
+  onSteer: (id: string) => void;
+  onRemove: (id: string) => void;
+  /** Accessible queue name. @default "Waiting messages" */
+  label?: string;
+}
+
+export type ChatReasoningProps = ComponentProps<"details">;
+
+export interface ChatToolProps extends ComponentProps<"details"> {
+  /** Reflect the current tool-call state. */
+  status?: ChatToolState;
+}
+
+export type ChatToolHeaderProps = ComponentProps<"summary">;
+export type ChatToolStatusProps = ComponentProps<"span">;
+export type ChatToolCallProps = ComponentProps<"div">;
+export type ChatToolResultProps = ComponentProps<"div">;
+
+export type ChatTypingProps = Omit<ComponentProps<"span">, "children">;
+
+/** A snapshot of the controlled draft at submission time. */
+export interface ChatComposerSubmission {
+  value: string;
+  files: File[];
+}
+
+export interface ChatComposerCompletion {
+  id: string;
+  label: string;
+  /** Optional presentation; never part of the submitted document. */
+  icon?: ReactNode;
+  sourceLabel?: string;
+  description?: ReactNode;
+  disabled?: boolean;
+  group?: string;
+}
+
+export interface ChatComposerCompletionContext {
+  value: string;
+  selectionStart: number;
+  selectionEnd: number;
+}
+
+/** The application supplies candidates and owns inserting the selected result. */
+export interface ChatComposerCompletionConfig {
+  items: readonly ChatComposerCompletion[];
+  onSelect: (
+    item: ChatComposerCompletion,
+    context: ChatComposerCompletionContext,
+  ) => void;
+  label?: string;
+}
+
+export interface ChatComposerActionContext {
+  submit: () => void;
+  submitting: boolean;
+  canSubmit: boolean;
+  disabled: boolean;
+  generating: boolean;
+  openAttachments: () => void;
+}
+
+export interface ChatComposerAttachmentContext {
+  remove: () => void;
+  disabled: boolean;
+}
+
+export interface ChatComposerProps extends Omit<
+  ComponentProps<"div">,
+  "children" | "onSubmit" | "onChange"
+> {
+  value: string;
+  /** Isolate pending admission and completion state when changing contexts. */
+  scope?: ComposerScope;
+  onValueChange: (value: string) => void;
+  /** Return false to reject admission and retain the draft. */
+  onSubmit: (
+    snapshot: ChatComposerSubmission,
+  ) => boolean | void | Promise<boolean | void>;
+  attachments?: File[];
+  /** Enables the native file picker and attachment removal controls. */
+  onAttachmentsChange?: (files: File[]) => void;
+  accept?: string;
+  /** Shared validation for picker, pasted files, and dropped files. */
+  attachmentPolicy?: ComposerAttachmentIntakePolicy;
+  onAttachmentRejected?: (
+    rejected: readonly ComposerAttachmentRejection[],
+  ) => void;
+  /** @default true */
+  multiple?: boolean;
+  /** Permit a draft containing only files. @default false */
+  allowAttachmentOnly?: boolean;
+  /** Compact Add menu, one send/stop action and ready-image strip. @default false */
+  compact?: boolean;
+  /** Additional actions in the compact Add menu. */
+  addMenu?: ReactNode;
+  /** Attached context bar, rendered first inside the composer. */
+  context?: ReactNode;
+  disabled?: boolean;
+  /** Gates submission while keeping the draft editable. */
+  busy?: boolean;
+  /** Shows Stop when onStop is supplied; does not prevent submission. */
+  generating?: boolean;
+  /** Application-controlled admission, including follow-ups. @default true */
+  canSubmit?: boolean;
+  onStop?: () => void;
+  error?: ReactNode;
+  onSubmitError?: (error: unknown) => void;
+  /** Clear unchanged admitted text and only admitted file entries. @default true */
+  clearOnSubmit?: boolean;
+  completion?: ChatComposerCompletionConfig;
+  /** @default 1 */
+  minRows?: number;
+  /** @default 6 */
+  maxRows?: number;
+  textareaProps?: Omit<
+    TextAreaProps,
+    | "value"
+    | "defaultValue"
+    | "onChange"
+    | "disabled"
+    | "rows"
+    | "autoSize"
+    | "ref"
+  >;
+  attachLabel?: string;
+  sendLabel?: string;
+  stopLabel?: string;
+  renderAttachment?: (
+    file: File,
+    context: ChatComposerAttachmentContext,
+  ) => ReactNode;
+  /** Extra application actions rendered alongside Attach, Stop, and Send. */
+  children?: ReactNode | ((context: ChatComposerActionContext) => ReactNode);
+}
+
+type ChatPartComponent<T extends HTMLElement, P> = ForwardRefExoticComponent<
+  P & RefAttributes<T>
+>;
+
+export type ChatComponent = ChatPartComponent<HTMLDivElement, ChatProps> & {
+  Composer: ChatPartComponent<HTMLDivElement, ChatComposerProps>;
+  ComposerContext: ChatPartComponent<HTMLDivElement, ChatComposerContextProps>;
+  ComposerContextItem: ChatPartComponent<
+    HTMLSpanElement,
+    ChatComposerContextItemProps
+  >;
+  ComposerContextEnd: ChatPartComponent<
+    HTMLSpanElement,
+    ChatComposerContextEndProps
+  >;
+  ComposerConnection: ChatPartComponent<
+    HTMLSpanElement,
+    ChatComposerConnectionProps
+  >;
+  Request: ChatPartComponent<HTMLDivElement, ChatRequestProps>;
+  Agent: ChatPartComponent<HTMLDivElement, ChatAgentProps>;
+  Content: ChatPartComponent<HTMLDivElement, ChatContentProps>;
+  Work: ChatPartComponent<HTMLDetailsElement, ChatWorkProps>;
+  WorkSummary: ChatPartComponent<HTMLElement, ChatWorkSummaryProps>;
+  WorkBody: ChatPartComponent<HTMLDivElement, ChatWorkBodyProps>;
+  InputArea: ChatPartComponent<HTMLDivElement, ChatInputAreaProps>;
+  Queue: ChatPartComponent<HTMLElement, ChatQueueProps>;
+  ComposerForm: ChatPartComponent<HTMLFormElement, ChatComposerFormProps>;
+  ComposerInput: ChatPartComponent<HTMLTextAreaElement, ChatComposerInputProps>;
+  ComposerActions: ChatPartComponent<HTMLDivElement, ChatComposerActionsProps>;
+  ComposerHint: ChatPartComponent<HTMLElement, ChatComposerHintProps>;
+  Avatar: ChatPartComponent<HTMLDivElement, ChatAvatarProps>;
+  Header: ChatPartComponent<HTMLDivElement, ChatHeaderProps>;
+  Bubble: ChatPartComponent<HTMLDivElement, ChatBubbleProps>;
+  Footer: ChatPartComponent<HTMLDivElement, ChatFooterProps>;
+  Status: ChatPartComponent<HTMLDivElement, ChatStatusProps>;
+  StatusItem: ChatPartComponent<HTMLSpanElement, ChatStatusItemProps>;
+  StatusValue: ChatPartComponent<HTMLSpanElement, ChatStatusValueProps>;
+  Actions: ChatPartComponent<HTMLDivElement, ChatActionsProps>;
+  Scroll: ChatPartComponent<HTMLDivElement, ChatScrollProps>;
+  ScrollBody: ChatPartComponent<HTMLDivElement, ChatScrollBodyProps>;
+  ScrollTrack: ChatPartComponent<HTMLDivElement, ChatScrollTrackProps>;
+  ScrollIndicator: ChatPartComponent<
+    HTMLButtonElement,
+    ChatScrollIndicatorProps
+  >;
+  Reasoning: ChatPartComponent<HTMLDetailsElement, ChatReasoningProps>;
+  Tool: ChatPartComponent<HTMLDetailsElement, ChatToolProps>;
+  ToolHeader: ChatPartComponent<HTMLElement, ChatToolHeaderProps>;
+  ToolStatus: ChatPartComponent<HTMLSpanElement, ChatToolStatusProps>;
+  ToolCall: ChatPartComponent<HTMLDivElement, ChatToolCallProps>;
+  ToolResult: ChatPartComponent<HTMLDivElement, ChatToolResultProps>;
+  Typing: ChatPartComponent<HTMLSpanElement, ChatTypingProps>;
+};
