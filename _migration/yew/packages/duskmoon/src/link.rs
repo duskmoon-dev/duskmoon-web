@@ -1,0 +1,60 @@
+use serde::Serialize;
+use yew::prelude::*;
+
+use yew_router::components::Link as YewLink;
+use yew_router::Routable;
+
+/// Props for [`Link`]
+#[derive(Properties, Clone, PartialEq)]
+pub struct LinkProps<R, Q = ()>
+where
+    R: Routable,
+    Q: Clone + PartialEq + Serialize,
+{
+    /// CSS classes to add to the anchor element (optional).
+    #[prop_or_default]
+    pub classes: Classes,
+    #[prop_or_default]
+    pub variant: Option<String>,
+    /// Route that will be pushed when the anchor is clicked.
+    pub to: R,
+    /// Route query data
+    #[prop_or_default]
+    pub query: Option<Q>,
+    #[prop_or_default]
+    pub disabled: bool,
+    /// [`NodeRef`](yew::html::NodeRef) for the `<a>` element.
+    #[prop_or_default]
+    pub anchor_ref: NodeRef,
+    #[prop_or_default]
+    pub children: Children,
+}
+
+/// Link component using Tailwind CSS utility classes
+#[function_component(Link)]
+pub fn link<R, Q = ()>(props: &LinkProps<R, Q>) -> Html
+where
+    R: Routable + 'static,
+    Q: Clone + PartialEq + Serialize + 'static,
+{
+    let np = props.clone();
+
+    let mut link_classes = classes!("link");
+
+    if let Some(variant) = &np.variant {
+        link_classes.push(format!("link-{}", variant));
+    }
+
+    link_classes.push(np.classes.clone());
+
+    html! {
+        <YewLink<R,Q> classes={link_classes}
+            to={np.to}
+            query={np.query}
+            disabled={np.disabled}
+            anchor_ref={np.anchor_ref}
+        >
+            { np.children }
+        </YewLink<R,Q>>
+    }
+}

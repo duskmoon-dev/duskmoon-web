@@ -1,0 +1,41 @@
+[package]
+authors = ["Jonathan Gao <gsmlg.com@gmail.com>"]
+keywords = ["wasm", "web", "yew"]
+categories = ["wasm", "web-programming", "gui"]
+description = "Yew Duskmoon"
+edition = "2021"
+license = "GPLv3"
+name = "yew-duskmoon-ui-demo"
+readme = "./README.md"
+repository = "https://github.com/gsmlg-dev/yew-duskmoon-ui.git"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+yew-duskmoon = { version = "*", path = "../packages/duskmoon" }
+log = "0.4"
+serde = "1"
+serde_json = "1.0"
+reqwest = { version = "0.11.13", features = ["json"] }
+yew = { version = "0.23.0", features = ["csr"] }
+yew-router = "0.20.0"
+yew-hooks = "0.6.4"
+wasm-bindgen = "0.2"
+wasm-logger = "0.2.0"
+web-sys = { version = "0.3", features = ["Document", "Element", "HtmlInputElement", "Window"] }
+yewdux = "0.13.0"
+strum = "0.28.0"
+strum_macros = "0.28.0"
+implicit-clone = { version = "0.6.0", features = ["map"] }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+gloo-utils = "0.1.5"
+
+[dev-dependencies.web-sys]
+version = "0.3"
+features = ["Document", "Element", "HtmlCollection"]

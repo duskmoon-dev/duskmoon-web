@@ -1,0 +1,117 @@
+use yew::prelude::*;
+use yew::virtual_dom::AttrValue;
+
+#[derive(Properties, Clone, PartialEq)]
+pub struct ToggleProps {
+    #[prop_or_default]
+    pub class: Classes,
+    #[prop_or_default]
+    pub children: Children,
+    #[prop_or_default]
+    pub variant: Option<String>,
+    #[prop_or_default]
+    pub options: Vec<AttrValue>,
+    #[prop_or_default]
+    pub active: usize,
+    #[prop_or_default]
+    pub disabled: bool,
+    #[prop_or(AttrValue::from("Toggle options"))]
+    pub aria_label: AttrValue,
+    #[prop_or_default]
+    pub onclick: Callback<usize>,
+}
+
+#[function_component(Toggle)]
+pub fn toggle(props: &ToggleProps) -> Html {
+    let active = use_state_eq(|| props.active);
+
+    let mut classes = classes!("toggle-group");
+    if let Some(variant) = &props.variant {
+        classes.push(format!("toggle-group-{}", variant));
+    }
+    classes.push(props.class.clone());
+
+    let options = if props.options.is_empty() && props.children.is_empty() {
+        vec![
+            AttrValue::from("List"),
+            AttrValue::from("Grid"),
+            AttrValue::from("Details"),
+        ]
+    } else {
+        props.options.clone()
+    };
+
+    html! {
+        <div class={classes} role="group" aria-label={props.aria_label.clone()}>
+            {
+                if options.is_empty() {
+                    let mut button_classes = toggle_button_classes(props.variant.as_deref(), true);
+                    if props.disabled {
+                        button_classes.push("toggle-btn-disabled");
+                    }
+
+                    html! {
+                        <button
+                            type="button"
+                            class={button_classes}
+                            aria-pressed="true"
+                            disabled={props.disabled}
+                        >
+                            { for props.children.iter() }
+                        </button>
+                    }
+                } else {
+                    html! {
+                        <>
+                            {
+                                for options.into_iter().enumerate().map(|(index, option)| {
+                                    let is_active = index == *active;
+                                    let mut button_classes = toggle_button_classes(props.variant.as_deref(), is_active);
+                                    if props.disabled {
+                                        button_classes.push("toggle-btn-disabled");
+                                    }
+
+                                    let onclick = {
+                                        let active = active.clone();
+                                        let callback = props.onclick.clone();
+                                        Callback::from(move |_| {
+                                            active.set(index);
+                                            callback.emit(index);
+                                        })
+                                    };
+
+                                    html! {
+                                        <button
+                                            type="button"
+                                            class={button_classes}
+                                                            aria-pressed={if is_active { "true" } else { "false" }}
+                                            disabled={props.disabled}
+                                            onclick={onclick}
+                                        >
+                                            { option }
+                                        </button>
+                                    }
+                                })
+                            }
+                        </>
+                    }
+                }
+            }
+        </div>
+    }
+}
+
+fn toggle_button_classes(variant: Option<&str>, active: bool) -> Classes {
+    let mut classes = classes!("toggle-btn");
+
+    if let Some(variant) = variant {
+        classes.push(format!("toggle-btn-{}", variant));
+    }
+
+    if active {
+        classes.push("toggle-btn-active");
+        classes.push("active");
+    }
+
+    classes
+}

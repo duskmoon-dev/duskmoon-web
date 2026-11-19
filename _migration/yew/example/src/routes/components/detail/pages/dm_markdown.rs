@@ -1,0 +1,540 @@
+use crate::routes::components::catalog::ComponentSpec;
+use crate::routes::components::detail::page::{ApiRow, ComponentPage};
+use yew::prelude::*;
+use yew_duskmoon::{DmMarkdown, FrontMatterMode};
+
+const DM_MARKDOWN_API: &[ApiRow] = &[
+    ApiRow {
+        prop: "class",
+        ty: "Classes",
+        default: "empty",
+        docs: "Extra CSS classes appended to the markdown root.",
+    },
+    ApiRow {
+        prop: "allow_html",
+        ty: "bool",
+        default: "true",
+        docs: "Renders safe raw HTML while escaping style, script, and object tags.",
+    },
+    ApiRow {
+        prop: "base_url",
+        ty: "Option<String>",
+        default: "None",
+        docs: "Resolves relative Markdown link and image destinations against a directory URL.",
+    },
+    ApiRow {
+        prop: "custom_elements",
+        ty: "Vec<String>",
+        default: "empty",
+        docs: "Allowed custom element tag names. Empty disables custom elements.",
+    },
+    ApiRow {
+        prop: "color_chips",
+        ty: "bool",
+        default: "true",
+        docs: "Adds a visible color chip to inline code containing one valid CSS color.",
+    },
+    ApiRow {
+        prop: "front_matter",
+        ty: "FrontMatterMode",
+        default: "Render",
+        docs: "Renders, hides, or disables recognition of initial YAML front matter.",
+    },
+    ApiRow {
+        prop: "markdown",
+        ty: "AttrValue",
+        default: "empty",
+        docs: "Markdown source rendered into HTML.",
+    },
+    ApiRow {
+        prop: "syntax_service",
+        ty: "SyntaxService",
+        default: "shared default",
+        docs: "Shared Tree-sitter Worker service. Configure the served asset directory with SyntaxConfig.",
+    },
+    ApiRow {
+        prop: "variant",
+        ty: "Option<String>",
+        default: "None",
+        docs: "Legacy modifier escape hatch; Core provides a neutral prose surface without root palette variants.",
+    },
+];
+
+const SAMPLE_MARKDOWN: &str = r#"---
+title: DmMarkdown feature showcase
+tags:
+  - rust
+  - yew
+accent: '#4C86FC'
+---
+# DmMarkdown rendering
+
+Dm Markdown renders source text into the same typography scope as `MarkdownBody`, with asynchronously highlighted fenced code and Mermaid diagrams.
+
+## Inline color chips
+
+| Color | Inline code |
+| --- | --- |
+| Brand blue | `#4C86FC` |
+| White | `#fff` |
+| Black | `#000` |
+| Transparent red | `#FF000080` |
+
+Function colors work too: `rgb(255, 0, 0)`, `rgba(255, 0, 0, 0.5)`, `hsl(210, 100%, 50%)`, and `hsla(210, 100%, 50%, 0.5)`.
+
+## Raw HTML
+
+<aside><strong>Safe HTML:</strong> raw tags render by default.</aside>
+
+<el-dm-note>Custom elements are escaped unless their tag name is allowed.</el-dm-note>
+
+<script>alert("blocked")</script>
+
+## Mermaid diagrams
+
+SVG diagrams keep their original proportions and fit the available width without enlarging small charts. Click a diagram or its **1:1** button to inspect it at its original CSS-pixel size. Scroll to explore a large chart, then use **Close** or **Esc** to return to the document.
+
+### Compact chart
+
+```mermaid
+flowchart TD
+  Seed[Plant a seed] --> Bloom[First bloom]
+```
+
+### Wide chart
+
+```mermaid
+flowchart LR
+  Source[Markdown Source] --> Parse[Parse the Document]
+  Parse --> Sanitize[Sanitize HTML]
+  Sanitize --> Renderer[DmMarkdown]
+  Renderer --> Html[Highlighted HTML]
+  Renderer --> Chart[Mermaid Chart]
+  Html --> Document[Assemble the Page]
+  Chart --> Document
+  Document --> Cache[Cache the Preview]
+  Cache --> Publish[Publish the Document]
+```
+
+### Directed workflow with groups and decisions
+
+```mermaid
+graph TD
+  subgraph Studio [Content studio]
+    A[Draft a technical article] --> B[Submit the article for review]
+    R[Revise the article from the review report]
+  end
+  subgraph Pipeline [Publishing pipeline]
+    C[Build a private preview]
+    D[Run link, style, and accessibility checks]
+    E{All automated checks pass}
+    F[Create a detailed correction report]
+    G[Prepare the production publication]
+    H{Editorial approval required}
+    I[Request final editorial approval]
+    J[Publish the article and notify subscribers]
+  end
+  B --> C
+  C --> D
+  D --> E
+  E -- No --> F
+  F --> R
+  R --> B
+  E -- Yes --> G
+  G --> H
+  H -- Yes --> I
+  I --> J
+  H -- No --> J
+```
+
+```mermaid
+swimlane-beta LR
+  subgraph Customer
+    request[Request service]
+    update[Receive update]
+  end
+  subgraph Support
+    triage[Triage request]
+    answer[Send answer]
+  end
+  subgraph Engineering
+    investigate[Investigate issue]
+    fix[Prepare fix]
+  end
+  request --> triage
+  triage -->|Known issue| answer
+  triage -->|Needs code change| investigate
+  investigate --> fix
+  fix --> answer
+  answer --> update
+```
+
+### Sequence with aliases, long labels, and self calls
+
+```mermaid
+sequenceDiagram
+  actor U as 编辑用户
+  participant C as 内容管理与版本服务
+  participant R as 编辑审核工作台
+  participant P as 已接入的发布平台
+  U->>C: 选择内容来源并提交需要审核的文章草稿
+  C->>R: 创建审核任务并附上最新文章版本
+  Note over R: 保留原稿与审核记录
+  R-->>C: 返回审核记录与修改建议（必要时补充说明）
+  C->>C: 校验文章来源并冻结当前审核版本
+  C->>P: 按照既有发布流程提交审核通过的内容
+  P-->>C: 返回发布地址<br/>与可追踪的版本编号
+  C->>C: 校验远端内容与当前文章版本一致
+  C->>R: 回写发布结果并保留已有审核记录
+  C-->>U: 通知发布完成并提供访问链接
+```
+
+```mermaid
+classDiagram
+  namespace Company {
+    class CEO {
+      +makeDecisions()
+    }
+  }
+  namespace Company.Engineering.Backend {
+    class Developer {
+      +writeCode()
+    }
+  }
+  namespace Company.Engineering.Frontend {
+    class Designer {
+      +createMockup()
+    }
+  }
+  CEO --> Developer : oversees
+  CEO --> Designer : oversees
+```
+
+```mermaid
+stateDiagram-v2
+  [*] --> Still
+  Still --> Moving
+  Moving --> Crash
+  Crash --> [*]
+  Still --> [*]
+  Moving --> Still
+```
+
+```mermaid
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  CUSTOMER ||--o{ DELIVERY_ADDRESS : uses
+  ORDER ||--|{ LINE_ITEM : contains
+```
+
+```mermaid
+journey
+  title My working day
+  section Morning
+    Go to work: 5: Me
+    Make tea: 5: Cat, Me
+    Go upstairs: 3: Me
+  section Work
+    Do work: 2: Cat, Me
+  section Evening
+    Go downstairs: 5: Me
+    Go home: 5: Me
+    Sit down: 5: Me
+```
+
+```mermaid
+gantt
+  title A Gantt Diagram
+  dateFormat  YYYY-MM-DD
+  axisFormat  %Y-%m-%d
+  section Section
+  A task :2014-01-01, 2014-01-31
+  Another task :2014-01-31, 2014-02-18
+  section Another
+  Task in Another :2014-01-12, 2014-01-24
+  another task :2014-01-24, 2014-02-10
+```
+
+```mermaid
+pie showData
+  title Demo content
+  "Code" : 42
+  "Mermaid" : 34
+  "Markdown" : 24
+```
+
+```mermaid
+quadrantChart
+  title Documentation value
+  x-axis Low effort --> High effort
+  y-axis Low impact --> High impact
+  "Markdown": [0.30, 0.65]
+  "Mermaid": [0.58, 0.82]
+  "Highlight": [0.42, 0.74]
+```
+
+```mermaid
+requirementDiagram
+  requirement safe_render {
+    id: DM-1
+    text: Strip unsafe raw HTML
+    risk: high
+    verifymethod: test
+  }
+```
+
+```mermaid
+gitGraph
+  commit id: "markdown"
+  branch demo
+  checkout demo
+  commit id: "mermaid"
+```
+
+```mermaid
+C4Context
+  title Markdown rendering context
+  Person(author, "Author", "Writes docs")
+  System(renderer, "DmMarkdown", "Renders safe HTML")
+  Rel(author, renderer, "submits markdown")
+```
+
+```mermaid
+mindmap
+  root((DmMarkdown))
+    Markdown
+      Tables
+      Task lists
+    Code
+      Rust
+      TypeScript
+    Mermaid
+      Flowchart
+      Sequence
+```
+
+```mermaid
+timeline
+  title Render path
+  Source : Markdown arrives
+  Parse : Events are sanitized
+  Output : HTML is emitted
+```
+
+```mermaid
+zenuml
+  Author->Renderer: markdown
+  Renderer->Renderer: Validate content and prepare the rendered document
+  Renderer->Author: html
+```
+
+```mermaid
+sankey-beta
+  Markdown,Parser,40
+  Parser,Highlighter,22
+  Parser,Mermaid,18
+  Highlighter,HTML,22
+  Mermaid,HTML,18
+```
+
+```mermaid
+xychart-beta
+  title "Render coverage"
+  x-axis [Markdown, Code, Mermaid]
+  y-axis "Coverage" 0 --> 100
+  bar [92, 88, 76]
+```
+
+```mermaid
+block-beta
+  columns 3
+  source["Source"] parser["Parser"] html["HTML"]
+  source --> parser
+  parser --> html
+```
+
+```mermaid
+packet-beta
+  title Markdown payload
+  0-7: "type"
+  8-31: "content length"
+  32-63: "source bytes"
+```
+
+```mermaid
+kanban
+  Todo
+    Add docs
+  Doing
+    Render diagrams
+  Done
+    Highlight code
+```
+
+```mermaid
+architecture-beta
+  group app(cloud)[Example app]
+  service markdown(server)[DmMarkdown] in app
+  service browser(internet)[Browser] in app
+  browser:R -- L:markdown
+```
+
+```mermaid
+radar-beta
+  title Renderer qualities
+  axis Safety, Coverage, Readability, Speed
+  curve Demo{90, 80, 88, 74}
+```
+
+```mermaid
+eventModeling
+  event MarkdownSubmitted
+  command RenderMarkdown
+  view HtmlPreview
+```
+
+```mermaid
+treemap-beta
+  "DmMarkdown"
+    "Markdown": 32
+    "Code": 26
+    "Mermaid": 42
+```
+
+```mermaid
+venn
+  Markdown: 40
+  Mermaid: 35
+  Markdown & Mermaid: 15
+```
+
+```mermaid
+ishikawa
+  root((Renderer quality))
+    Safety
+      Escaped HTML
+    Readability
+      Highlighted code
+    Coverage
+      Mermaid diagrams
+```
+
+```mermaid
+wardley
+  title Documentation map
+  anchor User [0.95, 0.65]
+  component Markdown [0.65, 0.55]
+  component Mermaid [0.48, 0.44]
+  User->Markdown
+```
+
+```mermaid
+cynefin
+  title Rendering decisions
+  Simple: Escape HTML
+  Complicated: Highlight syntax
+  Complex: Diagram layout
+```
+
+```mermaid
+treeview
+  root
+    markdown
+      code
+      mermaid
+    html
+```
+
+## Language fences
+
+```elixir
+defmodule Demo.Greeting do
+  def hello(name) do
+    "hello #{name}"
+  end
+end
+```
+
+```go
+package main
+
+func hello(name string) string {
+    return "hello " + name
+}
+```
+
+```rust
+pub fn hello(name: &str) -> String {
+    let message = format!("hello {name}");
+    message
+}
+```
+
+```zig
+const std = @import("std");
+
+pub fn hello(writer: anytype) !void {
+    try writer.print("hello {s}", .{"moon"});
+}
+```
+
+```typescript
+type User = {
+  readonly name: string;
+};
+
+export function hello(user: User): string {
+  return `hello ${user.name}`;
+}
+```
+
+- [x] Parse Markdown
+- [x] Highlight code fences
+- [x] Render Mermaid chart blocks
+"#;
+
+const HIDDEN_FRONT_MATTER_MARKDOWN: &str = r#"---
+title: Hidden metadata
+owner: docs
+---
+## Hidden front matter
+
+Only the Markdown body is rendered in hidden mode.
+"#;
+
+const DISABLED_FRONT_MATTER_MARKDOWN: &str = r#"---
+title: Disabled front matter
+---
+# Disabled front matter recognition
+
+Delimiter lines are parsed as ordinary Markdown in disabled mode.
+"#;
+
+pub fn page(spec: &'static ComponentSpec) -> ComponentPage {
+    ComponentPage::without_color_variants(spec, usage, DM_MARKDOWN_API, demo)
+}
+
+fn usage(_: &ComponentSpec) -> String {
+    "use yew_duskmoon::DmMarkdown;\n\nhtml! {\n    <DmMarkdown markdown={\"# Demo\\n\\n```rust\\nfn main() {}\\n```\"} />\n}".to_owned()
+}
+
+fn demo(_: &ComponentSpec) -> Html {
+    html! {
+        <div class="component-detail-markdown-stack">
+            <DmMarkdown
+                class="component-detail-demo-control"
+                markdown={SAMPLE_MARKDOWN}
+            />
+            <DmMarkdown
+                class="component-detail-demo-control"
+                front_matter={FrontMatterMode::Hidden}
+                markdown={HIDDEN_FRONT_MATTER_MARKDOWN}
+            />
+            <DmMarkdown
+                class="component-detail-demo-control"
+                front_matter={FrontMatterMode::Disabled}
+                markdown={DISABLED_FRONT_MATTER_MARKDOWN}
+            />
+        </div>
+    }
+}
