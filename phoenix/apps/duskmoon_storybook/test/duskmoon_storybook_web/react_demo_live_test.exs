@@ -143,7 +143,7 @@ defmodule DuskmoonStorybookWeb.ReactDemoLiveTest do
     root = html |> LazyHTML.from_document() |> LazyHTML.query("#react-schema-profile")
 
     assert ["DuskmoonReactForm"] = LazyHTML.attribute(root, "phx-hook")
-    assert ["ignore"] = LazyHTML.attribute(root, "phx-update")
+    assert [] = LazyHTML.attribute(root, "phx-update")
     assert [] = LazyHTML.attribute(root, "data-initial-values")
     assert [schema_json] = LazyHTML.attribute(root, "data-schema")
     schema = Jason.decode!(schema_json)
@@ -162,7 +162,7 @@ defmodule DuskmoonStorybookWeb.ReactDemoLiveTest do
     assert get_in(schema, ["properties", "members", "items", "properties", "email", "format"]) ==
              "email"
 
-    assert has_element?(view, "#react-schema-profile > [data-dm-react-schema]")
+    assert has_element?(view, "#react-schema-profile > [data-dm-react-schema][phx-update=ignore]")
     refute has_element?(view, "#react-schema-profile [data-dm-react-field]")
   end
 

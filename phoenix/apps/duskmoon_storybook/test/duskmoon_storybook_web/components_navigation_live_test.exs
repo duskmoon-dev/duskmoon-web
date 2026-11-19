@@ -115,9 +115,9 @@ defmodule DuskmoonStorybookWeb.ComponentsNavigationLiveTest do
     for {path, active, content} <- [
           {"/components/", "components-index", "UI demos"},
           {"/components/action/button/?source=sidebar", "action-button",
-           "Button component for triggering actions"},
+           "Native button with Core styling for actions and form submission."},
           {"/components/action/%62utton", "action-button",
-           "Button component for triggering actions"}
+           "Native button with Core styling for actions and form submission."}
         ] do
       {:ok, view, html} = live(conn, path)
 
