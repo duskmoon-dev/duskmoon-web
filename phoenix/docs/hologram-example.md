@@ -88,10 +88,12 @@ HOLOGRAM_START=1 MIX_ENV=test scripts/with-precompiled-toolchain.sh mix storyboo
 HOLOGRAM_START=1 MIX_ENV=test scripts/with-precompiled-toolchain.sh mix test apps/duskmoon_storybook/hologram_test
 ```
 
-Normal Storybook tests also include `hologram_test`. Tests cover state transitions,
-SSR, hydration, styles, input/checkbox updates, theme changes, native modal behavior,
-mobile overflow and demo navigation. Screenshots are written beneath the active
-Mix build directory's `hologram-screenshots` directory. The [Hologram workflow](../../.github/workflows/hologram-example.yml) uses the same locked dependencies and uploads these screenshots.
+Run `hologram_test` by passing its directory to Mix as shown above or by selecting
+**Run workflow** in [Hologram integration tests](../../.github/workflows/integration-test-hologram.yml).
+Tests cover state transitions, SSR, hydration, styles, input/checkbox updates,
+theme changes, native modal behavior, mobile overflow and demo navigation.
+Screenshots are written beneath the active Mix build directory's
+`hologram-screenshots` directory and uploaded by the workflow.
 
 Production validation also runs `scripts/check-release-applications.exs` against
 the actual release. It requires the Hologram runtime and retains the exclusion of

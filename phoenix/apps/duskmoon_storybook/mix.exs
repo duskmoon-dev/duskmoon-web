@@ -13,7 +13,6 @@ defmodule DuskmoonStorybook.MixProject do
       lockfile: "../../mix.lock",
       elixir: ">= 1.18.0",
       compilers: Mix.compilers() ++ [:hologram],
-      test_paths: ["test", "hologram_test"],
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),

@@ -1,29 +1,7 @@
-name: Hologram integration
+name: Hologram integration tests
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - '.github/workflows/hologram-example.yml'
-      - 'packages/css/**'
-      - 'packages/elements/**'
-      - 'packages/react/**'
-      - 'phoenix/**'
-      - 'bun.lock'
-      - 'package.json'
-      - 'VERSION'
-      - 'scripts/js/**'
-  pull_request:
-    paths:
-      - '.github/workflows/hologram-example.yml'
-      - 'packages/css/**'
-      - 'packages/elements/**'
-      - 'packages/react/**'
-      - 'phoenix/**'
-      - 'bun.lock'
-      - 'package.json'
-      - 'VERSION'
-      - 'scripts/js/**'
 
 permissions:
   contents: read
