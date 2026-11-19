@@ -13,7 +13,8 @@
     "packages/react/components",
     "packages/react/art-components",
     "apps/*",
-    "phoenix/apps/*"
+    "phoenix/apps/*",
+    "yew/example"
   ],
   "scripts": {
     "build": "bun run build:packages",

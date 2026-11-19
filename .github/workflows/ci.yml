@@ -13,6 +13,7 @@ jobs:
     outputs:
       base: ${{ steps.plan.outputs.base }}
       phoenix: ${{ steps.plan.outputs.phoenix }}
+      yew: ${{ steps.plan.outputs.yew }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -29,7 +30,7 @@ jobs:
             base=$(git hash-object -w -t tree /dev/null)
           fi
           printf 'base=%s\n' "$base" >> "$GITHUB_OUTPUT"
-          bun scripts/js/workspace.mjs plan "$base" | jq -r '"phoenix=\(.phoenix)"' >> "$GITHUB_OUTPUT"
+          bun scripts/js/workspace.mjs plan "$base" | jq -r '"phoenix=\(.phoenix)", "yew=\(.yew)"' >> "$GITHUB_OUTPUT"
   js:
     needs: impact
     runs-on: ubuntu-26.04
@@ -101,3 +102,37 @@ jobs:
           name: phoenix-native-invocations
           path: ${{ runner.temp }}/web-native-invocations.log
           if-no-files-found: ignore
+  yew:
+    needs: impact
+    if: needs.impact.outputs.yew == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@1.97.0
+        with:
+          components: clippy, rustfmt
+          targets: wasm32-unknown-unknown
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.0'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Check Rust libraries and Worker resources
+        working-directory: yew
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --locked --workspace --all-targets --all-features -- -D warnings
+          cargo build --locked --workspace --all-features
+          cargo test --locked --workspace --all-features
+          cargo check --locked --workspace --all-features --target wasm32-unknown-unknown
+          node --test packages/code-engine/tests/*.test.mjs
+      - name: Build Core CSS for the Trunk demo
+        run: |
+          bun install --frozen-lockfile
+          bun scripts/js/workspace.mjs build @duskmoon-dev/core
+          cargo install --locked trunk --version 0.21.14
+      - name: Build the Trunk demo under a deployment subpath
+        working-directory: yew/example
+        run: trunk build --release --locked --public-url /yew/

@@ -3373,6 +3373,82 @@
         "highestStable": "0.6.4",
         "maximumMajor": 0
       }
+    },
+    {
+      "name": "code-engine",
+      "family": "yew",
+      "registry": "crates.io",
+      "sourceRepository": "yew-duskmoon-ui",
+      "sourceCommit": "fa187c524dc5fab5a044d5d5e0aac3dca4c2e0da",
+      "sourcePath": "packages/code-engine",
+      "path": "yew/packages/code-engine",
+      "sourceVersion": "0.11.2",
+      "sourceRuntimeDependencies": {},
+      "sourceAssets": [
+        "assets",
+        "examples/export_syntax_assets.rs"
+      ],
+      "sourceChecks": [
+        "cargo fmt",
+        "cargo clippy",
+        "cargo build",
+        "cargo test",
+        "cargo check --target wasm32-unknown-unknown",
+        "node --test packages/code-engine/tests/*.test.mjs"
+      ],
+      "sourceDocs": [
+        "packages/code-engine/README.md"
+      ],
+      "sourceLicense": "GPL-3.0",
+      "licenseFiles": [
+        "LICENSE",
+        "packages/code-engine/assets/licenses"
+      ],
+      "published": {
+        "status": 200,
+        "latest": "0.11.2",
+        "highestStable": "0.11.2",
+        "maximumMajor": 0,
+        "checkedOn": "2026-11-19"
+      }
+    },
+    {
+      "name": "yew-duskmoon",
+      "family": "yew",
+      "registry": "crates.io",
+      "sourceRepository": "yew-duskmoon-ui",
+      "sourceCommit": "fa187c524dc5fab5a044d5d5e0aac3dca4c2e0da",
+      "sourcePath": "packages/duskmoon",
+      "path": "yew/packages/duskmoon",
+      "sourceVersion": "0.11.2",
+      "sourceRuntimeDependencies": {
+        "code-engine": "0.11.2"
+      },
+      "sourceAssets": [
+        "src/components"
+      ],
+      "sourceChecks": [
+        "cargo fmt",
+        "cargo clippy",
+        "cargo build",
+        "cargo test",
+        "cargo check --target wasm32-unknown-unknown",
+        "node --test packages/code-engine/tests/*.test.mjs"
+      ],
+      "sourceDocs": [
+        "packages/duskmoon/README.md"
+      ],
+      "sourceLicense": "GPL-3.0",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "published": {
+        "status": 200,
+        "latest": "0.11.2",
+        "highestStable": "0.11.2",
+        "maximumMajor": 0,
+        "checkedOn": "2026-11-19"
+      }
     }
   ]
 }

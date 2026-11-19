@@ -32,9 +32,10 @@ CSS Art respectively. The React build verifies its input graph and emitted
 imports. The boundary check also walks the installed dependency closure and
 scans source and built code for Duskmoon Elements imports, tags and registration.
 
-`bun run plan:impacted <git-base>` prints the workspaces affected between the
-base and HEAD and indicates whether Phoenix checks are needed. Common
-configuration and lockfiles invalidate all consumers. Phoenix uses the published
+`bun run plan:impacted <git-base>` prints the affected JS workspaces and the
+Phoenix and Yew check flags. Common configuration and the root Bun lockfile
+invalidate all consumers. Core CSS changes trigger the Yew demo build, while
+changes confined to Phoenix skip the Rust job. Phoenix uses the published
 precompiled Bundler toolchain for its verification.
 
 The imported development guides include package-specific conventions.

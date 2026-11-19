@@ -1,0 +1,25 @@
+[build]
+target = "static/index.html"
+dist = "dist"
+
+[[hooks]]
+stage = "pre_build"
+command = "bun"
+command_arguments = ["run", "build:css"]
+
+[[hooks]]
+stage = "pre_build"
+command = "cargo"
+command_arguments = ["run", "--locked", "--quiet", "--manifest-path", "../Cargo.toml", "-p", "code-engine", "--example", "export_syntax_assets", "--", "static/tree-sitter"]
+
+[watch]
+ignore = ["static/tailwind.css", "static/tree-sitter"]
+
+[[hooks]]
+stage = "post_build"
+command = "bun"
+command_arguments = ["run", "scripts/normalize-preloads.mjs"]
+
+[serve]
+addresses = ["0.0.0.0"]
+port = 3240

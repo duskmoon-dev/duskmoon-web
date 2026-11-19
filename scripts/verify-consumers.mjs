@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import { cpSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
@@ -9,8 +10,8 @@ import { setTimeout as delay } from "node:timers/promises";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const [output, mode] = process.argv.slice(2);
-assert(output, "Usage: node scripts/verify-consumers.mjs ARTIFACTS [--react-only|--serve-native|--no-browser]");
-assert([undefined, "--react-only", "--serve-native", "--no-browser"].includes(mode), "Unknown consumer mode");
+assert(output, "Usage: node scripts/verify-consumers.mjs ARTIFACTS [--react-only|--yew-only|--serve-native|--no-browser]");
+assert([undefined, "--react-only", "--yew-only", "--serve-native", "--no-browser"].includes(mode), "Unknown consumer mode");
 const artifactDir = resolve(output);
 const { artifacts } = JSON.parse(readFileSync(join(artifactDir, "release.json"), "utf8"));
 const npm = new Map(artifacts.filter(({ registry }) => registry === "npm").map((entry) => [entry.name, entry]));
@@ -44,6 +45,55 @@ function install(name, packages, tooling = {}) {
 
 function installedPaths(dir) {
   return Object.keys(JSON.parse(readFileSync(join(dir, "package-lock.json"), "utf8")).packages);
+}
+
+function verifyYew() {
+  const { dependencies, devDependencies } = JSON.parse(readFileSync(join(root, "yew/example/package.json"), "utf8"));
+  const dir = install("yew-consumer", ["@duskmoon-dev/core", "@duskmoon-dev/css-art"], {
+    tailwindcss: dependencies.tailwindcss,
+    "@tailwindcss/cli": devDependencies["@tailwindcss/cli"],
+  });
+  const unpack = (name) => {
+    const artifact = artifacts.find((entry) => entry.name === name && entry.registry === "crates.io");
+    assert(artifact, `Missing archive for ${name}`);
+    run("tar", ["-xzf", join(artifactDir, artifact.file)], dir);
+    return `./${name}-${artifact.version}`;
+  };
+  const engine = unpack("code-engine");
+  const components = unpack("yew-duskmoon");
+  writeFileSync(join(dir, "Cargo.toml"), `[package]
+name = "duskmoon-yew-consumer"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+code-engine = { path = "${engine}" }
+yew-duskmoon = { path = "${components}" }
+yew = { version = "0.23.0", features = ["csr"] }
+
+[patch.crates-io]
+code-engine = { path = "${engine}" }
+`);
+  mkdirSync(join(dir, "src"));
+  cpSync(join(root, "validation", "yew-consumer.rs"), join(dir, "src", "main.rs"));
+  run("cargo", ["run", "--quiet"], dir);
+  run("cargo", ["check", "--locked", "--target", "wasm32-unknown-unknown"], dir);
+
+  const exported = join(dir, "public/tree-sitter");
+  const checksums = JSON.parse(readFileSync(join(exported, "SHA256SUMS.json"), "utf8"));
+  assert(Object.keys(checksums).length > 100, "Missing grammar, query or license resources");
+  for (const [file, expected] of Object.entries(checksums)) {
+    const bytes = readFileSync(join(exported, file));
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), expected, file);
+  }
+  writeFileSync(join(dir, "app.css"), '@import "tailwindcss" source(none);\n' +
+    '@import "@duskmoon-dev/core";\n@source "./src";\n');
+  run(join(dir, "node_modules/.bin/tailwindcss"), ["-i", "app.css", "-o", "public/app.css"], dir);
+  const compiled = readFileSync(join(dir, "public/app.css"), "utf8");
+  assert.match(compiled, /\.btn\b/);
+  assert.match(compiled, /\.mt-7\b/);
+  console.log(`Isolated Yew archives: native Markdown/Mermaid, Wasm components, Core CSS and ${Object.keys(checksums).length} checked resources passed`);
 }
 
 function verifyReact() {
@@ -160,7 +210,7 @@ async function verifyNative() {
 }
 
 try {
-  if (mode !== "--serve-native") verifyReact();
+  if (mode !== "--serve-native" && mode !== "--yew-only") verifyReact();
   if (mode === undefined || mode === "--no-browser") {
     install("all-web-packages", [...npm.keys()]);
     console.log(`One clean install resolved all ${npm.size} exact npm tarballs`);
@@ -171,7 +221,8 @@ try {
       "--phoenix", join(artifactDir, npm.get("duskmoon_phoenix").file),
     ], root);
   }
-  if (mode !== "--react-only") await verifyNative();
+  if (mode !== "--react-only" && mode !== "--yew-only") await verifyNative();
+  if (mode === undefined || mode === "--no-browser" || mode === "--yew-only") verifyYew();
 } finally {
   rmSync(tmp, { recursive: true, force: true });
 }

@@ -41,6 +41,9 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
+      - uses: dtolnay/rust-toolchain@1.97.0
+        with:
+          targets: wasm32-unknown-unknown
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: '1.4.0'
@@ -89,7 +92,8 @@ jobs:
         env:
           CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
         run: |
-          node scripts/release.mjs stage "$RUNNER_TEMP/web" "$SOURCE_SHA" "$RUNNER_TEMP/duskmoon_phoenix.tar"
+          cargo package --manifest-path yew/Cargo.toml --locked --workspace
+          node scripts/release.mjs stage "$RUNNER_TEMP/web" "$SOURCE_SHA" "$RUNNER_TEMP/duskmoon_phoenix.tar" yew/target/package
           node scripts/verify-consumers.mjs "$RUNNER_TEMP/web"
           node scripts/release.mjs dry-run "$RUNNER_TEMP/web" "$SOURCE_SHA"
       - uses: actions/upload-artifact@v6
@@ -117,6 +121,7 @@ jobs:
         with:
           node-version: '24'
           registry-url: https://registry.npmjs.org
+      - uses: dtolnay/rust-toolchain@1.97.0
       - name: Check workflow and verified staging run
         env:
           GH_TOKEN: ${{ github.token }}
@@ -141,11 +146,13 @@ jobs:
           github-token: ${{ github.token }}
       - name: Verify tag, publish missing artifacts and mark completion
         env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ github.token }}
         run: |
           test -n "$HEX_API_KEY"
+          test -n "$CARGO_REGISTRY_TOKEN"
           tag="v$RELEASE_VERSION"
           refs=$(git ls-remote origin "refs/tags/$tag" "refs/tags/$tag^{}")
           if [[ -n "$refs" ]]; then
@@ -154,7 +161,7 @@ jobs:
           node scripts/release.mjs publish "$RUNNER_TEMP/web" "$SOURCE_SHA"
           if ! gh release view "$tag" --json tagName >/dev/null 2>&1; then
             gh release create "$tag" --target "$SOURCE_SHA" --title "Duskmoon Web $RELEASE_VERSION" \
-              --draft --notes "All npm and Hex distributions were verified against the attached release manifest."
+              --draft --notes "All npm, Hex and crates.io distributions were verified against the attached release manifest."
           fi
           draft=$(gh release view "$tag" --json isDraft --jq .isDraft)
           if [[ "$draft" == true ]]; then

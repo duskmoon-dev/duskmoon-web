@@ -1,0 +1,17 @@
+{
+  "name": "yew-duskmoon-ui-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:css": "tailwindcss -i static/app.css -o static/tailwind.css",
+    "watch:css": "tailwindcss -i static/app.css -o static/tailwind.css --watch"
+  },
+  "dependencies": {
+    "@duskmoon-dev/core": "workspace:*",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3"
+  }
+}

@@ -62,6 +62,8 @@ function affected(paths) {
     js,
     phoenix: shared || (paths ?? []).some(dependsOnPhoenix) ||
       js.some((name) => publicPackages.has(name)),
+    yew: shared || changed.has("@duskmoon-dev/core") ||
+      (paths ?? []).some((path) => path.startsWith("yew/")),
   };
 }
 

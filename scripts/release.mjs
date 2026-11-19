@@ -15,6 +15,9 @@ assert.match(version, /^\d+\.\d+\.\d+$/, "VERSION must be a stable release");
 const npmInventory = inventory.filter(({ registry }) => registry === "npm");
 const group = new Set(npmInventory.map(({ name }) => name));
 const hex = inventory.find(({ registry }) => registry === "hex");
+const crates = inventory.filter(({ registry }) => registry === "crates.io");
+const cargoWorkspace = join(root, "yew");
+const lockfiles = ["bun.lock", "phoenix/mix.lock", "yew/Cargo.lock", "yew/example/Cargo.lock"];
 const dependencyFields = ["dependencies", "peerDependencies", "optionalDependencies", "devDependencies"];
 const npmRegistry = "https://registry.npmjs.org";
 const hexApi = "https://hex.pm/api";
@@ -50,7 +53,7 @@ function requirementEntries(manifest) {
 
 function manifests() {
   assert.equal(group.size, npmInventory.length, "Duplicate npm inventory entry");
-  assert.equal(inventory.length, npmInventory.length + 1, "Expected one Hex package");
+  assert.equal(inventory.length, npmInventory.length + crates.length + 1, "Unexpected release registry");
   const workspacePatterns = readJson(join(root, "package.json")).workspaces;
   const publicManifests = new Set(globSync(workspacePatterns.map((p) => p + "/package.json"), { cwd: root })
     .filter((path) => !readJson(join(root, path)).private));
@@ -80,6 +83,15 @@ function sync() {
   }
   writeFileSync(join(root, hex.path, "VERSION"), version + "\n");
   writeFileSync(reactVersionFile, reactVersionSource);
+  const cargoFile = join(cargoWorkspace, "Cargo.toml");
+  const cargo = readFileSync(cargoFile, "utf8");
+  writeFileSync(cargoFile, cargo
+    .replace(/^version = "[^"]+"$/m, `version = "${version}"`)
+    .replace(/^(code-engine = \{ version = "=)[^"]+(", path = .+)$/m,
+      (_, prefix, suffix) => `${prefix}${version}${suffix}`));
+  for (const cwd of [cargoWorkspace, join(cargoWorkspace, "example")]) {
+    run("cargo", ["update", "--workspace"], cwd);
+  }
 }
 
 function validateManifest(manifest, name, { shipped = false } = {}) {
@@ -119,7 +131,16 @@ function publicationOrder() {
   }
 
   for (const name of [...group].sort()) visit(name);
-  return [...order, hex];
+  assert.deepEqual(crates.map(({ name }) => name), ["code-engine", "yew-duskmoon"]);
+  const cargo = readFileSync(join(cargoWorkspace, "Cargo.toml"), "utf8");
+  assert(cargo.includes(`version = "${version}"\n`), "Cargo workspace version differs from VERSION");
+  assert(cargo.includes(`code-engine = { version = "=${version}",`), "Cargo dependency version differs from VERSION");
+  for (const crate of crates) {
+    const manifest = readFileSync(join(root, crate.path, "Cargo.toml"), "utf8");
+    assert(manifest.includes(`name = "${crate.name}"\n`), crate.path);
+    assert(manifest.includes("version.workspace = true\n"), `${crate.name} must inherit the Cargo workspace version`);
+  }
+  return [...order, hex, ...crates];
 }
 
 function checkedSource(sha) {
@@ -129,6 +150,7 @@ function checkedSource(sha) {
 }
 
 function artifactFile({ registry, name }) {
+  if (registry === "crates.io") return `${name}-${version}.crate`;
   return registry === "npm"
     ? `${name.replace(/^@/, "").replace("/", "-")}-${version}.tgz`
     : `${name}-${version}.tar`;
@@ -172,13 +194,37 @@ function fileMetadata(path) {
   return { file: basename(path), bytes: info.size, sha256: digest(readFileSync(path)) };
 }
 
+function auditCrate(path, name) {
+  const prefix = `${name}-${version}/`;
+  const manifest = run("tar", ["-xOf", path, `${prefix}Cargo.toml`]);
+  assert(manifest.includes(`name = "${name}"\n`), name);
+  assert(manifest.includes(`version = "${version}"\n`), name);
+  assert(manifest.includes('license = "GPL-3.0"\n'), name);
+  for (const section of manifest.split(/^\[/m)) {
+    if (/^[^\n]*dependencies\./.test(section)) {
+      assert(!/^path = /m.test(section), `${name} ships a local dependency`);
+    }
+  }
+  if (name === "yew-duskmoon") {
+    assert(manifest.includes(`[dependencies.code-engine]\nversion = "=${version}"\n`));
+  }
+  const files = new Set(run("tar", ["-tf", path]).trim().split("\n"));
+  const required = ["LICENSE", "Cargo.lock", "README.md"];
+  if (name === "code-engine") {
+    required.push("assets/worker.js", "assets/manifest.json", "assets/SHA256SUMS.json",
+      "assets/web-tree-sitter.wasm", "examples/export_syntax_assets.rs");
+  }
+  for (const file of required) assert(files.has(`${prefix}${file}`), `${name} is missing ${file}`);
+}
+
 function readArtifact(path, entry) {
   if (entry.registry === "npm") auditNpm(path, entry.name);
-  else auditHex(path);
+  else if (entry.registry === "hex") auditHex(path);
+  else auditCrate(path, entry.name);
   return { name: entry.name, registry: entry.registry, version, ...fileMetadata(path) };
 }
 
-function stage(dir, sha, hexPath) {
+function stage(dir, sha, hexPath, crateDir) {
   checkedSource(sha);
   const order = publicationOrder();
   assert(!existsSync(dir), `Output directory already exists: ${dir}`);
@@ -187,6 +233,8 @@ function stage(dir, sha, hexPath) {
     const path = join(dir, artifactFile(entry));
     if (entry.registry === "hex") {
       copyFileSync(hexPath, path);
+    } else if (entry.registry === "crates.io") {
+      copyFileSync(join(crateDir, artifactFile(entry)), path);
     } else {
       const output = JSON.parse(run("npm", [
         "pack", "--json", "--ignore-scripts", "--pack-destination", dir,
@@ -195,7 +243,7 @@ function stage(dir, sha, hexPath) {
     }
     return readArtifact(path, entry);
   });
-  const locks = ["bun.lock", "phoenix/mix.lock"].map((file) => ({
+  const locks = lockfiles.map((file) => ({
     file,
     sha256: digest(readFileSync(join(root, file))),
   }));
@@ -213,7 +261,7 @@ function verify(dir, sha) {
   const manifest = readJson(join(dir, "release.json"));
   assert.equal(manifest.sha, sha);
   assert.equal(manifest.version, version);
-  assert.deepEqual(manifest.locks, ["bun.lock", "phoenix/mix.lock"].map((file) => ({
+  assert.deepEqual(manifest.locks, lockfiles.map((file) => ({
     file,
     sha256: digest(readFileSync(join(root, file))),
   })));
@@ -248,9 +296,27 @@ async function get(url) {
   return fetch(url, { signal: AbortSignal.timeout(30_000) });
 }
 
-function realRegistry(dir) {
+function realRegistry(dir, artifacts) {
+  const codeEngine = artifacts.find(({ registry, name }) => registry === "crates.io" && name === "code-engine");
+
   async function lookup(artifact) {
     const { name, registry, version } = artifact;
+    if (registry === "crates.io") {
+      const indexPath = `${name.slice(0, 2)}/${name.slice(2, 4)}/${name}`;
+      const index = await get(`https://index.crates.io/${indexPath}`);
+      if (index.status === 404) return null;
+      assert(index.ok, `Lookup ${id(artifact)} returned HTTP ${index.status}`);
+      const entry = (await index.text()).trim().split("\n").map(JSON.parse).find(({ vers }) => vers === version);
+      if (!entry) return null;
+      assert.equal(entry.name, name);
+      assert(!entry.yanked, `${name}@${version} is yanked`);
+      const tar = await get(`https://static.crates.io/crates/${name}/${artifact.file}`);
+      if (tar.status === 404) return propagating;
+      assert(tar.ok, `Artifact download for ${id(artifact)} returned HTTP ${tar.status}`);
+      const checksum = digest(Buffer.from(await tar.arrayBuffer()));
+      assert.equal(checksum, entry.cksum, `${name} archive differs from the registry index`);
+      return checksum;
+    }
     const root = registry === "npm"
       ? `${npmRegistry}/${encodeURIComponent(name)}/${version}`
       : `${hexApi}/packages/${name}/releases/${version}`;
@@ -276,7 +342,7 @@ function realRegistry(dir) {
       if (artifact.registry === "npm") {
         console.log(run("npm", ["publish", file, "--registry", npmRegistry, "--access", "public",
           "--provenance", "--ignore-scripts"]).trim());
-      } else {
+      } else if (artifact.registry === "hex") {
         assert(process.env.HEX_API_KEY, "HEX_API_KEY is required for Hex publication");
         const response = await fetch(`${hexApi}/packages/${artifact.name}/releases?replace=false`, {
           method: "POST",
@@ -286,6 +352,16 @@ function realRegistry(dir) {
           signal: AbortSignal.timeout(60_000),
         });
         assert(response.ok, `Hex upload returned HTTP ${response.status}`);
+      } else {
+        assert(process.env.CARGO_REGISTRY_TOKEN, "CARGO_REGISTRY_TOKEN is required for crates.io publication");
+        if (artifact.name === "yew-duskmoon") {
+          assert.equal(await this.confirm(codeEngine), codeEngine.sha256, "code-engine differs from the staged release");
+        }
+        const packageArgs = ["--locked", "--registry", "crates-io", "--no-verify", "-p", artifact.name];
+        console.log(run("cargo", ["package", ...packageArgs], cargoWorkspace).trim());
+        const candidate = join(cargoWorkspace, "target", "package", artifact.file);
+        assert.equal(fileMetadata(candidate).sha256, artifact.sha256, `Repacked ${id(artifact)} differs from staged bytes`);
+        console.log(run("cargo", ["publish", ...packageArgs], cargoWorkspace).trim());
       }
     },
     async confirm(artifact) {
@@ -307,9 +383,10 @@ function realRegistry(dir) {
 async function dryRun(artifacts) {
   const simulated = new Map();
   const writes = [];
-  const cutoff = Math.floor(artifacts.length / 2);
+  const cutoffs = new Set([Math.floor(artifacts.length / 2), artifacts.findIndex(
+    ({ registry, name }) => registry === "crates.io" && name === "code-engine",
+  ) + 1]);
   const interruption = new Error("simulated interrupted publication");
-  let interrupt = true;
   const lookup = async (artifact) => simulated.get(id(artifact)) ?? null;
   const registry = {
     lookup,
@@ -318,12 +395,13 @@ async function dryRun(artifacts) {
       assert(!simulated.has(id(artifact)), `Duplicate publication: ${id(artifact)}`);
       simulated.set(id(artifact), artifact.sha256);
       writes.push(id(artifact));
-      if (interrupt && writes.length === cutoff) throw interruption;
+      if (cutoffs.has(writes.length)) throw interruption;
     },
   };
-  await assert.rejects(reconcile(artifacts, registry), interruption);
-  assert.equal(writes.length, cutoff);
-  interrupt = false;
+  for (const cutoff of cutoffs) {
+    await assert.rejects(reconcile(artifacts, registry), interruption);
+    assert.equal(writes.length, cutoff);
+  }
   await reconcile(artifacts, registry);
   assert.deepEqual(writes, artifacts.map(id), "Resume changed publication order");
   simulated.set(id(artifacts[0]), "unexpected hash");
@@ -332,7 +410,7 @@ async function dryRun(artifacts) {
   console.log(`Dry-run passed for all ${writes.length} artifacts, including interrupted resume and hash conflict`);
 }
 
-const [command, output, sha, hexInput] = process.argv.slice(2);
+const [command, output, sha, hexInput, cargoInput] = process.argv.slice(2);
 if (command === "version") {
   console.log(version);
 } else if (command === "sync") {
@@ -340,14 +418,14 @@ if (command === "version") {
 } else if (command === "check") {
   const order = publicationOrder();
   console.log(`${version}: ${order.length} distributions\n${order.map(id).join("\n")}`);
-} else if (command === "stage" && output && sha && hexInput) {
-  stage(resolve(output), sha, resolve(hexInput));
+} else if (command === "stage" && output && sha && hexInput && cargoInput) {
+  stage(resolve(output), sha, resolve(hexInput), resolve(cargoInput));
 } else if (["verify", "dry-run", "publish"].includes(command) && output && sha) {
   const dir = resolve(output);
   const artifacts = verify(dir, sha);
   if (command === "dry-run") await dryRun(artifacts);
-  if (command === "publish") await reconcile(artifacts, realRegistry(dir));
+  if (command === "publish") await reconcile(artifacts, realRegistry(dir, artifacts));
   console.log(`${command} verified ${artifacts.length} distributions for ${version}`);
 } else {
-  throw new Error("Usage: release.mjs version|sync|check | stage OUTPUT SHA HEX_TAR | verify|dry-run|publish OUTPUT SHA");
+  throw new Error("Usage: release.mjs version|sync|check | stage OUTPUT SHA HEX_TAR CRATE_DIR | verify|dry-run|publish OUTPUT SHA");
 }
