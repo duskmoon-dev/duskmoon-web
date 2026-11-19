@@ -1,4 +1,4 @@
-# Phoenix component renderers in Web 11
+# Phoenix component renderers in Web
 
 The source baseline is Phoenix commit `b115f533c24587c0b6ea8ca1ec3598d9e782863a`.
 Unless marked in the migration guide, public `dm_*` functions keep their

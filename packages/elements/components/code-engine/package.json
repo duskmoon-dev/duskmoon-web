@@ -1,6 +1,6 @@
 {
   "name": "@duskmoon-dev/el-code-engine",
-  "version": "11.0.0",
+  "version": "2.0.0-rc.0",
   "type": "module",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
@@ -33,7 +33,7 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
-    "@duskmoon-dev/el-base": "11.0.0",
+    "@duskmoon-dev/el-base": "2.0.0-rc.0",
     "@duskmoon-dev/code-engine": "^0.3.1"
   },
   "devDependencies": {

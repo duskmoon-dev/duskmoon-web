@@ -1,6 +1,6 @@
 {
   "name": "@duskmoon-dev/core",
-  "version": "11.0.0",
+  "version": "2.0.0-rc.0",
   "description": "DuskMoonUI - Tailwind CSS v4 plugin with Material Design 3 color system and component styles",
   "type": "module",
   "main": "./dist/index.css",
@@ -628,7 +628,7 @@
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
-    "@duskmoon-dev/css-art": "11.0.0",
+    "@duskmoon-dev/css-art": "2.0.0-rc.0",
     "@axe-core/playwright": "4.13.0",
     "@playwright/test": "1.64.0",
     "@types/bun": "latest",

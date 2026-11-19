@@ -1,6 +1,6 @@
 # Duskmoon Bundler extraction
 
-> Historical reference from the standalone Phoenix repository. For Web 11, use
+> Historical reference from the standalone Phoenix repository. For Duskmoon Web, use
 > [the current architecture](../../docs/migration.md) and
 > [Web release workflow](../../docs/release.md).
 

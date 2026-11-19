@@ -4,13 +4,13 @@ Duskmoon Phoenix uses Phoenix LiveView 1.2 and Tailwind CSS v4. Add the release
 of the Hex package that corresponds to the current Web version.
 
 ```elixir
-{:duskmoon_phoenix, "~> 11.0"}
+{:duskmoon_phoenix, "2.0.0-rc.0"}
 ```
 
 Install the npm counterpart with the same Web version.
 
 ```sh
-bun add duskmoon_phoenix@11.0.0
+bun add duskmoon_phoenix@2.0.0-rc.0
 ```
 
 Import the compiled stylesheet and, when needed, the native hook exports.
@@ -70,5 +70,5 @@ tailwind: [
 React Form and Chat load through separate entry points. If you compile the Form
 bridge's classes, include `deps/duskmoon_phoenix/assets/js/react_form` in the
 same profile. Explicitly register an Elements leaf and its optional bridge only for routes that render a retained
-Element. The [migration guide](migrating-to-v11.md) lists these imports and
+Element. The [migration guide](migrating-to-duskmoon-web.md) lists these imports and
 their matching styles.

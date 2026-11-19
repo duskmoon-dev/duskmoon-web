@@ -1,4 +1,4 @@
-# Web 11 verification
+# Web release verification
 
 ## Reproduce
 

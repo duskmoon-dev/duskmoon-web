@@ -30,7 +30,7 @@ The `yew/` Cargo workspace contains both Rust crates and the separate private Tr
 - [Yew development and consumer setup](yew/README.md)
 - [Public package inventory](docs/package-inventory.json)
 - [Release and recovery](docs/release.md)
-- [Phoenix 10 to 11 consumer migration](phoenix/apps/duskmoon_phoenix/guides/migrating-to-v11.md)
+- [Phoenix consumer migration](phoenix/apps/duskmoon_phoenix/guides/migrating-to-duskmoon-web.md)
 - [Phoenix renderers and retained integrations](phoenix/docs/component-audit.md)
 - [React Form and Chat bridge contracts](docs/bridge.md)
 - [Verification and reproduction](docs/verification.md)

@@ -154,6 +154,12 @@ jobs:
           test -n "$HEX_API_KEY"
           test -n "$CARGO_REGISTRY_TOKEN"
           tag="v$RELEASE_VERSION"
+          prerelease=false
+          release_flags=()
+          if [[ "$RELEASE_VERSION" == *-rc.* ]]; then
+            prerelease=true
+            release_flags=(--prerelease --latest=false)
+          fi
           refs=$(git ls-remote origin "refs/tags/$tag" "refs/tags/$tag^{}")
           if [[ -n "$refs" ]]; then
             test "$(tail -1 <<<"$refs" | cut -f1)" = "$SOURCE_SHA"
@@ -161,8 +167,10 @@ jobs:
           node scripts/release.mjs publish "$RUNNER_TEMP/web" "$SOURCE_SHA"
           if ! gh release view "$tag" --json tagName >/dev/null 2>&1; then
             gh release create "$tag" --target "$SOURCE_SHA" --title "Duskmoon Web $RELEASE_VERSION" \
-              --draft --notes "All npm, Hex and crates.io distributions were verified against the attached release manifest."
+              --draft "${release_flags[@]}" \
+              --notes "All npm, Hex and crates.io distributions were verified against the attached release manifest."
           fi
+          test "$(gh release view "$tag" --json isPrerelease --jq .isPrerelease)" = "$prerelease"
           draft=$(gh release view "$tag" --json isDraft --jq .isDraft)
           if [[ "$draft" == true ]]; then
             test "$(gh release view "$tag" --json targetCommitish --jq .targetCommitish)" = "$SOURCE_SHA"

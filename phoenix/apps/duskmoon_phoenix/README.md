@@ -7,7 +7,7 @@ hooks, and SVG assets. Both distributions share the Duskmoon Web version.
 Add the Hex dependency to your application:
 
 ```elixir
-{:duskmoon_phoenix, "~> 11.0"}
+{:duskmoon_phoenix, "2.0.0-rc.0"}
 ```
 
 Use `DuskmoonPhoenix.Component` in your view helpers:
@@ -23,7 +23,7 @@ end
 Install the npm distribution at the same version and import its CSS:
 
 ```sh
-bun add duskmoon_phoenix@11.0.0
+bun add duskmoon_phoenix@2.0.0-rc.0
 ```
 
 ```css
@@ -42,5 +42,5 @@ A basic Phoenix app uses Core and browser controls. Import
 `duskmoon_phoenix/react-form` or `duskmoon_phoenix/react-chat` on routes that
 need React. Use `duskmoon_phoenix/elements` and the relevant Elements package
 on routes that use retained custom elements. See
-[the migration guide](guides/migrating-to-v11.md) for the exact imports and
+[the migration guide](guides/migrating-to-duskmoon-web.md) for the exact imports and
 event contracts.

@@ -1,12 +1,12 @@
-# Migrate to Duskmoon Phoenix 11
+# Migrate to Duskmoon Phoenix for Web 2.0
 
 Upgrade the Hex and npm distributions together. Release artifacts carry the
 same Web version as Core, CSS Art, Elements, and React. The independently
 published Duskmoon Bundler and its Hologram fork have their own versions.
 
-| Previous usage | Duskmoon Web 11 |
+| Previous usage | Duskmoon Web 2.0 |
 | --- | --- |
-| Hex dependency `{:phoenix_duskmoon, ...}` | `{:duskmoon_phoenix, "~> 11.0"}` |
+| Hex dependency `{:phoenix_duskmoon, ...}` | `{:duskmoon_phoenix, "2.0.0-rc.0"}` |
 | OTP application `:phoenix_duskmoon` | `:duskmoon_phoenix` |
 | `PhoenixDuskmoon.*` modules and view helpers | `DuskmoonPhoenix.*` |
 | `config :phoenix_duskmoon, ...` | `config :duskmoon_phoenix, ...` |

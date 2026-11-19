@@ -15,8 +15,8 @@ bridges. Retained Elements integrations register their leaf packages by route.
 
 ## Quick install
 
-Add `{:duskmoon_phoenix, "~> 11.0"}` to Mix dependencies and
-`duskmoon_phoenix@11.0.0` to JavaScript dependencies. Use
+Add `{:duskmoon_phoenix, "2.0.0-rc.0"}` to Mix dependencies and
+`duskmoon_phoenix@2.0.0-rc.0` to JavaScript dependencies. Use
 `DuskmoonPhoenix.Component` and import `duskmoon_phoenix/css`.
 
 ## Component Categories
@@ -34,7 +34,7 @@ Add `{:duskmoon_phoenix, "~> 11.0"}` to Mix dependencies and
 
 ## Guides
 
-- [Migration to Web 11](migrating-to-v11.md)
+- [Migration to Duskmoon Web](migrating-to-duskmoon-web.md)
 
 - [Getting Started](getting-started.md) — Installation, view helpers, CSS and JS setup
 - [Migrating to v9](migrating-to-v9.md) — Upgrade guide from v6/v7/v8 (DaisyUI to @duskmoon-dev/core)

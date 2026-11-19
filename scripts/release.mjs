@@ -11,7 +11,9 @@ import { setTimeout as delay } from "node:timers/promises";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const inventory = readJson(join(root, "docs/package-inventory.json")).packages;
 const version = readFileSync(join(root, "VERSION"), "utf8").trim();
-assert.match(version, /^\d+\.\d+\.\d+$/, "VERSION must be a stable release");
+assert.match(version, /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-rc\.(0|[1-9]\d*))?$/,
+  "VERSION must be a stable release or a release candidate (X.Y.Z-rc.N)");
+const npmTag = version.includes("-") ? "rc" : "latest";
 const npmInventory = inventory.filter(({ registry }) => registry === "npm");
 const group = new Set(npmInventory.map(({ name }) => name));
 const hex = inventory.find(({ registry }) => registry === "hex");
@@ -341,7 +343,7 @@ function realRegistry(dir, artifacts) {
       assert.equal(digest(readFileSync(file)), artifact.sha256);
       if (artifact.registry === "npm") {
         console.log(run("npm", ["publish", file, "--registry", npmRegistry, "--access", "public",
-          "--provenance", "--ignore-scripts"]).trim());
+          "--tag", npmTag, "--provenance", "--ignore-scripts"]).trim());
       } else if (artifact.registry === "hex") {
         assert(process.env.HEX_API_KEY, "HEX_API_KEY is required for Hex publication");
         const response = await fetch(`${hexApi}/packages/${artifact.name}/releases?replace=false`, {

@@ -11,7 +11,7 @@ defmodule DuskmoonPhoenix do
 
   Add deps in `mix.exs`
 
-      {:duskmoon_phoenix, "~> 11.0"}
+      {:duskmoon_phoenix, "2.0.0-rc.0"}
 
   Install frontend packages:
 

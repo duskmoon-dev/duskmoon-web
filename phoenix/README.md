@@ -4,7 +4,7 @@ The bounded Mix workspace contains the publicly distributed
 [`duskmoon_phoenix`](apps/duskmoon_phoenix), plus the private
 [`duskmoon_storybook`](apps/duskmoon_storybook) demonstration application.
 See the package [installation guide](apps/duskmoon_phoenix/guides/getting-started.md)
-and [migration guide](apps/duskmoon_phoenix/guides/migrating-to-v11.md).
+and [migration guide](apps/duskmoon_phoenix/guides/migrating-to-duskmoon-web.md).
 
 Install and build workspace dependencies from the Web repository root.
 

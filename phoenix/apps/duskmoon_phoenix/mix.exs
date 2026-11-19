@@ -28,7 +28,7 @@ defmodule DuskmoonPhoenix.Mixfile do
           "guides/split-pane.md",
           "guides/react-forms.md",
           "guides/react-chat.md",
-          "guides/migrating-to-v11.md",
+          "guides/migrating-to-duskmoon-web.md",
           "guides/migrating-to-v9.md",
           "guides/upstream-design-alignment.md",
           "guides/migrating-git-components.md",

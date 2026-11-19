@@ -2,13 +2,13 @@
 
 Every formal Web release publishes the entire public inventory at the version in root [VERSION](../VERSION). This includes every Elements package, both Phoenix distributions, and the `code-engine` and `yew-duskmoon` crates. For an unchanged package, describe the release as version alignment only. An incompatible stable API change bumps the group major. Compatible additions bump the minor and compatible fixes bump the patch.
 
-The first unified release is 11.0.0. Public registry lookups for all 98 distribution identities are recorded in [the source inventory](package-inventory.json). The old npm and Hex Phoenix packages were both at 10.1.4 and had the highest published major, 10. The highest non-yanked release of each Rust crate was 0.11.2. Registry-side naming and the publishing account's permissions must be confirmed during setup. Design, Duskmoon Bundler, and Bundler's Hologram fork have independent release versions.
+The unified Web release series starts at `2.0.0` with `2.0.0-rc.0` as its first release candidate. Candidates use `X.Y.Z-rc.N`, the npm `rc` dist-tag, and GitHub's prerelease flag. Test with an exact version, for example `bun add @duskmoon-dev/core@2.0.0-rc.0`. Registry history for all 98 distribution identities is recorded in [the source inventory](package-inventory.json). Design, Duskmoon Bundler, and Bundler's Hologram fork have independent release versions.
 
 ## Update a release
 
 1. Edit `VERSION` and run `node scripts/release.mjs sync` with Cargo available. Commit the updated public manifests, generated Phoenix `VERSION` file, and Cargo locks.
 2. Run `bun install` to update the root lock and `node scripts/release.mjs check`. The checker rejects an omitted public workspace or any same-group dependency that resolves to another version.
-3. Record breaking changes, fixes and additions by package. The rest of the packages are version-alignment-only releases. For 11.0.0, record the Phoenix identity, renderer and opt-in changes in the migration guide. Core/CSS Art, Elements and React retain their public identities and receive coordinated version alignment, workspace/packaging fixes and rewritten same-group requirements.
+3. Record breaking changes, fixes and additions by package. The rest of the packages are version-alignment-only releases. The Web 2.0 candidate includes the Phoenix package rename, native renderers, and explicit React and Elements integrations. Core, CSS Art, Elements, React, and Yew retain their public identities and move to coordinated versions.
 
 ## Verify a release candidate
 
