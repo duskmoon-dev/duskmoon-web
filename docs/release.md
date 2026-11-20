@@ -10,6 +10,11 @@ The unified Web release series starts at `2.0.0` with `2.0.0-rc.0` as its first 
 2. Run `bun install` to update the root lock and `node scripts/release.mjs check`. The checker rejects an omitted public workspace or any same-group dependency that resolves to another version.
 3. Record breaking changes, fixes and additions by package. The rest of the packages are version-alignment-only releases.
 
+## 2.0.0-rc.3
+
+- The Web source snapshot includes separate [consumer skills](../skills/README.md) and [repository development skills](../.agents/skills/README.md). The Phoenix consumer skill is `duskmoon-phoenix`.
+- The public packages align at the coordinated Web version.
+
 ## 2.0.0-rc.2
 
 - `@duskmoon-dev/el-tabs` preserves horizontal scrolling and keyboard focus as selection changes.

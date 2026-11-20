@@ -1,6 +1,6 @@
 {
   "name": "@duskmoon-dev/el-cascader",
-  "version": "2.0.0-rc.2",
+  "version": "2.0.0-rc.3",
   "description": "DuskMoon Cascader custom element for multi-level cascading selection",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -34,8 +34,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@duskmoon-dev/el-base": "2.0.0-rc.2",
-    "@duskmoon-dev/core": "2.0.0-rc.2"
+    "@duskmoon-dev/el-base": "2.0.0-rc.3",
+    "@duskmoon-dev/core": "2.0.0-rc.3"
   },
   "devDependencies": {
     "typescript": "6.0.3"

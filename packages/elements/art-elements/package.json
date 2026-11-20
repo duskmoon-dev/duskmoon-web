@@ -1,6 +1,6 @@
 {
   "name": "@duskmoon-dev/art-elements",
-  "version": "2.0.0-rc.2",
+  "version": "2.0.0-rc.3",
   "description": "All DuskMoon CSS art elements in one package",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -46,22 +46,22 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
-    "@duskmoon-dev/el-base": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-moon": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-sun": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-atom": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-eclipse": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-mountain": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-plasma-ball": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-cat-stargazer": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-color-spin": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-synthwave-starfield": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-circular-gallery": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-snow": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-flower-animation": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-gemini-input": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-snowball-preloader": "2.0.0-rc.2",
-    "@duskmoon-dev/el-art-csswitch": "2.0.0-rc.2"
+    "@duskmoon-dev/el-base": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-moon": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-sun": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-atom": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-eclipse": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-mountain": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-plasma-ball": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-cat-stargazer": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-color-spin": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-synthwave-starfield": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-circular-gallery": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-snow": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-flower-animation": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-gemini-input": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-snowball-preloader": "2.0.0-rc.3",
+    "@duskmoon-dev/el-art-csswitch": "2.0.0-rc.3"
   },
   "devDependencies": {
     "typescript": "6.0.3"
