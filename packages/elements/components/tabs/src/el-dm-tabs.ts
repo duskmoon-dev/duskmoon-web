@@ -32,6 +32,7 @@ const styles = css`
   :host {
     display: block;
     font-family: inherit;
+    min-width: 0;
   }
 
   :host([hidden]) {
@@ -50,6 +51,10 @@ const styles = css`
   .tabs {
     position: relative;
     flex-wrap: nowrap;
+  }
+
+  .tabs-scrollable ::slotted(el-dm-tab) {
+    flex: none;
   }
 
   :host([variant='pills']) .tabs {
@@ -87,6 +92,10 @@ const styles = css`
       left 200ms ease,
       width 200ms ease;
     pointer-events: none;
+  }
+
+  .tabs-scrollable .indicator {
+    bottom: 0;
   }
 
   :host([orientation='vertical']) .indicator {
@@ -132,7 +141,7 @@ export class ElDmTabs extends BaseElement {
   declare color: string;
   declare orientation: TabsOrientation;
 
-  private _indicatorStyle = '';
+  private _resizeObserver?: ResizeObserver;
 
   constructor() {
     super();
@@ -144,43 +153,46 @@ export class ElDmTabs extends BaseElement {
     this.addEventListener('tab-click', this._handleTabClick as EventListener);
     this.addEventListener('keydown', this._handleKeyDown);
 
-    // Initialize selection after DOM is ready
-    requestAnimationFrame(() => {
-      this._initializeSelection();
-    });
+    this.shadowRoot.addEventListener('slotchange', this._handleSlotChange);
+    if (typeof ResizeObserver !== 'undefined') {
+      this._resizeObserver ??= new ResizeObserver(() => this._updateIndicator());
+      this._observeTabSizes();
+    }
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeEventListener('tab-click', this._handleTabClick as EventListener);
     this.removeEventListener('keydown', this._handleKeyDown);
+    this.shadowRoot.removeEventListener('slotchange', this._handleSlotChange);
+    this._resizeObserver?.disconnect();
   }
 
-  private _initializeSelection(): void {
-    const tabs = this._getTabs();
-    if (tabs.length === 0) return;
-
-    // If no value set, select first tab
-    if (!this.value && tabs.length > 0) {
-      const firstTab = tabs[0];
-      const tabId = firstTab.getAttribute('tab-id');
-      if (tabId) {
-        this.value = tabId;
-      }
-    }
-
+  private _handleSlotChange = (): void => {
     this._updateSelection();
+    this._observeTabSizes();
+  };
+
+  private _observeTabSizes(): void {
+    const observer = this._resizeObserver;
+    const tablist = this.query('.tabs');
+    if (!tablist || !observer) return;
+
+    observer.disconnect();
+    observer.observe(tablist);
+    this._getTabs().forEach((tab) => observer.observe(tab));
   }
 
   private _getTabs(): HTMLElement[] {
-    return Array.from(this.querySelectorAll('el-dm-tab'));
+    return Array.from(this.querySelectorAll(':scope > el-dm-tab'));
   }
 
   private _getPanels(): HTMLElement[] {
-    return Array.from(this.querySelectorAll('el-dm-tab-panel'));
+    return Array.from(this.querySelectorAll(':scope > el-dm-tab-panel'));
   }
 
   private _handleTabClick = (event: CustomEvent<{ tabId: string }>): void => {
+    if ((event.target as HTMLElement).parentElement !== this) return;
     const { tabId } = event.detail;
     if (tabId && tabId !== this.value) {
       const oldValue = this.value;
@@ -249,6 +261,8 @@ export class ElDmTabs extends BaseElement {
   private _updateSelection(): void {
     const tabs = this._getTabs();
     const panels = this._getPanels();
+    const initialValue = tabs[0]?.getAttribute('tab-id');
+    if (!this.value && initialValue) this.value = initialValue;
 
     // Update tab states
     tabs.forEach((tab) => {
@@ -256,24 +270,15 @@ export class ElDmTabs extends BaseElement {
       const isSelected = tabId === this.value;
       tab.setAttribute('aria-selected', String(isSelected));
       tab.setAttribute('tabindex', isSelected ? '0' : '-1');
-      if (isSelected) {
-        tab.setAttribute('active', '');
-      } else {
-        tab.removeAttribute('active');
-      }
+      tab.toggleAttribute('active', isSelected);
     });
 
     // Update panel states
     panels.forEach((panel) => {
       const panelFor = panel.getAttribute('panel-for');
       const isActive = panelFor === this.value;
-      if (isActive) {
-        panel.setAttribute('active', '');
-        panel.removeAttribute('hidden');
-      } else {
-        panel.removeAttribute('active');
-        panel.setAttribute('hidden', '');
-      }
+      panel.toggleAttribute('active', isActive);
+      panel.toggleAttribute('hidden', !isActive);
     });
 
     // Update indicator position
@@ -281,47 +286,33 @@ export class ElDmTabs extends BaseElement {
   }
 
   private _updateIndicator(): void {
-    if (this.variant !== 'underline') return;
+    const tabsEl = this.query<HTMLElement>('.tabs');
+    const indicator = this.query<HTMLElement>('.indicator');
+    if (!tabsEl || !indicator) return;
 
-    const activeTab = this.querySelector('el-dm-tab[active]') as HTMLElement | null;
-    if (!activeTab) {
-      this._indicatorStyle = 'display: none;';
-      this.update();
+    const activeTab = this.querySelector(':scope > el-dm-tab[active]');
+    if (!activeTab || this.variant !== 'underline') {
+      indicator.style.cssText = 'display: none;';
       return;
     }
-
-    const tabsEl = this.shadowRoot?.querySelector('.tabs');
-    if (!tabsEl) return;
 
     const tabsRect = tabsEl.getBoundingClientRect();
     const tabRect = activeTab.getBoundingClientRect();
 
     if (this.orientation === 'vertical') {
-      const top = tabRect.top - tabsRect.top;
-      this._indicatorStyle = `top: ${top}px; height: ${tabRect.height}px;`;
+      const top = tabRect.top - tabsRect.top + tabsEl.scrollTop - tabsEl.clientTop;
+      indicator.style.cssText = `top: ${top}px; height: ${tabRect.height}px;`;
     } else {
-      const left = tabRect.left - tabsRect.left;
-      this._indicatorStyle = `left: ${left}px; width: ${tabRect.width}px;`;
+      const left = tabRect.left - tabsRect.left + tabsEl.scrollLeft - tabsEl.clientLeft;
+      indicator.style.cssText = `left: ${left}px; width: ${tabRect.width}px;`;
     }
-
-    this.update();
   }
 
   render(): string {
-    const colorStyle = this.color
-      ? `--color-primary: var(--color-${this.color}, ${this.color});`
-      : '';
-
     return `
-      <div
-        class="tabs"
-        role="tablist"
-        part="tablist"
-        aria-orientation="${this.orientation || 'horizontal'}"
-        style="${colorStyle}"
-      >
+      <div class="tabs" role="tablist" part="tablist">
         <slot name="tab"></slot>
-        <div class="indicator" part="indicator" style="${this._indicatorStyle}"></div>
+        <div class="indicator" part="indicator"></div>
       </div>
       <div class="panels">
         <slot></slot>
@@ -330,12 +321,18 @@ export class ElDmTabs extends BaseElement {
   }
 
   update(): void {
-    super.update();
+    if (!this.query('.tabs')) super.update();
+    const tablist = this.query<HTMLElement>('.tabs')!;
+    const orientation = this.orientation || 'horizontal';
+    tablist.setAttribute('aria-orientation', orientation);
+    tablist.classList.toggle('tabs-scrollable', orientation === 'horizontal');
 
-    // Re-attach mutation observer after update
-    requestAnimationFrame(() => {
-      this._updateIndicator();
-    });
+    if (this.color) {
+      tablist.style.setProperty('--color-primary', `var(--color-${this.color}, ${this.color})`);
+    } else {
+      tablist.style.removeProperty('--color-primary');
+    }
+    this._updateSelection();
   }
 }
 
@@ -462,10 +459,10 @@ export class ElDmTab extends BaseElement {
   constructor() {
     super();
     this.attachStyles(tabStyles);
-    this.slot = 'tab';
   }
 
   connectedCallback(): void {
+    this.slot = 'tab';
     super.connectedCallback();
     this.setAttribute('role', 'tab');
     this.setAttribute('tabindex', this.active ? '0' : '-1');
@@ -473,6 +470,8 @@ export class ElDmTab extends BaseElement {
 
   private _handleClick(): void {
     if (this.disabled) return;
+    // Selection redraws the inner button. Keep existing focus on the tab host.
+    if (!this.active && this.shadowRoot.activeElement) this.focus({ preventScroll: true });
     this.emit('tab-click', { tabId: this.tabId }, { bubbles: true, composed: true });
   }
 

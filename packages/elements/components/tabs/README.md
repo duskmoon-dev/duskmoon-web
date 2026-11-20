@@ -52,6 +52,8 @@ customElements.define('my-tab', ElDmTab);
 | `horizontal` | Horizontal tabs (default) |
 | `vertical` | Vertical tabs |
 
+Horizontal tab lists scroll within their available width when the tabs overflow.
+
 ## Attributes (el-dm-tabs)
 
 | Attribute | Type | Default | Description |

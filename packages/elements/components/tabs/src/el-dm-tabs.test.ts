@@ -49,6 +49,48 @@ describe('ElDmTabs', () => {
     expect(defaultSlot).toBeDefined();
   });
 
+  test('keeps the scrollable tablist through indicator and selection updates', async () => {
+    const el = document.createElement('el-dm-tabs') as ElDmTabs;
+    el.innerHTML = `
+      <el-dm-tab tab-id="first">First</el-dm-tab>
+      <el-dm-tab tab-id="last">Last</el-dm-tab>
+      <el-dm-tab-panel panel-for="last">Last panel</el-dm-tab-panel>
+    `;
+    container.appendChild(el);
+    const tablist = el.shadowRoot.querySelector<HTMLElement>('[part="tablist"]')!;
+    tablist.scrollLeft = 100;
+
+    const nextFrame = () => new Promise(requestAnimationFrame);
+    await nextFrame();
+    await nextFrame();
+    expect(el.shadowRoot.querySelector('[part="tablist"]') === tablist).toBe(true);
+
+    el.value = 'last';
+    await nextFrame();
+    expect(el.shadowRoot.querySelector('[part="tablist"]') === tablist).toBe(true);
+    expect(tablist.scrollLeft).toBe(100);
+    expect(el.querySelector('[tab-id="last"]')?.getAttribute('aria-selected')).toBe('true');
+    expect(el.querySelector('[panel-for="last"]')?.hasAttribute('hidden')).toBe(false);
+  });
+
+  test('keeps keyboard navigation available after clicking a tab', async () => {
+    const el = document.createElement('el-dm-tabs');
+    el.innerHTML = `
+      <el-dm-tab tab-id="first">First</el-dm-tab>
+      <el-dm-tab tab-id="last">Last</el-dm-tab>
+    `;
+    container.appendChild(el);
+    const last = el.querySelector('[tab-id="last"]')!;
+    const button = last.shadowRoot!.querySelector('button')!;
+    button.focus();
+    button.click();
+    await Promise.resolve();
+
+    expect(document.activeElement === last).toBe(true);
+    last.dispatchEvent(createKeyboardEvent('Home', last as HTMLElement));
+    expect(el.getAttribute('value')).toBe('first');
+  });
+
   test('reflects value attribute', () => {
     const el = document.createElement('el-dm-tabs') as ElDmTabs;
     el.value = 'tab-1';
