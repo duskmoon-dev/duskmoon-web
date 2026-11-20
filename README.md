@@ -135,6 +135,8 @@ engine. Yew uses the separate Rust/Tree-sitter implementation on crates.io.
 Run the TypeScript editor demo with `bun run --filter @duskmoon-dev/code-engine-playground dev`.
 
 - [Workspace layout and JS checks](docs/js-workspace.md)
+- [Skills for released packages](skills/README.md)
+- [Repository development skills](.agents/skills/README.md)
 - [Source history and migration](docs/migration.md)
 - [Yew development and consumer setup](yew/README.md)
 - [Public package inventory](docs/package-inventory.json)

@@ -23,6 +23,9 @@ playwright-report/
 .DS_Store
 .trees/
 
+# Repository development skills
+!/.agents/skills/
+
 # Local immutable release staging
 .release/
 
