@@ -46,6 +46,10 @@ chunks shipped in the npm tarball. The default deployment path is
 `/duskmoon-web/code-engine/`. Set `DOCS_SITE` and `DOCS_BASE` to match the
 deployment origin and path when hosting it elsewhere.
 
+The **Deploy Code Engine Playground** workflow publishes to GitHub Pages on
+relevant pushes to `main` and can also be run manually. Open the deployed
+playground at [duskmoon-dev.github.io/duskmoon-web/code-engine/](https://duskmoon-dev.github.io/duskmoon-web/code-engine/).
+
 `bun run plan:impacted <git-base>` prints the affected JS workspaces and the
 Phoenix and Yew check flags. Common configuration and the root Bun lockfile
 invalidate all consumers. Core CSS changes trigger the Yew demo build, while

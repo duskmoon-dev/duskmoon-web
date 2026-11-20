@@ -1,0 +1,76 @@
+name: Deploy Code Engine Playground
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/deploy-pages.yml
+      - apps/code-engine-playground/**
+      - packages/engines/code-engine/**
+      - package.json
+      - bun.lock
+      - bunfig.toml
+      - scripts/js/workspace.mjs
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.0'
+      - uses: actions/configure-pages@v6
+        id: pages
+      - name: Build the playground
+        env:
+          DOCS_SITE: ${{ steps.pages.outputs.origin }}
+          DOCS_BASE: ${{ steps.pages.outputs.base_path }}/code-engine/
+        run: |
+          bun install --frozen-lockfile
+          bun run build:apps @duskmoon-dev/code-engine-playground
+      - name: Assemble the Pages site
+        run: |
+          mkdir "$RUNNER_TEMP/pages"
+          cp -R apps/code-engine-playground/dist "$RUNNER_TEMP/pages/code-engine"
+          cp "$RUNNER_TEMP/pages/code-engine/robots.txt" "$RUNNER_TEMP/pages/robots.txt"
+          cat > "$RUNNER_TEMP/pages/index.html" <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=./code-engine/">
+          <title>Duskmoon Web</title>
+          <a href="./code-engine/">Open the Code Engine Playground</a>
+          </html>
+          HTML
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: ${{ runner.temp }}/pages
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-26.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v5
+        id: deployment
