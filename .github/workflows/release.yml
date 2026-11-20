@@ -121,14 +121,19 @@ jobs:
           if-no-files-found: error
           retention-days: 90
   publish:
+    name: Publish ${{ matrix.registry }}
     needs: prepare
     if: always() && !cancelled() && inputs.publish && (needs.prepare.result == 'success' || (needs.prepare.result == 'skipped' && inputs.recovery_run_id != ''))
+    strategy:
+      fail-fast: false
+      matrix:
+        registry: [npm, hex, crates.io]
     runs-on: ubuntu-26.04
     timeout-minutes: 180
     environment: release
     permissions:
       actions: read
-      contents: write
+      contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v7
@@ -140,6 +145,7 @@ jobs:
           node-version: '24'
           registry-url: https://registry.npmjs.org
       - uses: dtolnay/rust-toolchain@1.97.0
+        if: matrix.registry == 'crates.io'
       - name: Check workflow and verified staging run
         env:
           GH_TOKEN: ${{ github.token }}
@@ -156,21 +162,55 @@ jobs:
           fi
           git fetch --no-tags origin main
           git merge-base --is-ancestor "$SOURCE_SHA" FETCH_HEAD
+          git merge-base --is-ancestor "$SOURCE_SHA" "$GITHUB_SHA"
+          # Keep registry selection available when recovering older staging runs.
+          git show "$GITHUB_SHA:scripts/release.mjs" > "$RUNNER_TEMP/release.mjs"
       - uses: actions/download-artifact@v7
         with:
           name: web-${{ inputs.version }}-${{ inputs.source_sha }}
           path: ${{ runner.temp }}/web
           run-id: ${{ inputs.recovery_run_id || github.run_id }}
           github-token: ${{ github.token }}
-      - name: Verify tag, publish missing artifacts and mark completion
+      - name: Verify tag and publish missing artifacts
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
-          GH_TOKEN: ${{ github.token }}
+          RELEASE_REGISTRY: ${{ matrix.registry }}
+          DUSKMOON_RELEASE_SOURCE_ROOT: ${{ github.workspace }}
+          CARGO_REGISTRY_TOKEN: ${{ matrix.registry == 'crates.io' && secrets.CARGO_REGISTRY_TOKEN || '' }}
+          HEX_API_KEY: ${{ matrix.registry == 'hex' && secrets.HEX_API_KEY || '' }}
           NPM_CONFIG_LOGLEVEL: warn
         run: |
-          test -n "$HEX_API_KEY"
-          test -n "$CARGO_REGISTRY_TOKEN"
+          tag="v$RELEASE_VERSION"
+          refs=$(git ls-remote origin "refs/tags/$tag" "refs/tags/$tag^{}")
+          if [[ -n "$refs" ]]; then
+            test "$(tail -1 <<<"$refs" | cut -f1)" = "$SOURCE_SHA"
+          fi
+          node "$RUNNER_TEMP/release.mjs" publish "$RUNNER_TEMP/web" "$SOURCE_SHA" "$RELEASE_REGISTRY"
+  finalize:
+    name: Publish GitHub release
+    needs: publish
+    if: always() && !cancelled() && needs.publish.result == 'success'
+    runs-on: ubuntu-26.04
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v7
+        with:
+          name: web-${{ inputs.version }}-${{ inputs.source_sha }}
+          path: ${{ runner.temp }}/web
+          run-id: ${{ inputs.recovery_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify release assets and publish on GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/release.mjs verify "$RUNNER_TEMP/web" "$SOURCE_SHA"
           tag="v$RELEASE_VERSION"
           prerelease=false
           release_flags=()
@@ -182,7 +222,6 @@ jobs:
           if [[ -n "$refs" ]]; then
             test "$(tail -1 <<<"$refs" | cut -f1)" = "$SOURCE_SHA"
           fi
-          node scripts/release.mjs publish "$RUNNER_TEMP/web" "$SOURCE_SHA"
           if ! gh release view "$tag" --json tagName >/dev/null 2>&1; then
             gh release create "$tag" --target "$SOURCE_SHA" --title "Duskmoon Web $RELEASE_VERSION" \
               --draft "${release_flags[@]}" \

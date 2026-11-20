@@ -8,12 +8,13 @@ import { basename, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { setTimeout as delay } from "node:timers/promises";
 
-const root = fileURLToPath(new URL("../", import.meta.url));
+const root = resolve(process.env.DUSKMOON_RELEASE_SOURCE_ROOT ?? fileURLToPath(new URL("../", import.meta.url)));
 const inventory = readJson(join(root, "docs/package-inventory.json")).packages;
 const version = readFileSync(join(root, "VERSION"), "utf8").trim();
 assert.match(version, /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-rc\.(0|[1-9]\d*))?$/,
   "VERSION must be a stable release or a release candidate (X.Y.Z-rc.N)");
 const npmTag = version.includes("-") ? "rc" : "latest";
+const registries = ["npm", "hex", "crates.io"];
 const npmInventory = inventory.filter(({ registry }) => registry === "npm");
 const group = new Set(npmInventory.map(({ name }) => name));
 const hex = inventory.find(({ registry }) => registry === "hex");
@@ -382,17 +383,10 @@ function realRegistry(dir, artifacts) {
   };
 }
 
-async function dryRun(artifacts) {
+async function dryRunRegistry(artifacts, interruptionPoints) {
   const simulated = new Map();
   const writes = [];
-  const position = (identity) => artifacts.findIndex((artifact) => id(artifact) === identity);
-  const engine = position("npm:@duskmoon-dev/code-engine");
-  const adapter = position("npm:@duskmoon-dev/el-code-engine");
-  const rustEngine = position("crates.io:code-engine");
-  assert(engine >= 0 && engine < adapter, "npm code-engine must publish before its adapter");
-  assert(rustEngine >= 0 && rustEngine < position("crates.io:yew-duskmoon"),
-    "Rust code-engine must publish before yew-duskmoon");
-  const cutoffs = [...new Set([engine + 1, Math.floor(artifacts.length / 2), rustEngine + 1])].sort((a, b) => a - b);
+  const cutoffs = [...new Set(interruptionPoints)].sort((a, b) => a - b);
   const interruption = new Error("simulated interrupted publication");
   const lookup = async (artifact) => simulated.get(id(artifact)) ?? null;
   const registry = {
@@ -412,13 +406,28 @@ async function dryRun(artifacts) {
   }
   await reconcile(artifacts, registry);
   assert.deepEqual(writes, artifacts.map(id), "Resume changed publication order");
-  simulated.set(id(artifacts[engine]), "unexpected hash");
+  simulated.set(id(artifacts[0]), "unexpected hash");
   await assert.rejects(reconcile(artifacts, registry), /Published bytes differ/);
   assert.equal(writes.length, artifacts.length);
-  console.log(`Dry-run passed for all ${writes.length} artifacts, including interrupted resume and hash conflict`);
 }
 
-const [command, output, sha, hexInput, cargoInput] = process.argv.slice(2);
+async function dryRun(artifacts) {
+  const npm = artifacts.filter(({ registry }) => registry === "npm");
+  const hexArtifacts = artifacts.filter(({ registry }) => registry === "hex");
+  const rust = artifacts.filter(({ registry }) => registry === "crates.io");
+  const engine = npm.findIndex(({ name }) => name === "@duskmoon-dev/code-engine");
+  const adapter = npm.findIndex(({ name }) => name === "@duskmoon-dev/el-code-engine");
+  assert(engine >= 0 && engine < adapter, "npm code-engine must publish before its adapter");
+  assert.deepEqual(rust.map(({ name }) => name), ["code-engine", "yew-duskmoon"]);
+  await Promise.all([
+    dryRunRegistry(npm, [engine + 1, Math.floor(npm.length / 2)]),
+    dryRunRegistry(hexArtifacts, [1]),
+    dryRunRegistry(rust, [1]),
+  ]);
+  console.log(`Dry-run passed for all ${artifacts.length} artifacts across three parallel registries`);
+}
+
+const [command, output, sha, registryOrHexPath, cargoPath] = process.argv.slice(2);
 if (command === "version") {
   console.log(version);
 } else if (command === "sync") {
@@ -426,14 +435,17 @@ if (command === "version") {
 } else if (command === "check") {
   const order = publicationOrder();
   console.log(`${version}: ${order.length} distributions\n${order.map(id).join("\n")}`);
-} else if (command === "stage" && output && sha && hexInput && cargoInput) {
-  stage(resolve(output), sha, resolve(hexInput), resolve(cargoInput));
+} else if (command === "stage" && output && sha && registryOrHexPath && cargoPath) {
+  stage(resolve(output), sha, resolve(registryOrHexPath), resolve(cargoPath));
 } else if (["verify", "dry-run", "publish"].includes(command) && output && sha) {
   const dir = resolve(output);
-  const artifacts = verify(dir, sha);
+  const targetRegistry = command === "publish" ? registryOrHexPath : undefined;
+  if (targetRegistry !== undefined) assert(registries.includes(targetRegistry), `Unknown registry: ${targetRegistry}`);
+  const verified = verify(dir, sha);
+  const artifacts = targetRegistry === undefined ? verified : verified.filter(({ registry }) => registry === targetRegistry);
   if (command === "dry-run") await dryRun(artifacts);
   if (command === "publish") await reconcile(artifacts, realRegistry(dir, artifacts));
   console.log(`${command} verified ${artifacts.length} distributions for ${version}`);
 } else {
-  throw new Error("Usage: release.mjs version|sync|check | stage OUTPUT SHA HEX_TAR CRATE_DIR | verify|dry-run|publish OUTPUT SHA");
+  throw new Error("Usage: release.mjs version|sync|check | stage OUTPUT SHA HEX_TAR CRATE_DIR | verify|dry-run OUTPUT SHA | publish OUTPUT SHA [npm|hex|crates.io]");
 }
