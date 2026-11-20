@@ -13,12 +13,19 @@ pub fn app() -> Html {
         background: "#07100f".to_owned(),
     });
 
+    let content = html! {
+        <>
+            <Header />
+            <Switch<AppRoute> render={switch} />
+        </>
+    };
+    let router = if option_env!("DUSKMOON_YEW_HASH_ROUTER") == Some("1") {
+        html! { <HashRouter>{content}</HashRouter> }
+    } else {
+        html! { <BrowserRouter>{content}</BrowserRouter> }
+    };
+
     html! {
-        <ContextProvider<Theme> context={(*theme).clone()}>
-            <BrowserRouter>
-                <Header />
-                <Switch<AppRoute> render={switch} />
-            </BrowserRouter>
-        </ContextProvider<Theme>>
+        <ContextProvider<Theme> context={(*theme).clone()}>{router}</ContextProvider<Theme>>
     }
 }

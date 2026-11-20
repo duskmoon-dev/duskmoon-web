@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ThemeToggle from '../../components/ThemeToggle.astro';
+import { docsPath } from '../../utils/paths';
 ---
 
 <BaseLayout
@@ -10,12 +11,12 @@ import ThemeToggle from '../../components/ThemeToggle.astro';
   <div class="playground-container">
     <header class="playground-header">
       <div class="header-content">
-        <a href="/duskmoon-elements/" class="logo">DuskMoon Elements</a>
+        <a href={docsPath()} class="logo">DuskMoon Elements</a>
         <h1 class="playground-title">Markdown Input Playground</h1>
         <div class="header-actions">
           <ThemeToggle />
           <a
-            href="/duskmoon-elements/docs/components/markdown-input"
+            href={docsPath('docs/components/markdown-input/')}
             class="btn-link"
           >
             Documentation

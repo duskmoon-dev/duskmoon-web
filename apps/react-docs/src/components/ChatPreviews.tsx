@@ -11,6 +11,7 @@ import {
   RichComposerPreview,
   SemanticComposerPreview,
 } from "./ChatSessionPreviews";
+import { docsPath } from "../lib/paths";
 
 const Chat = DmComponents.Chat;
 const Avatar = DmComponents.Avatar;
@@ -98,7 +99,7 @@ export function BasicChatPreview() {
         <Chat.Header>Assistant - 2:15 PM</Chat.Header>
         <Chat.Content>
           How can I help you today? Read the{" "}
-          <a href="/components/chat">Chat guide</a> for longer messages and
+          <a href={docsPath("/components/chat/")}>Chat guide</a> for longer messages and
           links.
         </Chat.Content>
         <Chat.Footer>Delivered</Chat.Footer>

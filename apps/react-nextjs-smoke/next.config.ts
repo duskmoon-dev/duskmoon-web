@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {/* config options here */};
+const pagesBase = process.env.DOCS_BASE;
+const nextConfig: NextConfig = pagesBase ? {
+  output: "export",
+  basePath: pagesBase.replace(/\/$/, ""),
+  trailingSlash: true,
+} : {};
 
 export default nextConfig;

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Documentation, playgrounds, and examples for Duskmoon Web.">
+  <title>Duskmoon Web</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --background: #f7f5fb;
+      --surface: #fff;
+      --ink: #201835;
+      --muted: #564b6a;
+      --border: #d9d0e7;
+      --accent: #5c36ad;
+      --hover: #f0eafa;
+      font: 100%/1.5 system-ui, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #171222;
+        --surface: #231a31;
+        --ink: #f8f2ff;
+        --muted: #c8bdd8;
+        --border: #504361;
+        --accent: #cfb7ff;
+        --hover: #312344;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--background); color: var(--ink); }
+    main { max-width: 72rem; margin: auto; padding: clamp(1.25rem, 5vw, 4rem); }
+    header {
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      margin: 0 0 .75rem;
+      font-size: clamp(2.75rem, 7vw, 5rem);
+      line-height: 1;
+      letter-spacing: -.065em;
+    }
+    header p { margin: 0 0 1rem; color: var(--muted); }
+    header a { color: var(--accent); text-underline-offset: .2em; }
+    section { margin-top: 2rem; }
+    h2 { margin: 0 0 .65rem; font-size: 1.15rem; }
+    ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+      gap: .75rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    li a {
+      display: grid;
+      align-content: start;
+      height: 100%;
+      padding: 1rem 1.125rem;
+      border: 1px solid var(--border);
+      border-radius: .65rem;
+      background: var(--surface);
+      color: inherit;
+      text-decoration: none;
+    }
+    li a:is(:hover, :focus-visible) {
+      border-color: var(--accent);
+      background: var(--hover);
+    }
+    li a::after { content: "→" / ""; color: var(--accent); grid-area: 1 / 2; }
+    li a span { grid-column: 1 / -1; color: var(--muted); margin-top: .25rem; font-size: .925rem; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Duskmoon Web</h1>
+      <p>Documentation, playgrounds, and starter projects.</p>
+      <a href="https://github.com/duskmoon-dev/duskmoon-web">View repository on GitHub</a>
+    </header>
+    <nav aria-label="Duskmoon projects">
+      <!-- sites -->
+    </nav>
+  </main>
+</body>
+</html>

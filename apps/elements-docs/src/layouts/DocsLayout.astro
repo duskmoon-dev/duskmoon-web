@@ -3,6 +3,7 @@ import BaseLayout from './BaseLayout.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import Nav from '../components/Nav.astro';
 import MobileNav from '../components/MobileNav.astro';
+import { docsPath } from '../utils/paths';
 import pkg from '../../../../packages/elements/base/package.json';
 
 interface Props {
@@ -25,19 +26,19 @@ const version = `v${pkg.version}`;
   <div class="docs-container">
     <header class="docs-header">
       <div class="header-content">
-        <a href="/duskmoon-elements/" class="logo">
+        <a href={docsPath()} class="logo">
           <span class="logo-text">DuskMoon Elements</span>
         </a>
         <span class="version-badge">{version}</span>
         <nav class="header-nav">
           <a
-            href="/duskmoon-elements/docs/components"
+            href={docsPath('docs/components/')}
             class:list={['header-nav-link', { active: !isCssArt }]}
           >
             Components
           </a>
           <a
-            href="/duskmoon-elements/docs/art-elements/"
+            href={docsPath('docs/art-elements/')}
             class:list={['header-nav-link', { active: isCssArt }]}
           >
             Art Elements

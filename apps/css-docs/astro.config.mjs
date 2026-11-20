@@ -2,21 +2,28 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
+import { satteri } from "@astrojs/markdown-satteri";
 import { resolve } from "path";
+import { rebaseSatteriLinks } from "../../scripts/pages/markdown-links.mjs";
 
 import tailwindcss from "@tailwindcss/vite";
 
 const isProduction = process.env.NODE_ENV === "production";
 const coreSourceDir = resolve(import.meta.dirname, "../../packages/css/core/src");
 const cssArtSourceDir = resolve(import.meta.dirname, "../../packages/css/css-art/src");
+const defaultBase = "/duskmoonui";
+const base = process.env.DOCS_BASE ?? defaultBase;
 
 export default defineConfig({
-  site: "https://duskmoon-dev.github.io",
-  base: "/duskmoonui",
+  site: process.env.DOCS_SITE ?? "https://duskmoon-dev.github.io",
+  base,
   trailingSlash: "always",
 
   // Markdown configuration
   markdown: {
+    ...(base !== defaultBase && {
+      processor: satteri({ mdastPlugins: [rebaseSatteriLinks(defaultBase, base)] }),
+    }),
     shikiConfig: {
       themes: {
         light: "github-light",

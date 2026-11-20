@@ -1,4 +1,6 @@
 ---
+import { docsPath } from '../utils/paths';
+
 interface Props {
   title: string;
   description: string;
@@ -31,7 +33,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="twitter:description" content={description} />
 
     <title>{fullTitle}</title>
-    <link rel="icon" type="image/svg+xml" href="/duskmoon-elements/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={docsPath('favicon.svg')} />
     <script is:inline>
       // Initialize theme before render to prevent flash
       (function() {

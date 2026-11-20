@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { readFileSync } from 'node:fs';
+import { docsPath } from '../utils/paths';
 
 interface Props {
   currentPath?: string;
@@ -56,7 +57,7 @@ const sortedSections = Object.keys(sections).sort((a, b) => {
 });
 
 function isActive(slug: string): boolean {
-  const href = `/duskmoon-elements/docs/${slug}`;
+  const href = docsPath(`docs/${slug}`);
   return currentPath === href || currentPath === `${href}/`;
 }
 ---
@@ -71,7 +72,7 @@ function isActive(slug: string): boolean {
         {sections[section].map((doc) => (
           <li>
             <a
-              href={`/duskmoon-elements/docs/${doc.id}`}
+              href={docsPath(`docs/${doc.id}/`)}
               aria-current={isActive(doc.id) ? 'page' : undefined}
             >
               {doc.data.title}

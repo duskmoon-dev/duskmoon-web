@@ -2,6 +2,8 @@
 
 Duskmoon Web delivers Core/Tailwind, CSS Art, Custom Elements, and native React, Phoenix, and Yew components. Each package is independently installable. The public Web packages publish together at the version in [VERSION](VERSION).
 
+[Browse the documentation, playgrounds, and starter projects](https://duskmoon-dev.github.io/duskmoon-web/).
+
 | Use | Packages | Versions |
 | --- | --- | --- |
 | Tailwind and CSS | `@duskmoon-dev/core`, optional `@duskmoon-dev/css-art` | [![@duskmoon-dev/core version on npm](https://img.shields.io/npm/v/@duskmoon-dev/core/rc?label=%40duskmoon-dev%2Fcore)](https://registry.npmjs.org/%40duskmoon-dev%2Fcore/rc) [![@duskmoon-dev/css-art version on npm](https://img.shields.io/npm/v/@duskmoon-dev/css-art/rc?label=%40duskmoon-dev%2Fcss-art)](https://registry.npmjs.org/%40duskmoon-dev%2Fcss-art/rc) |

@@ -1,6 +1,7 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import { getCollection } from 'astro:content';
+import { docsPath } from '../../../utils/paths';
 
 const docs = await getCollection('docs', ({ data }) => !data.draft && !!data.component);
 
@@ -47,7 +48,7 @@ const totalCount = docs.length;
         <h2 class="category-title">{sectionMeta[section].label}</h2>
         <div class="component-grid">
           {groups[section].map((doc) => (
-            <a href={`/duskmoon-elements/docs/${doc.id}`} class="component-card">
+            <a href={docsPath(`docs/${doc.id}/`)} class="component-card">
               <h3 class="card-title">{doc.data.title}</h3>
               <p class="card-description">{doc.data.description}</p>
               <span class="card-link">View docs &rarr;</span>

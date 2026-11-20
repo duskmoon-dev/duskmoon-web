@@ -1,11 +1,15 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import { fileURLToPath } from 'node:url';
+import { rebaseMarkdownLinks } from '../../scripts/pages/markdown-links.mjs';
+
+const defaultBase = '/duskmoon-elements';
+const base = process.env.DOCS_BASE ?? defaultBase;
 
 export default defineConfig({
   integrations: [mdx()],
-  site: 'https://duskmoon-dev.github.io',
-  base: '/duskmoon-elements',
+  site: process.env.DOCS_SITE ?? 'https://duskmoon-dev.github.io',
+  base,
   output: 'static',
   server: {
     port: 4331,
@@ -36,6 +40,7 @@ export default defineConfig({
     },
   },
   markdown: {
+    ...(base !== defaultBase && { remarkPlugins: [rebaseMarkdownLinks(defaultBase, base)] }),
     shikiConfig: {
       themes: {
         light: 'github-light',

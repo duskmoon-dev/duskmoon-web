@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { findPrevNext } from '../../utils/navigation';
+import { docsPath } from '../../utils/paths';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -30,7 +31,7 @@ const { prev, next } = findPrevNext(allDocs, doc.id);
     <nav class="prev-next-nav" aria-label="Page navigation">
       <div class="prev-next-container">
         {prev ? (
-          <a href={`/duskmoon-elements/docs/${prev.slug}`} class="prev-link">
+          <a href={docsPath(`docs/${prev.slug}/`)} class="prev-link">
             <span class="nav-label">Previous</span>
             <span class="nav-title">{prev.title}</span>
           </a>
@@ -38,7 +39,7 @@ const { prev, next } = findPrevNext(allDocs, doc.id);
           <div />
         )}
         {next ? (
-          <a href={`/duskmoon-elements/docs/${next.slug}`} class="next-link">
+          <a href={docsPath(`docs/${next.slug}/`)} class="next-link">
             <span class="nav-label">Next</span>
             <span class="nav-title">{next.title}</span>
           </a>

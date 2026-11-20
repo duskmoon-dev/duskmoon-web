@@ -46,9 +46,31 @@ chunks shipped in the npm tarball. The default deployment path is
 `/duskmoon-web/code-engine/`. Set `DOCS_SITE` and `DOCS_BASE` to match the
 deployment origin and path when hosting it elsewhere.
 
-The **Deploy Code Engine Playground** workflow publishes to GitHub Pages on
-relevant pushes to `main` and can also be run manually. Open the deployed
-playground at [duskmoon-dev.github.io/duskmoon-web/code-engine/](https://duskmoon-dev.github.io/duskmoon-web/code-engine/).
+## GitHub Pages
+
+The **Deploy Duskmoon Web Pages** workflow starts on relevant pushes to `main`
+or by manual dispatch. It builds the Core, Elements, and React docs, the Code
+Engine and Elements playgrounds, the Tailwind and Yew demos, both starter
+projects, and the React/Next.js example. The sites share a
+[navigation page](https://duskmoon-dev.github.io/duskmoon-web/). Phoenix runs
+separately in its Mix workspace.
+
+Build the same static tree locally with Node, Bun, Trunk 0.21.14, and the Rust
+`wasm32-unknown-unknown` target installed.
+
+```sh
+bun install --frozen-lockfile
+preview=$(mktemp -d)
+PAGES_ORIGIN=http://localhost:8000 bun scripts/pages/build.mjs "$preview/duskmoon-web"
+python3 -m http.server 8000 --directory "$preview"
+```
+
+Open `http://localhost:8000/duskmoon-web/` to check the navigation and each
+project's subpath. The workflow gets the actual origin and base path from the
+GitHub Pages configuration. It uses Next.js static exports and Yew hash routing
+for the hosted builds.
+
+## Change impact
 
 `bun run plan:impacted <git-base>` prints the affected JS workspaces and the
 Phoenix and Yew check flags. Common configuration and the root Bun lockfile

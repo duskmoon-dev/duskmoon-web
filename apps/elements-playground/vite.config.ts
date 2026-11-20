@@ -199,6 +199,7 @@ const pageData = {
 };
 
 export default defineConfig({
+  base: process.env.DOCS_BASE,
   plugins: [
     {
       name: 'duskmoon-css-art-raw-imports',

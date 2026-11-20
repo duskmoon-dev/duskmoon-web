@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { docsPath } from '../utils/paths';
 ---
 
 <BaseLayout title="Page Not Found" description="The page you're looking for doesn't exist.">
@@ -7,7 +8,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <h1>404</h1>
     <p>Page not found</p>
     <p class="description">The page you're looking for doesn't exist or has been moved.</p>
-    <a href="/duskmoon-elements/" class="home-link">Go to Homepage</a>
+    <a href={docsPath()} class="home-link">Go to Homepage</a>
   </div>
 </BaseLayout>
 
