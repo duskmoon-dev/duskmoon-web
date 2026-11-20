@@ -166,7 +166,6 @@ jobs:
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ github.token }}
         run: |
           test -n "$HEX_API_KEY"

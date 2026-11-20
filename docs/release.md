@@ -30,14 +30,12 @@ Use `--engine-only` for the two isolated engine consumers or `--yew-only` for th
 
 ## Publication and recovery
 
-The GitHub `release` environment controls publication. Set up the npm publishing grants or trusted publishers, the Hex key, and a `CARGO_REGISTRY_TOKEN` authorized to publish both crates.
-
-An npm maintainer must confirm that the existing `@duskmoon-dev/code-engine`
-package authorizes `duskmoon-dev/duskmoon-web`, workflow `release.yml`, and
-environment `release` as a trusted publisher, or that the Web workflow has an
-authorized `NPM_TOKEN` for the package. The standalone repository's publisher
-identity applies to that repository. The new grant requires maintainer
-verification before publication and is independent of artifact staging.
+The GitHub `release` environment controls publication. Configure an npm trusted
+publisher on each npm package, including `@duskmoon-dev/code-engine` and
+`duskmoon_phoenix`. Use `duskmoon-dev/duskmoon-web`, workflow `release.yml`, and
+environment `release`, with permission for `npm publish`. The workflow uses
+OIDC for npm. Set `HEX_API_KEY` and a `CARGO_REGISTRY_TOKEN` authorized to
+publish both crates in the release environment.
 
 The publication job consumes the verified Actions artifact and publishes missing
 npm archives in dependency order, including `@duskmoon-dev/code-engine` before
