@@ -22,9 +22,15 @@ the transcript, above the composer: **Jump to latest** scrolls once without chan
 the follow setting; **Stick to bottom** toggles continuous following of new messages,
 streaming content, and late content or viewport resizing. Sticking starts enabled.
 Scrolling up or choosing a reply marker turns it off so history stays readable;
-reaching the bottom manually does not turn it back on. The toggle exposes its state
-through `aria-pressed`. Reply markers cover the latest 24 assistant messages while
-all messages remain visible. Each conversation starts with its own follow setting.
+the toggle exposes its state through `aria-pressed`. Reply markers cover the latest
+24 assistant messages while all messages remain visible. Each conversation starts
+with its own follow setting.
+
+Set `resumeFollowOnScroll: true` in `createDuskmoonReactChat` to turn **Stick to
+bottom** back on when a reader scrolls to the bottom after scrolling up. By default,
+use the toggle to resume following. With the option enabled, the toggle still
+controls following after an explicit unpin or a reply marker click, and **Jump to
+latest** remains a one-shot action.
 
 The mount has `phx-update="ignore"`. Push events rather than updating `@messages`
 per token. HEEX children are not a composition API: `inner_block` is no longer

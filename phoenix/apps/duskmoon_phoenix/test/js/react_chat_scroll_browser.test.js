@@ -46,12 +46,12 @@ globalThis.ResizeObserver = class extends NativeResizeObserver {
 };
 const messages = Array.from({length:12}, (_, index) => ({id:'message-'+index, role:'assistant', content:('Message '+index+'. ').repeat(30) + (index === 11 ? '\\n\\n![Late preview](/preview.svg)' : '')}));
 const mounts = [];
-function mount(id) {
+function mount(id, options) {
   const node = document.getElementById(id);
   const root = createRoot(node);
   const chat = {node, root, state:initialState(id, messages, {instanceGeneration:1})};
   chat.render = () => flushSync(() => root.render(React.createElement(ReactChat, {
-    state:chat.state, connected:true, label:id, bridge:{send:async () => ({status:'ok'})},
+    state:chat.state, connected:true, label:id, options, bridge:{send:async () => ({status:'ok'})},
   })));
   chat.append = () => {
     chat.state = {...chat.state, messages:[...chat.state.messages, {id:'message-'+chat.state.messages.length,role:'assistant',status:'streaming',content:'New streaming message. '.repeat(40)}]};
@@ -66,7 +66,7 @@ function mount(id) {
   return chat;
 }
 (async () => {
-  const first = mount('first'), second = mount('second');
+  const first = mount('first', {resumeFollowOnScroll:true}), second = mount('second');
   await waitFor(() => observers.size === 2 && bottom(first.viewport) && bottom(second.viewport), 'initial transcripts did not follow to the bottom');
   assert(first.sticking() && second.sticking(), 'following should start enabled');
   for (const chat of mounts) {
@@ -118,25 +118,30 @@ function mount(id) {
   await tick();
   assert(!bottom(first.viewport) && Math.abs(first.viewport.scrollTop - jumpedPosition) < 2, 'one-shot jump kept following later messages');
   first.viewport.scrollTo({top:first.viewport.scrollHeight,behavior:'instant'});
-  await tick();
-  assert(!first.sticking(), 'manually reaching the bottom enabled following');
-  first.pin.click();
-  await waitFor(() => first.sticking() && bottom(first.viewport), 'pin did not resume following');
+  await waitFor(() => first.sticking() && first.jump.disabled, 'manual return did not resume following with the option enabled');
   first.append();
-  await waitFor(() => bottom(first.viewport), 'pinned transcript did not follow new messages');
+  await waitFor(() => bottom(first.viewport), 'resumed transcript did not follow new messages');
   first.pin.click();
   await waitFor(() => !first.sticking(), 'pin did not turn following off');
   const unpinnedPosition = first.viewport.scrollTop;
   first.append();
   await tick();
   assert(Math.abs(first.viewport.scrollTop - unpinnedPosition) < 2 && !bottom(first.viewport), 'disabled pin still followed');
+  first.viewport.scrollTo({top:100,behavior:'instant'});
+  await tick();
+  first.viewport.scrollTo({top:first.viewport.scrollHeight,behavior:'instant'});
+  await waitFor(() => first.jump.disabled, 'manually unpinned transcript did not reach the bottom');
+  assert(!first.sticking(), 'manual return overrode an explicitly disabled pin');
 
   first.pin.click();
   await waitFor(() => first.sticking() && bottom(first.viewport), 'pin did not return to the bottom');
   first.node.querySelector('[data-chat-target]').click();
   await waitFor(() => !first.sticking() && first.viewport.scrollTop < 100, 'reply navigation did not pause following and reach history');
-  second.pin.click();
-  await waitFor(() => !second.sticking(), 'second mount did not pause');
+  second.viewport.scrollTo({top:100,behavior:'instant'});
+  await waitFor(() => !second.sticking() && !second.jump.disabled, 'default mount did not pause');
+  second.viewport.scrollTo({top:second.viewport.scrollHeight,behavior:'instant'});
+  await waitFor(() => second.jump.disabled, 'default mount did not reach the bottom');
+  assert(!second.sticking(), 'manual return resumed following by default');
   first.state = initialState('another-conversation', messages, {instanceGeneration:2});
   first.render();
   await waitFor(() => first.sticking() && bottom(first.viewport), 'conversation switch retained the previous follow setting');

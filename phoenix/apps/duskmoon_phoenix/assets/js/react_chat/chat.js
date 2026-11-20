@@ -241,7 +241,7 @@ export function ReactChat({
 	const transcriptId = useId();
 	const scroll = useRef(null);
 	const body = useRef(null);
-	const follow = useRef(true);
+	const follow = useRef("following");
 	const previousScrollTop = useRef(0);
 	const [sticking, setSticking] = useState(true);
 	const [atBottom, setAtBottom] = useState(true);
@@ -251,27 +251,26 @@ export function ReactChat({
 		previousScrollTop.current = el.scrollTop;
 		setAtBottom(true);
 	}
-	function pauseFollowing() {
-		follow.current = false;
-		setSticking(false);
+	function setFollowMode(mode) {
+		follow.current = mode;
+		setSticking(mode === "following");
 	}
 	function updateAtBottom() {
 		const el = scroll.current;
 		setAtBottom(el.scrollHeight - el.scrollTop - el.clientHeight < 2);
 	}
 	useLayoutEffect(() => {
-		follow.current = true;
-		setSticking(true);
+		setFollowMode("following");
 		jumpToLatest();
 	}, [state.conversationId, state.instanceGeneration]);
 	useLayoutEffect(() => {
-		if (follow.current) jumpToLatest();
+		if (follow.current === "following") jumpToLatest();
 		else updateAtBottom();
 	}, [state.messages]);
 	useEffect(() => {
 		// Markdown, images, and the composer can resize without a message event.
 		const observer = new ResizeObserver(() => {
-			if (follow.current) jumpToLatest();
+			if (follow.current === "following") jumpToLatest();
 			else updateAtBottom();
 		});
 		observer.observe(scroll.current);
@@ -327,12 +326,25 @@ export function ReactChat({
 					"data-chat-messages": true,
 					onScroll: () => {
 						const el = scroll.current;
-						const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
+						const top = el.scrollTop;
+						const bottom = el.scrollHeight - top - el.clientHeight < 2;
 						setAtBottom(bottom);
 						// Content growth must not be mistaken for scrolling into history.
-						if (!bottom && el.scrollTop < previousScrollTop.current)
-							pauseFollowing();
-						previousScrollTop.current = el.scrollTop;
+						if (
+							follow.current === "following" &&
+							!bottom &&
+							top < previousScrollTop.current
+						) {
+							setFollowMode("scroll-paused");
+						} else if (
+							options.resumeFollowOnScroll === true &&
+							follow.current === "scroll-paused" &&
+							bottom &&
+							top > previousScrollTop.current
+						) {
+							setFollowMode("following");
+						}
+						previousScrollTop.current = top;
 					},
 				},
 				h(
@@ -343,7 +355,7 @@ export function ReactChat({
 							key: message.id,
 							targetId: targetId(message),
 							timeline: timelines.get(message.id),
-							onClick: pauseFollowing,
+							onClick: () => setFollowMode("paused"),
 						}),
 					),
 				),
@@ -413,10 +425,9 @@ export function ReactChat({
 						"aria-pressed": sticking,
 						title: sticking ? "Stop sticking to bottom" : "Stick to bottom",
 						onClick: () => {
-							if (follow.current) pauseFollowing();
+							if (follow.current === "following") setFollowMode("paused");
 							else {
-								follow.current = true;
-								setSticking(true);
+								setFollowMode("following");
 								jumpToLatest();
 							}
 						},
