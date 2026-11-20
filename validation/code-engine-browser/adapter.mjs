@@ -27,7 +27,6 @@ window.fixture = {
     const scroller = view?.scrollDOM;
     return {
       value: host?.value,
-      mounted: Boolean(view),
       language: view?.state.facet(language)?.name,
       tree: view ? syntaxTree(view.state).toString() : '',
       readonly: view?.state.readOnly,
@@ -41,15 +40,6 @@ window.fixture = {
       clientHeight: scroller?.clientHeight,
       scrollTop: scroller?.scrollTop,
     };
-  },
-  add(id, value, selectedLanguage = 'javascript') {
-    const host = document.createElement('el-dm-code-engine');
-    host.id = id;
-    host.setAttribute('language', selectedLanguage);
-    host.setAttribute('theme', 'duskmoon');
-    host.value = value;
-    document.querySelector('#editors').append(host);
-    return host;
   },
 };
 document.documentElement.dataset.ready = 'true';

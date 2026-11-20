@@ -89,6 +89,23 @@ jobs:
           elixir scripts/check-release-applications.exs _build/prod/rel/storybook
           cd apps/duskmoon_phoenix
           mix hex.build --output "$RUNNER_TEMP/duskmoon_phoenix.tar"
+      - name: Exercise the production Storybook editor
+        env:
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+          HOLOGRAM_ENV: prod
+          HOST: 127.0.0.1
+          PORT: '4467'
+        run: |
+          export SECRET_KEY_BASE="$(openssl rand -hex 64)"
+          phoenix/_build/prod/rel/storybook/bin/storybook start >"$RUNNER_TEMP/storybook.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          origin="http://127.0.0.1:$PORT"
+          if ! curl --silent --fail --output /dev/null --retry 30 --retry-connrefused --retry-delay 1 "$origin"; then
+            cat "$RUNNER_TEMP/storybook.log"
+            exit 1
+          fi
+          node validation/code-engine-browser/storybook.mjs "$origin"
       - name: Stage artifacts, validate consumers and simulate recovery
         env:
           CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}

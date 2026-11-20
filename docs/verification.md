@@ -26,6 +26,11 @@
   editing and history, language chunk requests and syntax, themes and layout
   across ShadowRoots, delayed configuration across remounts, and startup on a
   page without an editor.
+- The release workflow starts the production Storybook release and runs
+  `node validation/code-engine-browser/storybook.mjs ORIGIN`. Chrome verifies
+  demand-driven registration, JavaScript and Elixir syntax from the production
+  chunks, multiple ShadowRoots, and the Phoenix component's field and slot
+  markup. Use `HOLOGRAM_ENV=prod` when starting the built release locally.
 - Run `node scripts/release.mjs dry-run STAGE SHA` to verify staged bytes and
   resume the simulation immediately after the npm engine and after the
   separately released Rust engine.

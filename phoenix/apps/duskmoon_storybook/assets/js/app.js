@@ -94,8 +94,8 @@ function importRegistrar(registrar) {
   // download. Production uses the bundler's ordinary literal chunk links.
   const url = registrar.toString().match(/import\((["'])(\/@vendor\/[^"']+)\1\)/)?.[2];
   return url
-    ? () => registrar().catch(() => import(`${url}${url.includes("?") ? "&" : "?"}retry=${Date.now()}`))
-    : registrar;
+    ? registrar().catch(() => import(`${url}${url.includes("?") ? "&" : "?"}retry=${Date.now()}`))
+    : registrar();
 }
 
 function collectDuskmoonElementTags(root) {
