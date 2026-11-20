@@ -167,6 +167,7 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
           GH_TOKEN: ${{ github.token }}
+          NPM_CONFIG_LOGLEVEL: warn
         run: |
           test -n "$HEX_API_KEY"
           test -n "$CARGO_REGISTRY_TOKEN"
