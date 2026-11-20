@@ -1,0 +1,1357 @@
+---
+---
+
+<div class="editor-demo">
+  <div class="controls" role="toolbar" aria-label="Editor settings">
+    <div class="control-group">
+      <label for="lang-select">
+        Language
+        <select id="lang-select" aria-label="Select programming language"></select>
+        <span id="lang-loading" class="loading" hidden aria-live="polite" aria-label="Loading language"><span class="spinner" aria-hidden="true"></span> Loading…</span>
+      </label>
+      <label for="theme-select">
+        Theme
+        <select id="theme-select" aria-label="Select editor theme">
+          <option value="one-dark">One Dark</option>
+          <option value="duskmoon">DuskMoon</option>
+          <option value="sunshine">Sunshine</option>
+          <option value="moonlight">Moonlight</option>
+        </select>
+      </label>
+    </div>
+    <hr class="divider" aria-hidden="true" />
+    <div class="control-group">
+      <label class="checkbox">
+        <input type="checkbox" id="ext-linenumbers" checked aria-label="Toggle line numbers">
+        Line Numbers
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="ext-autocomplete" checked aria-label="Toggle autocomplete">
+        Autocomplete
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="ext-wordwrap" aria-label="Toggle word wrap">
+        Word Wrap
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="ext-readonly" aria-label="Toggle read-only mode">
+        Read-only
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="ext-highlight-line" checked aria-label="Toggle active line highlight">
+        Active Line
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="ext-brackets" checked aria-label="Toggle bracket matching">
+        Brackets
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="ext-fold" checked aria-label="Toggle fold gutter">
+        Folding
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="ext-whitespace" aria-label="Toggle whitespace visibility">
+        Whitespace
+      </label>
+    </div>
+    <hr class="divider" aria-hidden="true" />
+    <div class="control-group">
+      <label for="tab-size">
+        Tab
+        <select id="tab-size" aria-label="Select tab size">
+          <option value="2" selected>2</option>
+          <option value="4">4</option>
+          <option value="8">8</option>
+        </select>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="ext-indent-tabs" aria-label="Toggle tab indentation">
+        Use Tabs
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="ext-vim" aria-label="Toggle Vim keymap">
+        Vim
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="ext-emacs" aria-label="Toggle Emacs keymap">
+        Emacs
+      </label>
+    </div>
+    <span class="spacer"></span>
+    <div class="control-group toolbar-actions">
+      <div class="font-size-controls" role="group" aria-label="Editor font size">
+        <button id="btn-font-decrease" class="toolbar-btn" aria-label="Decrease font size">A−</button>
+        <span id="font-size-display" class="font-size-display">14</span>
+        <button id="btn-font-increase" class="toolbar-btn" aria-label="Increase font size">A+</button>
+      </div>
+      <button id="btn-fullscreen" class="toolbar-btn" aria-label="Toggle fullscreen">Fullscreen</button>
+      <button id="btn-copy" class="toolbar-btn" aria-label="Copy code to clipboard">Copy</button>
+      <button id="btn-download" class="toolbar-btn" aria-label="Download editor content">Download</button>
+      <button id="btn-share" class="toolbar-btn" aria-label="Copy share link">Share</button>
+      <button id="btn-shortcuts" class="toolbar-btn" aria-label="Show keyboard shortcuts" title="Keyboard shortcuts">?</button>
+      <button id="btn-reset" class="toolbar-btn" aria-label="Reset to defaults">Reset</button>
+    </div>
+  </div>
+  <p id="load-error" class="load-error" role="alert" hidden>
+    Failed to load <span id="failed-lang-name"></span> language pack.
+    <button id="btn-retry-lang" class="toolbar-btn" style="margin-left: 0.5rem; font-size: 0.8rem;">Retry</button>
+  </p>
+  <div id="editor" role="region" aria-label="Code editor">
+    <div class="editor-loading" aria-label="Loading editor">
+      <span>Loading editor...</span>
+    </div>
+  </div>
+  <div class="status-bar" role="status" aria-live="polite" aria-label="Editor status">
+    <span id="status-pos">Ln 1, Col 1</span>
+    <span id="status-doc"></span>
+    <span id="status-lang">JavaScript</span>
+  </div>
+  <dialog id="shortcuts-dialog" class="shortcuts-dialog" aria-label="Keyboard shortcuts">
+    <h3>Keyboard Shortcuts</h3>
+    <dl>
+      <dt><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>S</kbd></dt>
+      <dd>Copy share link</dd>
+      <dt><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>=</kbd></dt>
+      <dd>Increase font size</dd>
+      <dt><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>-</kbd></dt>
+      <dd>Decrease font size</dd>
+      <dt><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>0</kbd></dt>
+      <dd>Reset font size</dd>
+      <dt><kbd>F11</kbd></dt>
+      <dd>Toggle fullscreen</dd>
+    </dl>
+    <button id="shortcuts-close" class="toolbar-btn">Close</button>
+  </dialog>
+  <noscript>
+    <div class="noscript-msg">
+      <p>JavaScript is required for the interactive editor.</p>
+      <p>Install the package with <code>bun add @duskmoon-dev/code-engine</code> and try it in your own project.</p>
+    </div>
+  </noscript>
+</div>
+
+<script>
+  import { EditorState, Compartment } from '@duskmoon-dev/code-engine/state'
+  import { EditorView, lineNumbers as lineNumbersExt, highlightActiveLine, highlightActiveLineGutter, highlightWhitespace, keymap } from '@duskmoon-dev/code-engine/view'
+  import { minimalSetup } from '@duskmoon-dev/code-engine/setup'
+  import { autocompletion, closeBrackets, closeBracketsKeymap } from '@duskmoon-dev/code-engine/autocomplete'
+  import { bracketMatching, indentOnInput, indentUnit, foldGutter, foldKeymap } from '@duskmoon-dev/code-engine/language'
+  import { highlightSelectionMatches, searchKeymap } from '@duskmoon-dev/code-engine/search'
+  import { oneDark } from '@duskmoon-dev/code-engine/theme/one-dark'
+  import { duskMoon } from '@duskmoon-dev/code-engine/theme/duskmoon'
+  import { sunshine } from '@duskmoon-dev/code-engine/theme/sunshine'
+  import { moonlight } from '@duskmoon-dev/code-engine/theme/moonlight'
+  import { vim } from '@duskmoon-dev/code-engine/keymaps/vim'
+  import { emacs } from '@duskmoon-dev/code-engine/keymaps/emacs'
+
+  import { javascript } from '@duskmoon-dev/code-engine/lang/javascript'
+
+  import type { LanguageSupport } from '@duskmoon-dev/code-engine/language'
+
+  // Dynamic loaders — only the initial language (javascript) is eagerly imported.
+  // All others are loaded on demand to reduce the initial bundle size.
+  const languageLoaders: Record<string, () => Promise<() => LanguageSupport>> = {
+    javascript: async () => () => javascript(),
+    typescript: async () => () => javascript({ typescript: true }),
+    python: async () => { const m = await import('@duskmoon-dev/code-engine/lang/python'); return () => m.python() },
+    html: async () => { const m = await import('@duskmoon-dev/code-engine/lang/html'); return () => m.html() },
+    css: async () => { const m = await import('@duskmoon-dev/code-engine/lang/css'); return () => m.css() },
+    json: async () => { const m = await import('@duskmoon-dev/code-engine/lang/json'); return () => m.json() },
+    markdown: async () => { const m = await import('@duskmoon-dev/code-engine/lang/markdown'); return () => m.markdown() },
+    xml: async () => { const m = await import('@duskmoon-dev/code-engine/lang/xml'); return () => m.xml() },
+    sql: async () => { const m = await import('@duskmoon-dev/code-engine/lang/sql'); return () => m.sql() },
+    rust: async () => { const m = await import('@duskmoon-dev/code-engine/lang/rust'); return () => m.rust() },
+    go: async () => { const m = await import('@duskmoon-dev/code-engine/lang/go'); return () => m.go() },
+    java: async () => { const m = await import('@duskmoon-dev/code-engine/lang/java'); return () => m.java() },
+    cpp: async () => { const m = await import('@duskmoon-dev/code-engine/lang/cpp'); return () => m.cpp() },
+    php: async () => { const m = await import('@duskmoon-dev/code-engine/lang/php'); return () => m.php() },
+    sass: async () => { const m = await import('@duskmoon-dev/code-engine/lang/sass'); return () => m.sass() },
+    less: async () => { const m = await import('@duskmoon-dev/code-engine/lang/less'); return () => m.less() },
+    yaml: async () => { const m = await import('@duskmoon-dev/code-engine/lang/yaml'); return () => m.yaml() },
+    angular: async () => { const m = await import('@duskmoon-dev/code-engine/lang/angular'); return () => m.angular() },
+    vue: async () => { const m = await import('@duskmoon-dev/code-engine/lang/vue'); return () => m.vue() },
+    liquid: async () => { const m = await import('@duskmoon-dev/code-engine/lang/liquid'); return () => m.liquid() },
+    wast: async () => { const m = await import('@duskmoon-dev/code-engine/lang/wast'); return () => m.wast() },
+    jinja: async () => { const m = await import('@duskmoon-dev/code-engine/lang/jinja'); return () => m.jinja() },
+    lezer: async () => { const m = await import('@duskmoon-dev/code-engine/lang/lezer'); return () => m.lezer() },
+    elixir: async () => { const m = await import('@duskmoon-dev/code-engine/lang/elixir'); return () => m.elixir() },
+    erlang: async () => { const m = await import('@duskmoon-dev/code-engine/lang/erlang'); return () => m.erlang() },
+    heex: async () => { const m = await import('@duskmoon-dev/code-engine/lang/heex'); return () => m.heex() },
+    zig: async () => { const m = await import('@duskmoon-dev/code-engine/lang/zig'); return () => m.zig() },
+    caddyfile: async () => { const m = await import('@duskmoon-dev/code-engine/lang/caddyfile'); return () => m.caddyfile() },
+    dart: async () => { const m = await import('@duskmoon-dev/code-engine/lang/dart'); return () => m.dart() },
+  }
+
+  // Cache resolved factories so each language is loaded only once
+  const resolvedFactories = new Map<string, () => LanguageSupport>()
+
+  const sampleCode: Record<string, string> = {
+    javascript: `function fibonacci(n) {
+  if (n <= 1) return n
+  return fibonacci(n - 1) + fibonacci(n - 2)
+}
+
+console.log(fibonacci(10))`,
+    typescript: `function greet(name: string): string {
+  return \`Hello, \${name}!\`
+}
+
+interface User {
+  name: string
+  age: number
+}
+
+const user: User = { name: "World", age: 42 }
+console.log(greet(user.name))`,
+    python: `def fibonacci(n: int) -> int:
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+for i in range(10):
+    print(fibonacci(i), end=" ")`,
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hello</title>
+</head>
+<body>
+  <h1>Hello, world!</h1>
+</body>
+</html>`,
+    css: `body {
+  font-family: system-ui, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.container {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 1rem;
+}`,
+    json: `{
+  "name": "@duskmoon-dev/code-engine",
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {}
+}`,
+    markdown: `# Hello World
+
+This is a **markdown** document with _emphasis_.
+
+- Item one
+- Item two
+- Item three
+
+\`\`\`js
+console.log("code block")
+\`\`\``,
+    xml: `<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+  <book id="1">
+    <title>Code Engine</title>
+    <author>DuskMoon</author>
+    <year>2025</year>
+  </book>
+</catalog>`,
+    sql: `SELECT users.name, COUNT(orders.id) AS order_count
+FROM users
+LEFT JOIN orders ON users.id = orders.user_id
+WHERE users.created_at > '2024-01-01'
+GROUP BY users.name
+HAVING order_count > 5
+ORDER BY order_count DESC;`,
+    rust: `fn fibonacci(n: u64) -> u64 {
+    match n {
+        0 | 1 => n,
+        _ => fibonacci(n - 1) + fibonacci(n - 2),
+    }
+}
+
+fn main() {
+    for i in 0..10 {
+        println!("{}", fibonacci(i));
+    }
+}`,
+    go: `package main
+
+func fibonacci(n int) int {
+	if n <= 1 {
+		return n
+	}
+	return fibonacci(n-1) + fibonacci(n-2)
+}
+
+func main() {
+	for i := range 10 {
+		println(fibonacci(i))
+	}
+}`,
+    java: `public class Fibonacci {
+    static int fibonacci(int n) {
+        if (n <= 1) return n;
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 10; i++) {
+            System.out.print(fibonacci(i) + " ");
+        }
+    }
+}`,
+    cpp: `#include <iostream>
+
+int fibonacci(int n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main() {
+    for (int i = 0; i < 10; i++) {
+        std::cout << fibonacci(i) << " ";
+    }
+    return 0;
+}`,
+    php: `<?php
+function fibonacci(int $n): int {
+    if ($n <= 1) return $n;
+    return fibonacci($n - 1) + fibonacci($n - 2);
+}
+
+for ($i = 0; $i < 10; $i++) {
+    echo fibonacci($i) . " ";
+}`,
+    sass: `.container {
+  max-width: 48rem;
+  margin: 0 auto;
+
+  .header {
+    font-size: 2rem;
+    color: #333;
+
+    &:hover {
+      color: #58a6ff;
+    }
+  }
+}`,
+    less: `.container {
+  max-width: 48rem;
+  margin: 0 auto;
+
+  .header {
+    font-size: 2rem;
+    color: #333;
+
+    &:hover {
+      color: #58a6ff;
+    }
+  }
+}`,
+    yaml: `name: CI
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test`,
+    angular: `<div *ngIf="user">
+  <h1>{{ user.name }}</h1>
+  <p [class.active]="isActive">
+    Welcome back!
+  </p>
+  <button (click)="logout()">Log out</button>
+</div>`,
+    vue: `<template>
+  <div class="app">
+    <h1>{{ message }}</h1>
+    <button @click="count++">
+      Count: {{ count }}
+    </button>
+  </div>
+</template>`,
+    liquid: `{% for product in collections.all.products %}
+  <div class="product">
+    <h2>{{ product.title }}</h2>
+    <p>{{ product.price | money }}</p>
+  </div>
+{% endfor %}`,
+    wast: `(module
+  (func $fibonacci (param $n i32) (result i32)
+    (if (i32.le_s (local.get $n) (i32.const 1))
+      (then (return (local.get $n)))
+    )
+    (i32.add
+      (call $fibonacci (i32.sub (local.get $n) (i32.const 1)))
+      (call $fibonacci (i32.sub (local.get $n) (i32.const 2)))
+    )
+  )
+  (export "fibonacci" (func $fibonacci))
+)`,
+    jinja: `{% extends "base.html" %}
+{% block content %}
+  <h1>{{ title }}</h1>
+  {% for item in items %}
+    <div class="item">
+      <span>{{ item.name | capitalize }}</span>
+      <span>{{ item.price | round(2) }}</span>
+    </div>
+  {% endfor %}
+{% endblock %}`,
+    lezer: `@top Program { expression* }
+
+expression {
+  Number |
+  Variable |
+  BinaryExpression
+}
+
+BinaryExpression { expression !add "+" expression }
+
+@tokens {
+  Number { @digit+ }
+  Variable { @asciiLetter+ }
+}`,
+    elixir: `defmodule Fibonacci do
+  def calc(0), do: 0
+  def calc(1), do: 1
+  def calc(n) when n > 1 do
+    calc(n - 1) + calc(n - 2)
+  end
+end
+
+IO.inspect(Fibonacci.calc(10))`,
+    erlang: `-module(fibonacci).
+-export([calc/1]).
+
+calc(0) -> 0;
+calc(1) -> 1;
+calc(N) when N > 1 ->
+    calc(N - 1) + calc(N - 2).`,
+    heex: `<.form for={@changeset} phx-submit="save">
+  <.input field={@changeset[:name]} label="Name" />
+  <.input field={@changeset[:email]} type="email" label="Email" />
+  <:actions>
+    <.button type="submit">Save</.button>
+  </:actions>
+</.form>`,
+    zig: `const std = @import("std");
+
+fn fibonacci(n: u64) u64 {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+pub fn main() void {
+    var i: u64 = 0;
+    while (i < 10) : (i += 1) {
+        std.debug.print("{d}\\n", .{fibonacci(i)});
+    }
+}`,
+    caddyfile: `# Global options
+{
+  email admin@example.com
+}
+
+example.com {
+  root * /var/www/html
+  file_server
+
+  @api path /api/*
+  reverse_proxy @api localhost:8080
+
+  log {
+    output file /var/log/caddy/access.log
+  }
+}`,
+    dart: `void main() {
+  for (int i = 0; i < 10; i++) {
+    print(fibonacci(i));
+  }
+}
+
+int fibonacci(int n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}`,
+  }
+
+  const themes: Record<string, any> = {
+    'one-dark': oneDark,
+    'duskmoon': duskMoon(),
+    'sunshine': sunshine,
+    'moonlight': moonlight,
+  }
+
+  const languageCompartment = new Compartment()
+  const themeCompartment = new Compartment()
+  const extensionCompartment = new Compartment()
+  const fontSizeCompartment = new Compartment()
+  const tabSizeCompartment = new Compartment()
+  const indentUnitCompartment = new Compartment()
+
+  const langSelect = document.getElementById('lang-select') as HTMLSelectElement
+  const themeSelect = document.getElementById('theme-select') as HTMLSelectElement
+  const lineNumbersCheckbox = document.getElementById('ext-linenumbers') as HTMLInputElement
+  const autocompleteCheckbox = document.getElementById('ext-autocomplete') as HTMLInputElement
+  const wordWrapCheckbox = document.getElementById('ext-wordwrap') as HTMLInputElement
+  const readOnlyCheckbox = document.getElementById('ext-readonly') as HTMLInputElement
+  const highlightLineCheckbox = document.getElementById('ext-highlight-line') as HTMLInputElement
+  const bracketsCheckbox = document.getElementById('ext-brackets') as HTMLInputElement
+  const foldCheckbox = document.getElementById('ext-fold') as HTMLInputElement
+  const whitespaceCheckbox = document.getElementById('ext-whitespace') as HTMLInputElement
+  const tabSizeSelect = document.getElementById('tab-size') as HTMLSelectElement
+  const indentTabsCheckbox = document.getElementById('ext-indent-tabs') as HTMLInputElement
+  const vimCheckbox = document.getElementById('ext-vim') as HTMLInputElement
+  const emacsCheckbox = document.getElementById('ext-emacs') as HTMLInputElement
+  const fontDecreaseBtn = document.getElementById('btn-font-decrease')!
+  const fontIncreaseBtn = document.getElementById('btn-font-increase')!
+  const fontSizeDisplay = document.getElementById('font-size-display')!
+  let currentFontSize = 14
+  const MIN_FONT_SIZE = 10
+  const MAX_FONT_SIZE = 28
+
+  const languageLabels: Record<string, string> = {
+    javascript: 'JavaScript',
+    typescript: 'TypeScript',
+    python: 'Python',
+    html: 'HTML',
+    css: 'CSS',
+    json: 'JSON',
+    markdown: 'Markdown',
+    xml: 'XML',
+    sql: 'SQL',
+    rust: 'Rust',
+    go: 'Go',
+    java: 'Java',
+    cpp: 'C++',
+    php: 'PHP',
+    sass: 'Sass',
+    less: 'Less',
+    yaml: 'YAML',
+    angular: 'Angular',
+    vue: 'Vue',
+    liquid: 'Liquid',
+    wast: 'WebAssembly Text',
+    jinja: 'Jinja2',
+    lezer: 'Lezer',
+    elixir: 'Elixir',
+    erlang: 'Erlang',
+    heex: 'HEEx',
+    zig: 'Zig',
+    caddyfile: 'Caddyfile',
+    dart: 'Dart',
+  }
+
+  // Populate language dropdown
+  for (const key of Object.keys(languageLoaders)) {
+    const opt = document.createElement('option')
+    opt.value = key
+    opt.textContent = languageLabels[key] ?? key
+    langSelect.appendChild(opt)
+  }
+
+  // Status bar elements
+  const statusPos = document.getElementById('status-pos')!
+  const statusDoc = document.getElementById('status-doc')!
+  const statusLang = document.getElementById('status-lang')!
+
+  function updateDocStats(doc: typeof EditorState.prototype.doc) {
+    const lines = doc.lines
+    const chars = doc.length
+    statusDoc.textContent = `${lines} line${lines !== 1 ? 's' : ''}, ${chars} char${chars !== 1 ? 's' : ''}`
+  }
+
+  const statusBarUpdater = EditorView.updateListener.of((update) => {
+    if (update.selectionSet || update.docChanged) {
+      const sel = update.state.selection.main
+      const pos = sel.head
+      const line = update.state.doc.lineAt(pos)
+      const col = pos - line.from + 1
+      if (sel.empty) {
+        statusPos.textContent = `Ln ${line.number}, Col ${col}`
+      } else {
+        const len = Math.abs(sel.to - sel.from)
+        statusPos.textContent = `Ln ${line.number}, Col ${col} (${len} selected)`
+      }
+    }
+    if (update.docChanged) {
+      updateDocStats(update.state.doc)
+      autoSave()
+    }
+  })
+
+  function getActiveExtensions() {
+    const exts: any[] = []
+    if (lineNumbersCheckbox.checked) exts.push(lineNumbersExt())
+    if (autocompleteCheckbox.checked) exts.push(autocompletion())
+    if (wordWrapCheckbox.checked) exts.push(EditorView.lineWrapping)
+    if (readOnlyCheckbox.checked) exts.push(EditorState.readOnly.of(true))
+    if (highlightLineCheckbox.checked) exts.push(highlightActiveLine(), highlightActiveLineGutter())
+    if (bracketsCheckbox.checked) exts.push(bracketMatching())
+    if (foldCheckbox.checked) exts.push(foldGutter(), keymap.of(foldKeymap))
+    if (whitespaceCheckbox.checked) exts.push(highlightWhitespace())
+    if (vimCheckbox.checked) exts.push(vim())
+    if (emacsCheckbox.checked) exts.push(emacs())
+    return exts
+  }
+
+  const view = new EditorView({
+    state: EditorState.create({
+      doc: sampleCode['javascript'],
+      extensions: [
+        minimalSetup,
+        closeBrackets(),
+        indentOnInput(),
+        highlightSelectionMatches(),
+        keymap.of([...closeBracketsKeymap, ...searchKeymap]),
+        languageCompartment.of(javascript()),
+        themeCompartment.of(oneDark),
+        extensionCompartment.of(getActiveExtensions()),
+        fontSizeCompartment.of(EditorView.theme({ '&': { fontSize: currentFontSize + 'px' } })),
+        tabSizeCompartment.of(EditorState.tabSize.of(2)),
+        indentUnitCompartment.of(indentUnit.of('  ')),
+        statusBarUpdater,
+      ],
+    }),
+    parent: document.getElementById('editor')!,
+  })
+
+  // Remove loading placeholder now that editor is ready
+  document.querySelector('.editor-loading')?.remove()
+
+  // Initialize doc stats
+  updateDocStats(view.state.doc)
+
+  async function loadLanguage(key: string): Promise<() => LanguageSupport> {
+    const cached = resolvedFactories.get(key)
+    if (cached) return cached
+    const loader = languageLoaders[key]
+    if (!loader) throw new Error(`Unknown language: ${key}`)
+    const factory = await loader()
+    resolvedFactories.set(key, factory)
+    return factory
+  }
+
+  const loadError = document.getElementById('load-error') as HTMLElement
+  const failedLangName = document.getElementById('failed-lang-name') as HTMLElement
+  const retryLangBtn = document.getElementById('btn-retry-lang') as HTMLButtonElement
+  const langLoading = document.getElementById('lang-loading') as HTMLElement
+  let lastFailedLang = ''
+
+  async function switchLanguage(key: string) {
+    langSelect.disabled = true
+    langLoading.hidden = false
+    loadError.hidden = true
+    try {
+      const factory = await loadLanguage(key)
+      view.dispatch({
+        changes: { from: 0, to: view.state.doc.length, insert: sampleCode[key] ?? '' },
+        effects: languageCompartment.reconfigure(factory()),
+      })
+      statusLang.textContent = languageLabels[key] ?? key
+      // Update hash after doc has been replaced with the new sample code
+      updateHash()
+    } catch {
+      lastFailedLang = key
+      failedLangName.textContent = languageLabels[key] ?? key
+      loadError.hidden = false
+      // Revert select to previous value
+      langSelect.value = [...langSelect.options].find(o =>
+        o.value !== key && resolvedFactories.has(o.value)
+      )?.value ?? 'javascript'
+    } finally {
+      langSelect.disabled = false
+      langLoading.hidden = true
+    }
+  }
+
+  retryLangBtn.addEventListener('click', () => {
+    if (lastFailedLang) {
+      langSelect.value = lastFailedLang
+      switchLanguage(lastFailedLang)
+    }
+  })
+
+  function reconfigureExtensions() {
+    view.dispatch({ effects: extensionCompartment.reconfigure(getActiveExtensions()) })
+  }
+
+  langSelect.addEventListener('change', () => { switchLanguage(langSelect.value) })
+
+  themeSelect.addEventListener('change', () => {
+    const t = themes[themeSelect.value]
+    if (t) view.dispatch({ effects: themeCompartment.reconfigure(t) })
+    autoSave()
+  })
+
+  function reconfigureAndSave() { reconfigureExtensions(); autoSave() }
+  lineNumbersCheckbox.addEventListener('change', reconfigureAndSave)
+  autocompleteCheckbox.addEventListener('change', reconfigureAndSave)
+  wordWrapCheckbox.addEventListener('change', reconfigureAndSave)
+  readOnlyCheckbox.addEventListener('change', reconfigureAndSave)
+  highlightLineCheckbox.addEventListener('change', reconfigureAndSave)
+  bracketsCheckbox.addEventListener('change', reconfigureAndSave)
+  foldCheckbox.addEventListener('change', reconfigureAndSave)
+  whitespaceCheckbox.addEventListener('change', reconfigureAndSave)
+
+  vimCheckbox.addEventListener('change', () => {
+    if (vimCheckbox.checked) emacsCheckbox.checked = false
+    reconfigureAndSave()
+  })
+
+  emacsCheckbox.addEventListener('change', () => {
+    if (emacsCheckbox.checked) vimCheckbox.checked = false
+    reconfigureAndSave()
+  })
+
+  function updateFontSize(size: number) {
+    currentFontSize = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, size))
+    fontSizeDisplay.textContent = String(currentFontSize)
+    view.dispatch({ effects: fontSizeCompartment.reconfigure(EditorView.theme({ '&': { fontSize: currentFontSize + 'px' } })) })
+  }
+
+  fontDecreaseBtn.addEventListener('click', () => { updateFontSize(currentFontSize - 2); autoSave() })
+  fontIncreaseBtn.addEventListener('click', () => { updateFontSize(currentFontSize + 2); autoSave() })
+
+  function getIndentString() {
+    const size = Number(tabSizeSelect.value)
+    return indentTabsCheckbox.checked ? '\t' : ' '.repeat(size)
+  }
+
+  function reconfigureIndent() {
+    view.dispatch({
+      effects: [
+        tabSizeCompartment.reconfigure(EditorState.tabSize.of(Number(tabSizeSelect.value))),
+        indentUnitCompartment.reconfigure(indentUnit.of(getIndentString())),
+      ],
+    })
+  }
+
+  tabSizeSelect.addEventListener('change', () => { reconfigureIndent(); autoSave() })
+  indentTabsCheckbox.addEventListener('change', () => { reconfigureIndent(); autoSave() })
+
+  // URL hash state: persist settings in the URL for shareability
+  function serializeState(): string {
+    const params = new URLSearchParams()
+    params.set('lang', langSelect.value)
+    params.set('theme', themeSelect.value)
+    if (!lineNumbersCheckbox.checked) params.set('ln', '0')
+    if (!autocompleteCheckbox.checked) params.set('ac', '0')
+    if (wordWrapCheckbox.checked) params.set('wrap', '1')
+    if (readOnlyCheckbox.checked) params.set('ro', '1')
+    if (!highlightLineCheckbox.checked) params.set('hl', '0')
+    if (!bracketsCheckbox.checked) params.set('bm', '0')
+    if (!foldCheckbox.checked) params.set('fold', '0')
+    if (whitespaceCheckbox.checked) params.set('ws', '1')
+    if (vimCheckbox.checked) params.set('vim', '1')
+    if (emacsCheckbox.checked) params.set('emacs', '1')
+    if (currentFontSize !== 14) params.set('fs', String(currentFontSize))
+    if (tabSizeSelect.value !== '2') params.set('tab', tabSizeSelect.value)
+    if (indentTabsCheckbox.checked) params.set('tabs', '1')
+    // Encode editor content in share URL (base64url-encoded UTF-8)
+    const doc = view.state.doc.toString()
+    const defaultDoc = sampleCode[langSelect.value] ?? ''
+    if (doc !== defaultDoc) {
+      const bytes = new TextEncoder().encode(doc)
+      // Chunked btoa to avoid RangeError on large documents
+      // (String.fromCharCode(...bytes) blows the call stack for >64KB)
+      let binary = ''
+      for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
+      const b64 = btoa(binary)
+      params.set('code', b64)
+    }
+    return params.toString()
+  }
+
+  function restoreState() {
+    const params = new URLSearchParams(location.hash.slice(1))
+    const lang = params.get('lang')
+    const theme = params.get('theme')
+    if (lang && languageLoaders[lang]) {
+      langSelect.value = lang
+      switchLanguage(lang)
+    }
+    if (theme && themes[theme]) {
+      themeSelect.value = theme
+      view.dispatch({ effects: themeCompartment.reconfigure(themes[theme]) })
+    }
+    if (params.get('ln') === '0') lineNumbersCheckbox.checked = false
+    if (params.get('ac') === '0') autocompleteCheckbox.checked = false
+    if (params.get('wrap') === '1') wordWrapCheckbox.checked = true
+    if (params.get('ro') === '1') readOnlyCheckbox.checked = true
+    if (params.get('hl') === '0') highlightLineCheckbox.checked = false
+    if (params.get('bm') === '0') bracketsCheckbox.checked = false
+    if (params.get('fold') === '0') foldCheckbox.checked = false
+    if (params.get('ws') === '1') whitespaceCheckbox.checked = true
+    if (params.get('vim') === '1') { vimCheckbox.checked = true; emacsCheckbox.checked = false }
+    if (params.get('emacs') === '1') { emacsCheckbox.checked = true; vimCheckbox.checked = false }
+    const fs = params.get('fs')
+    if (fs) updateFontSize(Number(fs))
+    const tab = params.get('tab')
+    if (tab && ['2', '4', '8'].includes(tab)) {
+      tabSizeSelect.value = tab
+    }
+    if (params.get('tabs') === '1') indentTabsCheckbox.checked = true
+    reconfigureIndent()
+    reconfigureExtensions()
+    // Restore code content from URL (after language switch settles)
+    const code = params.get('code')
+    if (code) {
+      try {
+        const bytes = Uint8Array.from(atob(code), c => c.charCodeAt(0))
+        const decoded = new TextDecoder().decode(bytes)
+        setTimeout(() => {
+          view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: decoded } })
+        }, 100)
+      } catch { /* ignore invalid base64 */ }
+    }
+  }
+
+  function updateHash() {
+    history.replaceState(null, '', '#' + serializeState())
+  }
+
+  // Update hash on any control change (language changes call updateHash after load completes)
+  themeSelect.addEventListener('change', updateHash)
+  lineNumbersCheckbox.addEventListener('change', updateHash)
+  autocompleteCheckbox.addEventListener('change', updateHash)
+  wordWrapCheckbox.addEventListener('change', updateHash)
+  readOnlyCheckbox.addEventListener('change', updateHash)
+  highlightLineCheckbox.addEventListener('change', updateHash)
+  bracketsCheckbox.addEventListener('change', updateHash)
+  foldCheckbox.addEventListener('change', updateHash)
+  whitespaceCheckbox.addEventListener('change', updateHash)
+  vimCheckbox.addEventListener('change', updateHash)
+  emacsCheckbox.addEventListener('change', updateHash)
+  fontDecreaseBtn.addEventListener('click', updateHash)
+  fontIncreaseBtn.addEventListener('click', updateHash)
+  tabSizeSelect.addEventListener('change', updateHash)
+  indentTabsCheckbox.addEventListener('change', updateHash)
+
+  // Share button — copy current URL with hash state
+  const shareBtn = document.getElementById('btn-share')!
+  const MAX_SHARE_URL_LENGTH = 8000 // browsers typically support up to ~8KB URLs
+  async function shareLink() {
+    updateHash()
+    const url = location.href
+    if (url.length > MAX_SHARE_URL_LENGTH) {
+      const sizeKB = Math.ceil(url.length / 1024)
+      shareBtn.textContent = `Too large (${sizeKB}KB)`
+      shareBtn.title = `URL is ${sizeKB}KB (limit 8KB). Use the Copy button to copy the code instead.`
+      setTimeout(() => { shareBtn.textContent = 'Share'; shareBtn.title = '' }, 3000)
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(url)
+      shareBtn.textContent = 'Copied!'
+    } catch {
+      shareBtn.textContent = 'Failed'
+    }
+    setTimeout(() => { shareBtn.textContent = 'Share' }, 1500)
+  }
+  shareBtn.addEventListener('click', shareLink)
+
+  // Global keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    const mod = e.metaKey || e.ctrlKey
+    if (mod && e.key === 's') {
+      e.preventDefault()
+      shareLink()
+    } else if (mod && (e.key === '=' || e.key === '+')) {
+      e.preventDefault()
+      updateFontSize(currentFontSize + 2)
+      updateHash()
+    } else if (mod && e.key === '-') {
+      e.preventDefault()
+      updateFontSize(currentFontSize - 2)
+      updateHash()
+    } else if (mod && e.key === '0') {
+      e.preventDefault()
+      updateFontSize(14)
+      updateHash()
+    } else if (e.key === 'F11') {
+      e.preventDefault()
+      if (document.fullscreenElement) document.exitFullscreen()
+      else editorDemo.requestFullscreen()
+    }
+  })
+
+  // Download button — save editor content as a file
+  const fileExtensions: Record<string, string> = {
+    javascript: 'js', typescript: 'ts', python: 'py', html: 'html', css: 'css',
+    json: 'json', markdown: 'md', xml: 'xml', sql: 'sql', rust: 'rs',
+    go: 'go', java: 'java', cpp: 'cpp', php: 'php', sass: 'scss', less: 'less',
+    yaml: 'yaml', angular: 'html', vue: 'vue', liquid: 'liquid', wast: 'wat',
+    jinja: 'html', lezer: 'grammar',
+    elixir: 'ex', erlang: 'erl', heex: 'heex', zig: 'zig', caddyfile: 'Caddyfile', dart: 'dart',
+  }
+  // Copy code button
+  const copyBtn = document.getElementById('btn-copy')!
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(view.state.doc.toString())
+      copyBtn.textContent = 'Copied!'
+    } catch {
+      copyBtn.textContent = 'Failed'
+    }
+    setTimeout(() => { copyBtn.textContent = 'Copy' }, 1500)
+  })
+
+  const downloadBtn = document.getElementById('btn-download')!
+  downloadBtn.addEventListener('click', () => {
+    const ext = fileExtensions[langSelect.value] ?? 'txt'
+    const blob = new Blob([view.state.doc.toString()], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `playground.${ext}`
+    a.click()
+    URL.revokeObjectURL(url)
+  })
+
+  // Shortcuts dialog
+  const shortcutsBtn = document.getElementById('btn-shortcuts')!
+  const shortcutsDialog = document.getElementById('shortcuts-dialog') as HTMLDialogElement
+  const shortcutsClose = document.getElementById('shortcuts-close')!
+  shortcutsBtn.addEventListener('click', () => shortcutsDialog.showModal())
+  shortcutsClose.addEventListener('click', () => shortcutsDialog.close())
+  // Close dialog when clicking the backdrop (outside the dialog box)
+  shortcutsDialog.addEventListener('click', (e) => {
+    if (e.target === shortcutsDialog) shortcutsDialog.close()
+  })
+
+  // Fullscreen toggle
+  const fullscreenBtn = document.getElementById('btn-fullscreen')!
+  const editorDemo = document.querySelector('.editor-demo') as HTMLElement
+  fullscreenBtn.addEventListener('click', () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen()
+    } else {
+      editorDemo.requestFullscreen()
+    }
+  })
+  document.addEventListener('fullscreenchange', () => {
+    fullscreenBtn.textContent = document.fullscreenElement ? 'Exit' : 'Fullscreen'
+  })
+
+  // Reset button — restore all defaults
+  const resetBtn = document.getElementById('btn-reset')!
+  resetBtn.addEventListener('click', () => {
+    langSelect.value = 'javascript'
+    themeSelect.value = 'one-dark'
+    lineNumbersCheckbox.checked = true
+    autocompleteCheckbox.checked = true
+    wordWrapCheckbox.checked = false
+    readOnlyCheckbox.checked = false
+    highlightLineCheckbox.checked = true
+    bracketsCheckbox.checked = true
+    foldCheckbox.checked = true
+    whitespaceCheckbox.checked = false
+    vimCheckbox.checked = false
+    emacsCheckbox.checked = false
+    tabSizeSelect.value = '2'
+    indentTabsCheckbox.checked = false
+    updateFontSize(14)
+    reconfigureIndent()
+    switchLanguage('javascript')
+    view.dispatch({ effects: themeCompartment.reconfigure(themes['one-dark']) })
+    reconfigureExtensions()
+    history.replaceState(null, '', location.pathname)
+    try { localStorage.removeItem(STORAGE_KEY) } catch (e) { console.warn('localStorage unavailable:', e) }
+  })
+
+  // Restore state from URL hash on load
+  if (location.hash.length > 1) restoreState()
+
+  // Auto-save editor content to localStorage (debounced)
+  const STORAGE_KEY = 'code-engine-playground'
+  let saveTimeout: ReturnType<typeof setTimeout>
+
+  function autoSave() {
+    clearTimeout(saveTimeout)
+    saveTimeout = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          lang: langSelect.value,
+          doc: view.state.doc.toString(),
+          theme: themeSelect.value,
+          fontSize: currentFontSize,
+          tabSize: tabSizeSelect.value,
+          useTabs: indentTabsCheckbox.checked,
+          lineNumbers: lineNumbersCheckbox.checked,
+          autocomplete: autocompleteCheckbox.checked,
+          wordWrap: wordWrapCheckbox.checked,
+          readOnly: readOnlyCheckbox.checked,
+          highlightLine: highlightLineCheckbox.checked,
+          brackets: bracketsCheckbox.checked,
+          fold: foldCheckbox.checked,
+          whitespace: whitespaceCheckbox.checked,
+          vim: vimCheckbox.checked,
+          emacs: emacsCheckbox.checked,
+        }))
+      } catch (e) { console.warn('Failed to save editor state:', e) }
+    }, 1000)
+  }
+
+  // Restore from localStorage only if no URL hash present
+  if (location.hash.length <= 1) {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        const state = JSON.parse(saved)
+        const { lang, doc, theme, fontSize, tabSize, useTabs,
+                lineNumbers, autocomplete, wordWrap, readOnly, highlightLine,
+                brackets, fold, whitespace, vim, emacs } = state
+        // Restore settings controls
+        if (theme && themes[theme]) {
+          themeSelect.value = theme
+          view.dispatch({ effects: themeCompartment.reconfigure(themes[theme]) })
+        }
+        if (typeof fontSize === 'number') updateFontSize(fontSize)
+        if (tabSize && ['2', '4', '8'].includes(String(tabSize))) tabSizeSelect.value = String(tabSize)
+        if (typeof useTabs === 'boolean') indentTabsCheckbox.checked = useTabs
+        if (typeof lineNumbers === 'boolean') lineNumbersCheckbox.checked = lineNumbers
+        if (typeof autocomplete === 'boolean') autocompleteCheckbox.checked = autocomplete
+        if (typeof wordWrap === 'boolean') wordWrapCheckbox.checked = wordWrap
+        if (typeof readOnly === 'boolean') readOnlyCheckbox.checked = readOnly
+        if (typeof highlightLine === 'boolean') highlightLineCheckbox.checked = highlightLine
+        if (typeof brackets === 'boolean') bracketsCheckbox.checked = brackets
+        if (typeof fold === 'boolean') foldCheckbox.checked = fold
+        if (typeof whitespace === 'boolean') whitespaceCheckbox.checked = whitespace
+        if (vim === true) { vimCheckbox.checked = true; emacsCheckbox.checked = false }
+        else if (emacs === true) { emacsCheckbox.checked = true; vimCheckbox.checked = false }
+        reconfigureIndent()
+        reconfigureExtensions()
+        // Restore language + doc
+        if (lang && languageLoaders[lang] && doc) {
+          langSelect.value = lang
+          switchLanguage(lang).then(() => {
+            view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: doc } })
+          })
+        }
+      }
+    } catch (e) { console.warn('Failed to restore editor state:', e) }
+  }
+
+  // Prefetch popular languages on idle to improve switching speed
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      const popular = ['python', 'typescript', 'html', 'css', 'json', 'rust', 'go']
+      // Prioritize the initially selected language from URL hash
+      const initialLang = new URLSearchParams(location.hash.slice(1)).get('lang')
+      const prefetchOrder = initialLang && !popular.includes(initialLang)
+        ? [initialLang, ...popular]
+        : popular
+      for (const lang of prefetchOrder) {
+        if (lang in languageLoaders) loadLanguage(lang)
+      }
+    })
+  }
+</script>
+
+<style>
+  .editor-demo {
+    height: calc(100dvh - 10rem);
+    min-height: 400px;
+  }
+
+  /* Desktop: sidebar + editor side by side */
+  @media (min-width: 768px) {
+    .editor-demo {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      grid-template-rows: 1fr auto;
+      gap: 0;
+    }
+    .controls {
+      grid-row: 1;
+      flex-direction: column;
+      align-items: stretch;
+      border-radius: var(--radius) 0 0 var(--radius);
+      border-right: none;
+      overflow-y: auto;
+    }
+    #editor {
+      border-radius: 0;
+      border-left: none;
+    }
+    .load-error {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Mobile: stacked toolbar + editor */
+  @media (max-width: 767px) {
+    .editor-demo {
+      display: flex;
+      flex-direction: column;
+    }
+    .controls {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    #editor {
+      flex: 1;
+      border-top: none;
+      border-radius: 0;
+    }
+  }
+
+  .controls {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .control-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+  }
+
+  .divider {
+    border: none;
+    background: var(--color-border);
+  }
+
+  @media (min-width: 768px) {
+    .control-group {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .toolbar-actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .divider {
+      height: 1px;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .divider {
+      width: 1px;
+      align-self: stretch;
+    }
+  }
+
+  .controls label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  .controls select {
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+    font-family: var(--font-sans);
+  }
+
+  .controls select:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+  .controls select:disabled {
+    opacity: 0.5;
+    cursor: wait;
+  }
+
+  .loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-left: 0.25rem;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    border: 2px solid var(--color-text-muted);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .controls input[type="checkbox"] {
+    accent-color: var(--color-accent);
+  }
+  .controls input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .spacer {
+    flex: 1;
+  }
+
+  .font-size-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .font-size-display {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    min-width: 1.5em;
+    text-align: center;
+  }
+
+  .toolbar-btn {
+    padding: 0.25rem 0.6rem;
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .toolbar-btn:hover,
+  .toolbar-btn:focus-visible {
+    color: var(--color-text);
+    border-color: var(--color-accent);
+  }
+  .toolbar-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+
+  .load-error {
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(248, 81, 73, 0.1);
+    border: 1px solid rgba(248, 81, 73, 0.4);
+    border-radius: var(--radius);
+    color: #f85149;
+    font-size: 0.85rem;
+    margin: var(--space-sm) 0;
+  }
+
+  #editor {
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+
+  #editor :global(.cm-editor) {
+    height: 100%;
+  }
+
+  .editor-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    font-family: var(--font-sans);
+  }
+
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.2rem var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    overflow: hidden;
+    white-space: nowrap;
+    gap: var(--space-sm);
+  }
+  .status-bar span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (min-width: 768px) {
+    .status-bar {
+      grid-column: 1 / -1;
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+  }
+
+  .shortcuts-dialog {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-md) var(--space-lg);
+    max-width: 24rem;
+  }
+  .shortcuts-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  .shortcuts-dialog h3 {
+    margin-bottom: var(--space-sm);
+    color: var(--color-accent);
+  }
+  .shortcuts-dialog dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.35rem 1rem;
+    margin-bottom: var(--space-md);
+  }
+  .shortcuts-dialog dt {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .shortcuts-dialog dd {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+  .shortcuts-dialog kbd {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    padding: 0.1rem 0.3rem;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+  }
+
+  .editor-demo:fullscreen {
+    background: var(--color-bg);
+    height: 100vh;
+  }
+
+  .noscript-msg {
+    padding: var(--space-lg);
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+  .noscript-msg code {
+    background: var(--color-surface);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+  }
+</style>
