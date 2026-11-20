@@ -1,0 +1,380 @@
+---
+import pkgJson from '../../../../packages/engines/code-engine/package.json'
+
+const pkgName = pkgJson.name
+const exportKeys = Object.keys(pkgJson.exports).map(k => k === '.' ? '.' : k.slice(2)) // strip './'
+const base = import.meta.env.BASE_URL
+
+// Language keys that map to playground language names
+// typescript is a special case (uses javascript({ typescript: true }) in the playground)
+const playgroundLangKeys: Record<string, string> = {
+  'lang/javascript': 'javascript',
+  'lang/python': 'python',
+  'lang/html': 'html',
+  'lang/css': 'css',
+  'lang/json': 'json',
+  'lang/markdown': 'markdown',
+  'lang/xml': 'xml',
+  'lang/sql': 'sql',
+  'lang/rust': 'rust',
+  'lang/go': 'go',
+  'lang/java': 'java',
+  'lang/cpp': 'cpp',
+  'lang/php': 'php',
+  'lang/sass': 'sass',
+  'lang/less': 'less',
+  'lang/yaml': 'yaml',
+  'lang/angular': 'angular',
+  'lang/vue': 'vue',
+  'lang/liquid': 'liquid',
+  'lang/wast': 'wast',
+  'lang/jinja': 'jinja',
+  'lang/lezer': 'lezer',
+  'lang/elixir': 'elixir',
+  'lang/erlang': 'erlang',
+  'lang/heex': 'heex',
+  'lang/zig': 'zig',
+  'lang/caddyfile': 'caddyfile',
+  'lang/dart': 'dart',
+}
+
+// Categorize exports dynamically from package.json
+const descriptions: Record<string, string> = {
+  '.': 'Barrel re-export of core modules',
+  'state': 'EditorState, StateField, Transaction, Text, ChangeSet',
+  'view': 'EditorView, Decoration, ViewPlugin, keymap',
+  'language': 'Language, LanguageSupport, syntaxTree, foldable',
+  'commands': 'Standard editing commands and default keymap',
+  'search': 'Search / replace panel and query API',
+  'autocomplete': 'Completion framework and snippets',
+  'lint': 'Inline diagnostics / linter framework',
+  'collab': 'Operational-transform collaborative editing',
+  'merge': 'Two-panel unified diff merge view',
+  'lsp': 'Language Server Protocol client utilities',
+  'language-data': 'Language descriptions registry',
+  'parser/common': 'Lezer Tree, SyntaxNode, NodeType interfaces',
+  'parser/lr': 'LRParser, Stack, parseMixed',
+  'parser/highlight': 'tags, styleTags, classHighlighter',
+  'lang/javascript': 'javascript(), javascriptLanguage, tsxLanguage',
+  'lang/python': 'python(), pythonLanguage',
+  'lang/html': 'html(), htmlLanguage',
+  'lang/css': 'css(), cssLanguage',
+  'lang/json': 'json(), jsonLanguage',
+  'lang/markdown': 'markdown(), markdownLanguage',
+  'lang/xml': 'xml(), xmlLanguage',
+  'lang/sql': 'sql(), MySQL, PostgreSQL, SQLite dialects',
+  'lang/rust': 'rust(), rustLanguage',
+  'lang/go': 'go(), goLanguage',
+  'lang/java': 'java(), javaLanguage',
+  'lang/cpp': 'cpp(), cppLanguage',
+  'lang/php': 'php(), phpLanguage',
+  'lang/sass': 'sass(), sassLanguage',
+  'lang/less': 'less(), lessLanguage',
+  'lang/yaml': 'yaml(), yamlLanguage',
+  'lang/angular': 'angular(), angularLanguage',
+  'lang/vue': 'vue(), vueLanguage',
+  'lang/liquid': 'liquid(), liquidLanguage',
+  'lang/wast': 'wast(), wastLanguage',
+  'lang/jinja': 'jinja(), jinjaLanguage',
+  'lang/lezer': 'lezer(), lezerLanguage',
+  'lang/elixir': 'elixir(), elixirLanguage',
+  'lang/erlang': 'erlang(), erlangLanguage',
+  'lang/heex': 'heex(), heexLanguage — HEEx Phoenix template syntax',
+  'lang/zig': 'zig(), zigLanguage',
+  'lang/caddyfile': 'caddyfile(), caddyfileLanguage',
+  'lang/dart': 'dart(), dartLanguage',
+  'lang/legacy/*': 'StreamLanguage.define() based legacy modes',
+  'theme/one-dark': 'oneDark — Atom One Dark theme extension',
+  'theme/duskmoon': 'duskMoon() — DuskMoon CSS-var-based theme',
+  'theme/sunshine': 'sunshine — Light theme from @duskmoon-dev/core sunshine palette',
+  'theme/moonlight': 'moonlight — Dark theme from @duskmoon-dev/core moonlight palette',
+  'keymaps/vim': 'vim() — Vim modal editing keymap',
+  'keymaps/emacs': 'emacs() — Emacs keybindings',
+  'setup': 'basicSetup, minimalSetup extension arrays',
+}
+
+const coreModules = ['state', 'view', 'language', 'commands', 'search', 'autocomplete', 'lint', 'collab', 'merge', 'lsp', 'language-data']
+
+function categorize(key: string): string {
+  if (key === '.') return 'Root'
+  if (coreModules.includes(key)) return 'Core'
+  if (key.startsWith('parser/')) return 'Parser'
+  if (key.startsWith('lang/')) return 'Languages'
+  if (key.startsWith('theme/')) return 'Themes'
+  if (key.startsWith('keymaps/')) return 'Keymaps'
+  if (key === 'setup') return 'Setup'
+  return 'Other'
+}
+
+const categoryOrder = ['Root', 'Core', 'Parser', 'Languages', 'Themes', 'Keymaps', 'Setup']
+
+const grouped = new Map<string, { path: string; description?: string }[]>()
+for (const cat of categoryOrder) grouped.set(cat, [])
+
+for (const key of exportKeys) {
+  const cat = categorize(key)
+  const list = grouped.get(cat)
+  if (list) list.push({ path: key, description: descriptions[key] })
+}
+
+const categories = categoryOrder
+  .map(name => ({ name, exports: grouped.get(name)! }))
+  .filter(c => c.exports.length > 0)
+---
+
+<div class="export-filter">
+  <input type="search" id="export-search" placeholder="Filter exports…" aria-label="Filter exports" />
+  <span id="export-match-count" class="match-count" aria-live="polite" aria-atomic="true"></span>
+</div>
+
+{categories.map(cat => (
+  <div class="category" data-category={cat.name}>
+    <h3>{cat.name} <span class="count">({cat.exports.length})</span></h3>
+    <div class="table-wrap" role="region" aria-label={`${cat.name} exports`} tabindex="0">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Import</th>
+          <th scope="col">Exports</th>
+        </tr>
+      </thead>
+      <tbody>
+        {cat.exports.map(exp => (
+          <tr>
+            <td>
+              <code>{exp.path === '.' ? pkgName : `${pkgName}/${exp.path}`}</code>
+              {exp.path !== 'lang/legacy/*' && (
+                <button class="copy-import-btn" data-import={`import { } from '${exp.path === '.' ? pkgName : `${pkgName}/${exp.path}`}'`} aria-label={`Copy import for ${exp.path}`} title="Copy import">⧉</button>
+              )}
+            </td>
+            <td class="desc">
+              {exp.description ?? ''}
+              {exp.path === 'lang/legacy/*' && (
+                <span class="legacy-note">
+                  Uses <code>StreamLanguage.define(mode)</code> instead of native Lezer parsers.
+                  Import the mode and wrap it: <code>StreamLanguage.define(yourMode)</code>.
+                </span>
+              )}
+              {playgroundLangKeys[exp.path] && (
+                <a
+                  href={`${base}playground/#lang=${playgroundLangKeys[exp.path]}`}
+                  class="try-lang-link"
+                  aria-label={`Try ${exp.description?.split(',')[0] ?? exp.path} in playground`}
+                >Try →</a>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    </div>
+  </div>
+))}
+
+<script>
+  const searchInput = document.getElementById('export-search') as HTMLInputElement
+  const matchCount = document.getElementById('export-match-count')!
+  const categories = document.querySelectorAll('.category')
+
+  // Copy import button handlers
+  document.querySelectorAll('.copy-import-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = (btn as HTMLElement).dataset.import ?? ''
+      const orig = btn.textContent
+      try {
+        await navigator.clipboard.writeText(text)
+        btn.textContent = 'Copied!'
+      } catch {
+        btn.textContent = 'Failed'
+      }
+      setTimeout(() => { btn.textContent = orig }, 1500)
+    })
+  })
+
+  function highlightText(el: HTMLElement, query: string) {
+    // Remove existing highlights
+    el.querySelectorAll('mark').forEach(mark => {
+      mark.replaceWith(mark.textContent ?? '')
+    })
+    if (!query) return
+    // Highlight matching text in td cells (not in buttons or code)
+    el.querySelectorAll('td').forEach(td => {
+      const walker = document.createTreeWalker(td, NodeFilter.SHOW_TEXT)
+      const matches: { node: Text; start: number }[] = []
+      let node: Text | null
+      while ((node = walker.nextNode() as Text | null)) {
+        if (node.parentElement?.tagName === 'MARK' || node.parentElement?.tagName === 'BUTTON') continue
+        const idx = node.textContent?.toLowerCase().indexOf(query) ?? -1
+        if (idx >= 0) matches.push({ node, start: idx })
+      }
+      // Apply highlights in reverse to preserve node positions
+      for (const m of matches.reverse()) {
+        const range = document.createRange()
+        range.setStart(m.node, m.start)
+        range.setEnd(m.node, m.start + query.length)
+        const mark = document.createElement('mark')
+        range.surroundContents(mark)
+      }
+    })
+  }
+
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase().trim()
+    let total = 0
+    let visible = 0
+
+    categories.forEach(cat => {
+      const rows = cat.querySelectorAll('tbody tr')
+      let catVisible = 0
+      rows.forEach(row => {
+        total++
+        const text = row.textContent?.toLowerCase() ?? ''
+        const match = !query || text.includes(query)
+        ;(row as HTMLElement).hidden = !match
+        if (match) {
+          catVisible++; visible++
+          highlightText(row as HTMLElement, query)
+        } else {
+          highlightText(row as HTMLElement, '')
+        }
+      })
+      ;(cat as HTMLElement).hidden = catVisible === 0 && !!query
+    })
+
+    matchCount.textContent = query ? `${visible} of ${total}` : ''
+  })
+</script>
+
+<style>
+  .export-filter {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+  .export-filter input {
+    flex: 1;
+    max-width: 20rem;
+    padding: 0.35rem 0.6rem;
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: var(--font-sans);
+  }
+  .export-filter input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+  .export-filter input::placeholder {
+    color: var(--color-text-muted);
+  }
+  .match-count {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+  .category {
+    margin-bottom: var(--space-lg);
+  }
+  h3 {
+    margin-bottom: var(--space-sm);
+  }
+  .count {
+    color: var(--color-text-muted);
+    font-weight: normal;
+    font-size: 0.9em;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-wrap:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    min-width: 28rem;
+  }
+
+  td:first-child, th:first-child {
+    width: 55%;
+    overflow-wrap: break-word;
+    word-break: break-all;
+  }
+  th {
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--color-border);
+  }
+  td {
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.9rem;
+  }
+  .desc {
+    color: var(--color-text-muted);
+  }
+  .copy-import-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0.1rem 0.3rem;
+    margin-left: 0.3rem;
+    border-radius: 3px;
+    vertical-align: middle;
+    transition: color 0.15s, background 0.15s;
+  }
+  .copy-import-btn:hover {
+    color: var(--color-accent);
+    background: var(--color-surface-alt, var(--color-surface));
+  }
+  .copy-import-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+  .legacy-note {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.85em;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+  .try-lang-link {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    border: 1px solid transparent;
+    border-radius: 3px;
+    white-space: nowrap;
+    transition: border-color 0.15s, background 0.15s;
+    vertical-align: middle;
+  }
+  .try-lang-link:hover {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    text-decoration: none;
+  }
+  .try-lang-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+  :global(mark) {
+    background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+    color: var(--color-text);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+</style>

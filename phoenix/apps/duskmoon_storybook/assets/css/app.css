@@ -77,12 +77,6 @@
   }
 }
 
-/* WORKAROUND(upstream): duskmoon-dev/code-engine#10 */
-el-dm-code-engine {
-  display: flex;
-  flex-direction: column;
-}
-
 /* Native component previews use the same theme surface as their content. */
 @layer base {
   .psb-sandbox {

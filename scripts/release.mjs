@@ -385,9 +385,14 @@ function realRegistry(dir, artifacts) {
 async function dryRun(artifacts) {
   const simulated = new Map();
   const writes = [];
-  const cutoffs = new Set([Math.floor(artifacts.length / 2), artifacts.findIndex(
-    ({ registry, name }) => registry === "crates.io" && name === "code-engine",
-  ) + 1]);
+  const position = (identity) => artifacts.findIndex((artifact) => id(artifact) === identity);
+  const engine = position("npm:@duskmoon-dev/code-engine");
+  const adapter = position("npm:@duskmoon-dev/el-code-engine");
+  const rustEngine = position("crates.io:code-engine");
+  assert(engine >= 0 && engine < adapter, "npm code-engine must publish before its adapter");
+  assert(rustEngine >= 0 && rustEngine < position("crates.io:yew-duskmoon"),
+    "Rust code-engine must publish before yew-duskmoon");
+  const cutoffs = [...new Set([engine + 1, Math.floor(artifacts.length / 2), rustEngine + 1])].sort((a, b) => a - b);
   const interruption = new Error("simulated interrupted publication");
   const lookup = async (artifact) => simulated.get(id(artifact)) ?? null;
   const registry = {
@@ -397,16 +402,17 @@ async function dryRun(artifacts) {
       assert(!simulated.has(id(artifact)), `Duplicate publication: ${id(artifact)}`);
       simulated.set(id(artifact), artifact.sha256);
       writes.push(id(artifact));
-      if (cutoffs.has(writes.length)) throw interruption;
+      if (cutoffs.includes(writes.length)) throw interruption;
     },
   };
   for (const cutoff of cutoffs) {
     await assert.rejects(reconcile(artifacts, registry), interruption);
     assert.equal(writes.length, cutoff);
+    console.log(`Simulated interruption after ${writes[cutoff - 1]}`);
   }
   await reconcile(artifacts, registry);
   assert.deepEqual(writes, artifacts.map(id), "Resume changed publication order");
-  simulated.set(id(artifacts[0]), "unexpected hash");
+  simulated.set(id(artifacts[engine]), "unexpected hash");
   await assert.rejects(reconcile(artifacts, registry), /Published bytes differ/);
   assert.equal(writes.length, artifacts.length);
   console.log(`Dry-run passed for all ${writes.length} artifacts, including interrupted resume and hash conflict`);

@@ -61,6 +61,7 @@ jobs:
           node scripts/release.mjs check
           bun install --frozen-lockfile
           bun run build:packages
+          bun run --filter @duskmoon-dev/code-engine-playground build
           bun run test:packages
           bun run verify:react-boundary
       - name: Test Phoenix with locked published precompiled toolchain

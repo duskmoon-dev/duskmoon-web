@@ -61,52 +61,41 @@ const THEMES: Record<string, Extension> = {
 
 // ── Language loaders (literal import paths so bundlers can resolve them) ──
 
-function langLoader(
-  importFn: () => Promise<Record<string, unknown>>,
-  opts?: Record<string, unknown>,
-): () => Promise<Extension | null> {
-  return async () => {
-    const mod = await importFn();
-    const factory = mod.default ?? Object.values(mod).find((v) => typeof v === 'function');
-    if (typeof factory === 'function') {
-      return (opts ? factory(opts) : factory()) as Extension;
-    }
-    return factory as Extension | null;
-  };
-}
-
 const LANG_LOADERS: Record<string, () => Promise<Extension | null>> = {
-  javascript: langLoader(() => import('@duskmoon-dev/code-engine/lang/javascript')),
-  typescript: langLoader(() => import('@duskmoon-dev/code-engine/lang/javascript'), {
-    typescript: true,
-  }),
-  css: langLoader(() => import('@duskmoon-dev/code-engine/lang/css')),
-  html: langLoader(() => import('@duskmoon-dev/code-engine/lang/html')),
-  json: langLoader(() => import('@duskmoon-dev/code-engine/lang/json')),
-  python: langLoader(() => import('@duskmoon-dev/code-engine/lang/python')),
-  markdown: langLoader(() => import('@duskmoon-dev/code-engine/lang/markdown')),
-  xml: langLoader(() => import('@duskmoon-dev/code-engine/lang/xml')),
-  sql: langLoader(() => import('@duskmoon-dev/code-engine/lang/sql')),
-  rust: langLoader(() => import('@duskmoon-dev/code-engine/lang/rust')),
-  go: langLoader(() => import('@duskmoon-dev/code-engine/lang/go')),
-  java: langLoader(() => import('@duskmoon-dev/code-engine/lang/java')),
-  cpp: langLoader(() => import('@duskmoon-dev/code-engine/lang/cpp')),
-  php: langLoader(() => import('@duskmoon-dev/code-engine/lang/php')),
-  yaml: langLoader(() => import('@duskmoon-dev/code-engine/lang/yaml')),
-  sass: langLoader(() => import('@duskmoon-dev/code-engine/lang/sass')),
-  less: langLoader(() => import('@duskmoon-dev/code-engine/lang/less')),
-  elixir: langLoader(() => import('@duskmoon-dev/code-engine/lang/elixir')),
-  erlang: langLoader(() => import('@duskmoon-dev/code-engine/lang/erlang')),
-  heex: langLoader(() => import('@duskmoon-dev/code-engine/lang/heex')),
-  dart: langLoader(() => import('@duskmoon-dev/code-engine/lang/dart')),
-  zig: langLoader(() => import('@duskmoon-dev/code-engine/lang/zig')),
-  vue: langLoader(() => import('@duskmoon-dev/code-engine/lang/vue')),
-  angular: langLoader(() => import('@duskmoon-dev/code-engine/lang/angular')),
-  liquid: langLoader(() => import('@duskmoon-dev/code-engine/lang/liquid')),
-  jinja: langLoader(() => import('@duskmoon-dev/code-engine/lang/jinja')),
-  wast: langLoader(() => import('@duskmoon-dev/code-engine/lang/wast')),
-  lezer: langLoader(() => import('@duskmoon-dev/code-engine/lang/lezer')),
-  caddyfile: langLoader(() => import('@duskmoon-dev/code-engine/lang/caddyfile')),
+  javascript: () =>
+    import('@duskmoon-dev/code-engine/lang/javascript').then((mod) => mod.javascript()),
+  typescript: () =>
+    import('@duskmoon-dev/code-engine/lang/javascript').then((mod) =>
+      mod.javascript({ typescript: true }),
+    ),
+  css: () => import('@duskmoon-dev/code-engine/lang/css').then((mod) => mod.css()),
+  html: () => import('@duskmoon-dev/code-engine/lang/html').then((mod) => mod.html()),
+  json: () => import('@duskmoon-dev/code-engine/lang/json').then((mod) => mod.json()),
+  python: () => import('@duskmoon-dev/code-engine/lang/python').then((mod) => mod.python()),
+  markdown: () => import('@duskmoon-dev/code-engine/lang/markdown').then((mod) => mod.markdown()),
+  xml: () => import('@duskmoon-dev/code-engine/lang/xml').then((mod) => mod.xml()),
+  sql: () => import('@duskmoon-dev/code-engine/lang/sql').then((mod) => mod.sql()),
+  rust: () => import('@duskmoon-dev/code-engine/lang/rust').then((mod) => mod.rust()),
+  go: () => import('@duskmoon-dev/code-engine/lang/go').then((mod) => mod.go()),
+  java: () => import('@duskmoon-dev/code-engine/lang/java').then((mod) => mod.java()),
+  cpp: () => import('@duskmoon-dev/code-engine/lang/cpp').then((mod) => mod.cpp()),
+  php: () => import('@duskmoon-dev/code-engine/lang/php').then((mod) => mod.php()),
+  yaml: () => import('@duskmoon-dev/code-engine/lang/yaml').then((mod) => mod.yaml()),
+  sass: () => import('@duskmoon-dev/code-engine/lang/sass').then((mod) => mod.sass()),
+  less: () => import('@duskmoon-dev/code-engine/lang/less').then((mod) => mod.less()),
+  elixir: () => import('@duskmoon-dev/code-engine/lang/elixir').then((mod) => mod.elixir()),
+  erlang: () => import('@duskmoon-dev/code-engine/lang/erlang').then((mod) => mod.erlang()),
+  heex: () => import('@duskmoon-dev/code-engine/lang/heex').then((mod) => mod.heex()),
+  dart: () => import('@duskmoon-dev/code-engine/lang/dart').then((mod) => mod.dart()),
+  zig: () => import('@duskmoon-dev/code-engine/lang/zig').then((mod) => mod.zig()),
+  vue: () => import('@duskmoon-dev/code-engine/lang/vue').then((mod) => mod.vue()),
+  angular: () => import('@duskmoon-dev/code-engine/lang/angular').then((mod) => mod.angular()),
+  liquid: () => import('@duskmoon-dev/code-engine/lang/liquid').then((mod) => mod.liquid()),
+  jinja: () => import('@duskmoon-dev/code-engine/lang/jinja').then((mod) => mod.jinja()),
+  wast: () => import('@duskmoon-dev/code-engine/lang/wast').then((mod) => mod.wast()),
+  lezer: () => import('@duskmoon-dev/code-engine/lang/lezer').then((mod) => mod.lezer()),
+  caddyfile: () =>
+    import('@duskmoon-dev/code-engine/lang/caddyfile').then((mod) => mod.caddyfile()),
 };
 
 const LANG_BADGES: Record<string, string> = {
@@ -380,6 +369,7 @@ export class ElDmCodeEngine extends BaseElement {
 
   #editor: EditorView | null = null;
   #pendingValue: string | null = null;
+  #configVersion = 0;
 
   readonly #languageCompartment = new Compartment();
   readonly #readonlyCompartment = new Compartment();
@@ -439,12 +429,15 @@ export class ElDmCodeEngine extends BaseElement {
   }
 
   protected update(): void {
+    this.#configVersion++;
     if (!this.#editor) {
       // First render: create the container then mount the editor.
       super.update();
       void this.#mountEditor();
     } else {
-      // Editor already mounted: reconfigure via compartment transactions.
+      // Keep the editor DOM and document while updating the surrounding bars.
+      this.shadowRoot!.querySelector('.topbar')!.outerHTML = this.#renderTopbar();
+      this.shadowRoot!.querySelector('.bottombar')!.outerHTML = this.#renderBottombar();
       void this.#applyConfig();
     }
   }
@@ -463,6 +456,7 @@ export class ElDmCodeEngine extends BaseElement {
   }
 
   disconnectedCallback(): void {
+    this.#configVersion++;
     this.shadowRoot!.removeEventListener('click', this.#clickHandler);
     if (this.#copyTimer) {
       clearTimeout(this.#copyTimer);
@@ -599,9 +593,15 @@ export class ElDmCodeEngine extends BaseElement {
     const host = this.shadowRoot?.querySelector('.cm-host');
     if (!host || this.#editor) return;
 
+    const configVersion = this.#configVersion;
     const langExt = await this.#loadLanguage(this.language);
     // A reactive update or disconnect can replace the mount while the language loads.
-    if (this.#editor || !this.isConnected || host !== this.shadowRoot?.querySelector('.cm-host')) {
+    if (
+      configVersion !== this.#configVersion ||
+      this.#editor ||
+      !this.isConnected ||
+      host !== this.shadowRoot?.querySelector('.cm-host')
+    ) {
       return;
     }
 
@@ -641,18 +641,23 @@ export class ElDmCodeEngine extends BaseElement {
   }
 
   async #applyConfig(): Promise<void> {
-    if (!this.#editor) return;
+    const editor = this.#editor;
+    if (!editor) return;
 
-    const langExt = await this.#loadLanguage(this.language);
-
-    this.#editor.dispatch({
+    const configVersion = this.#configVersion;
+    editor.dispatch({
       effects: [
-        this.#languageCompartment.reconfigure(langExt ?? []),
         this.#readonlyCompartment.reconfigure(EditorState.readOnly.of(this.readonly ?? false)),
         this.#themeCompartment.reconfigure(THEMES[this.theme] ?? []),
         this.#wrapCompartment.reconfigure(this.wrap ? EditorView.lineWrapping : []),
       ],
     });
+
+    const langExt = await this.#loadLanguage(this.language);
+    if (configVersion !== this.#configVersion || editor !== this.#editor || !this.isConnected) {
+      return;
+    }
+    editor.dispatch({ effects: this.#languageCompartment.reconfigure(langExt ?? []) });
   }
 
   async #loadLanguage(name: string): Promise<Extension | null> {

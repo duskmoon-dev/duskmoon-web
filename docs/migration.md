@@ -1,6 +1,6 @@
 # Duskmoon Web migration
 
-The Web repository brings Core and CSS Art, Custom Elements, native React, Phoenix, and Yew into one coordinated release. Packages retain their published identities except for Phoenix, which moves to the `duskmoon_phoenix` identity on Hex and npm and to the `DuskmoonPhoenix` Elixir namespace.
+The Web repository brings Core and CSS Art, Custom Elements, native React, Phoenix, Yew, and the standalone TypeScript Code Engine into one coordinated release. Packages retain their published identities except for Phoenix, which moves to the `duskmoon_phoenix` identity on Hex and npm and to the `DuskmoonPhoenix` Elixir namespace.
 
 ## Implementation sequence
 
@@ -21,8 +21,9 @@ The import commits have two parents. Their second parent is the verified upstrea
 | [duskmoon-react](https://github.com/duskmoon-dev/duskmoon-react) | `1197b9553884542854c35ad61f26d73691cbcf0b` | `_migration/react` |
 | [phoenix-duskmoon-ui](https://github.com/duskmoon-dev/phoenix-duskmoon-ui) | `b115f533c24587c0b6ea8ca1ec3598d9e782863a` | `_migration/phoenix` |
 | [yew-duskmoon-ui](https://github.com/duskmoon-dev/yew-duskmoon-ui) | `fa187c524dc5fab5a044d5d5e0aac3dca4c2e0da` | `_migration/yew` |
+| [code-engine](https://github.com/duskmoon-dev/code-engine) | `5ef45948b1498d150435eb15275d5c714c9551a8` | `_migration/code-engine` |
 
-GitHub resolved the old `duskmoon-dev/custom-elements` name to `duskmoon-dev/duskmoon-elements`. The local target had an unborn `main` and no configured remote. Both Git and the authenticated repository API returned “Repository not found” for the target, so remote history and access remain unverified.
+GitHub resolved the old `duskmoon-dev/custom-elements` name to `duskmoon-dev/duskmoon-elements`. The first imports began in a local checkout with an unborn `main`. The incremental Code Engine import extends the existing `duskmoon-dev/duskmoon-web` main history at `734524f74bbbf8415bc7c17cad92aa0560a92ac1`.
 
 Design and the Bundler toolchain retain their release schedules. The Hologram examples use Core styles and native Hologram actions. The Hologram fork, compiler, and runtime are supplied by Bundler.
 
@@ -43,7 +44,16 @@ The [package inventory](package-inventory.json) maps the npm, Hex, and crates.io
 | Phoenix Storybook and embedded Hologram demo | `phoenix/apps/duskmoon_storybook` |
 | Yew `packages/duskmoon` and `packages/code-engine` | `yew/packages/duskmoon` and `yew/packages/code-engine` |
 | Private Yew Trunk demo | `yew/example` |
+| Code Engine root, including grammars, generated parsers, build and sync tools | `packages/engines/code-engine` |
+| Code Engine `playground/` | `apps/code-engine-playground` |
 
-The import can be recreated on a clean target with `git fetch --no-tags <source> refs/heads/main:<local-import-ref>`, then `git merge --allow-unrelated-histories -s ours --no-commit <verified-sha>`, `git read-tree --prefix=_migration/<family>/ -u <verified-sha>`, and `git commit`. Use an explicit verified SHA. Core and React visual assets use Git LFS. Fetch their reachable LFS objects from the corresponding original endpoints and verify them on the Web remote when remote access is restored.
+The incremental import commit is `ce5f3c11a57383b69a4fd7fa3a6a8d92c10365de`.
+The npm engine retains its MIT and upstream notices. The existing npm adapter
+ships an exact dependency on the coordinated engine version. The crates.io
+`code-engine` keeps its Rust implementation, Cargo dependency graph, and license.
+The engine and private playground resolve through the Web Bun lock. The source
+repository's lockfiles and workflows remain accessible in its original history.
+
+The import can be recreated on a clean target with `git fetch --no-tags <source> refs/heads/main:<local-import-ref>`, then `git merge --allow-unrelated-histories -s ours --no-commit <verified-sha>`, `git read-tree --prefix=_migration/<family>/ -u <verified-sha>`, and `git commit`. Use an explicit verified SHA. Core and React visual assets use Git LFS. Their reachable LFS objects were fetched from the corresponding original endpoints during the earlier migration.
 
 Check ancestry with `git merge-base --is-ancestor <source-sha> HEAD`. Check the imported tree with `git rev-parse <import-commit>:_migration/<family>` and compare it to `git rev-parse <source-sha>^{tree}`.

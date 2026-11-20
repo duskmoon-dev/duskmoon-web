@@ -6,7 +6,6 @@ import { FormElementHook, WebComponentHook } from "duskmoon_phoenix/elements";
 import { lazyHook } from "duskmoon_phoenix/lazy-hook";
 import { DuskmoonLeftMenuHostDemo } from "./left_menu.js";
 import { DuskmoonHologramFrame } from "./hologram_frame.js";
-import { installCodeEngineShadowStyleWorkaround } from "./code_engine.js";
 
 function loadReactFeature(name) {
   const entry = new URL("../react/js/react_features.js", import.meta.url);
@@ -46,66 +45,6 @@ if (!window.location.pathname.startsWith("/storybook") && !window.liveSocket) {
 
   liveSocket.connect();
   window.liveSocket = liveSocket;
-}
-
-let codeEngineLayoutWorkaroundInstalled = false;
-let codeEngineLayoutWorkaroundFrame = undefined;
-
-const codeEngineLayoutWorkaroundStyleId = "duskmoon-code-engine-layout-workaround";
-
-function applyCodeEngineLayoutWorkaround(host) {
-  const root = host.shadowRoot;
-  if (!root || root.getElementById(codeEngineLayoutWorkaroundStyleId)) return;
-
-  const style = document.createElement("style");
-  style.id = codeEngineLayoutWorkaroundStyleId;
-  style.textContent = `
-    /* WORKAROUND(upstream): duskmoon-dev/code-engine#10 */
-    .cm-host {
-      display: flex;
-      flex-direction: column;
-      flex: 1 1 auto;
-      min-height: 0;
-    }
-
-    .cm-host .cm-editor {
-      flex: 1 1 auto;
-      min-height: 0;
-    }
-  `;
-  root.appendChild(style);
-}
-
-function patchCodeEngineLayout() {
-  document.querySelectorAll("el-dm-code-engine").forEach(applyCodeEngineLayoutWorkaround);
-}
-
-function scheduleCodeEngineLayoutPatch() {
-  if (codeEngineLayoutWorkaroundFrame !== undefined) return;
-
-  codeEngineLayoutWorkaroundFrame = requestAnimationFrame(() => {
-    codeEngineLayoutWorkaroundFrame = undefined;
-    patchCodeEngineLayout();
-  });
-}
-
-function installCodeEngineLayoutWorkaround() {
-  if (codeEngineLayoutWorkaroundInstalled) return;
-
-  codeEngineLayoutWorkaroundInstalled = true;
-  scheduleCodeEngineLayoutPatch();
-
-  new MutationObserver(scheduleCodeEngineLayoutPatch)
-    .observe(document.documentElement, { childList: true, subtree: true });
-}
-
-function withCodeEngineWorkarounds(load) {
-  installCodeEngineShadowStyleWorkaround();
-
-  return Promise.resolve().then(load).then((result) => {
-    installCodeEngineLayoutWorkaround();
-    return result;
-  });
 }
 
 const registerChatElements = () => import("@duskmoon-dev/el-chat/register");
@@ -154,10 +93,9 @@ function importRegistrar(registrar) {
   // Development's generated vendor imports may need a fresh URL after a failed
   // download. Production uses the bundler's ordinary literal chunk links.
   const url = registrar.toString().match(/import\((["'])(\/@vendor\/[^"']+)\1\)/)?.[2];
-  const load = url
+  return url
     ? () => registrar().catch(() => import(`${url}${url.includes("?") ? "&" : "?"}retry=${Date.now()}`))
     : registrar;
-  return registrar === registerCodeEngine ? withCodeEngineWorkarounds(load) : load();
 }
 
 function collectDuskmoonElementTags(root) {

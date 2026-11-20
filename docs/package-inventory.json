@@ -3449,6 +3449,47 @@
         "maximumMajor": 0,
         "checkedOn": "2026-11-19"
       }
+    },
+    {
+      "name": "@duskmoon-dev/code-engine",
+      "family": "engines",
+      "registry": "npm",
+      "sourceRepository": "code-engine",
+      "sourceCommit": "5ef45948b1498d150435eb15275d5c714c9551a8",
+      "sourcePath": ".",
+      "path": "packages/engines/code-engine",
+      "sourceVersion": "0.3.1",
+      "sourceRuntimeDependencies": {},
+      "sourceAssets": [
+        "dist",
+        "grammar",
+        "src/lang"
+      ],
+      "sourceChecks": [
+        "test",
+        "typecheck",
+        "build",
+        "verify",
+        "build:playground"
+      ],
+      "sourceDocs": [
+        "README.md",
+        "CHANGELOG.md",
+        "UPSTREAM.md",
+        "docs/"
+      ],
+      "sourceLicense": "MIT",
+      "licenseFiles": [
+        "LICENSE",
+        "UPSTREAM.md"
+      ],
+      "published": {
+        "status": 200,
+        "latest": "0.3.1",
+        "highestStable": "0.3.1",
+        "maximumMajor": 0,
+        "checkedOn": "2026-11-20"
+      }
     }
   ]
 }

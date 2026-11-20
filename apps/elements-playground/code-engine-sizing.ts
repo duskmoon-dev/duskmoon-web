@@ -2,7 +2,7 @@ import {
   register,
   type ElDmCodeEngine,
   type CodeEngineTheme,
-} from '../../packages/elements/components/code-engine/src/index.js';
+} from '@duskmoon-dev/el-code-engine';
 import { sunshineColor } from '@duskmoon-dev/code-engine/theme/sunshine';
 import { moonlightColor } from '@duskmoon-dev/code-engine/theme/moonlight';
 import { color as oneDarkColor } from '@duskmoon-dev/code-engine/theme/one-dark';

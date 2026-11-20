@@ -5,6 +5,7 @@
   "packageManager": "bun@1.4.0",
   "workspaces": [
     "packages/css/*",
+    "packages/engines/*",
     "packages/elements/base",
     "packages/elements/elements",
     "packages/elements/art-elements",

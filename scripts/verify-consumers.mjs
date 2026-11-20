@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
-import { cpSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -9,11 +9,12 @@ import { fileURLToPath } from "node:url";
 import { setTimeout as delay } from "node:timers/promises";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
-const [output, mode] = process.argv.slice(2);
-assert(output, "Usage: node scripts/verify-consumers.mjs ARTIFACTS [--react-only|--yew-only|--serve-native|--no-browser]");
-assert([undefined, "--react-only", "--yew-only", "--serve-native", "--no-browser"].includes(mode), "Unknown consumer mode");
+const [output, mode, ...extra] = process.argv.slice(2);
+const modes = ["--react-only", "--yew-only", "--engine-only", "--serve-native", "--serve-engine", "--no-browser"];
+assert(output && !extra.length, `Usage: node scripts/verify-consumers.mjs ARTIFACTS [${modes.join("|")}]`);
+assert(mode === undefined || modes.includes(mode), "Unknown consumer mode");
 const artifactDir = resolve(output);
-const { artifacts } = JSON.parse(readFileSync(join(artifactDir, "release.json"), "utf8"));
+const { artifacts, version } = JSON.parse(readFileSync(join(artifactDir, "release.json"), "utf8"));
 const npm = new Map(artifacts.filter(({ registry }) => registry === "npm").map((entry) => [entry.name, entry]));
 const hex = artifacts.find(({ registry }) => registry === "hex");
 const tmp = mkdtempSync(join(tmpdir(), "duskmoon-web-consumers-"));
@@ -45,6 +46,47 @@ function install(name, packages, tooling = {}) {
 
 function installedPaths(dir) {
   return Object.keys(JSON.parse(readFileSync(join(dir, "package-lock.json"), "utf8")).packages);
+}
+
+async function verifyCodeEngine() {
+  const engine = "@duskmoon-dev/code-engine";
+  const adapter = "@duskmoon-dev/el-code-engine";
+  const base = "@duskmoon-dev/el-base";
+  const core = "@duskmoon-dev/core";
+  for (const name of [engine, adapter, base, core]) assert.equal(npm.get(name)?.version, version, name);
+  const standalone = install("code-engine-consumer", [engine], {
+    typescript: rootPackage.devDependencies.typescript,
+  });
+  assert.deepEqual(installedPaths(standalone).filter(Boolean).sort(),
+    [`node_modules/${engine}`, "node_modules/typescript"].sort());
+  const source = join(root, "packages/engines/code-engine");
+  const { exports } = JSON.parse(readFileSync(join(source, "package.json"), "utf8"));
+  const legacyModules = readdirSync(join(source, "src/lang/legacy"))
+    .filter((file) => file.endsWith(".js") || file === "index.ts")
+    .map((file) => file.slice(0, -3))
+    .sort();
+  cpSync(join(root, "validation/code-engine-exports.mjs"), join(standalone, "code-engine-exports.mjs"));
+  writeFileSync(join(standalone, "code-engine-expected-exports.json"), JSON.stringify({ exports, legacyModules }));
+  run("node", ["code-engine-exports.mjs", version], standalone);
+
+  const withAdapter = install("code-engine-adapter-consumer", [engine, adapter, base, core]);
+  const locked = JSON.parse(readFileSync(join(withAdapter, "package-lock.json"), "utf8")).packages;
+  assert.deepEqual(Object.keys(locked).filter((path) => path.endsWith(`node_modules/${engine}`)),
+    [`node_modules/${engine}`]);
+  for (const name of [engine, adapter, base, core]) {
+    const entry = locked[`node_modules/${name}`];
+    assert.equal(entry.version, version);
+    assert(entry.resolved.startsWith("file:"));
+    assert.equal(resolve(withAdapter, entry.resolved.slice(5)), join(artifactDir, npm.get(name).file));
+  }
+  assert.equal(locked[`node_modules/${adapter}`].dependencies[engine], version);
+  assert.deepEqual(installedPaths(withAdapter).filter(Boolean).sort(),
+    [engine, adapter, base, core, "tailwindcss"].map((name) => `node_modules/${name}`).sort());
+  if (mode !== "--no-browser") {
+    const { verifyCodeEngineBrowser } = await import("../validation/code-engine-browser/index.mjs");
+    const { chromium } = await import("@playwright/test");
+    await verifyCodeEngineBrowser({ standalone, adapter: withAdapter, chromium, mode });
+  }
 }
 
 function verifyYew() {
@@ -130,7 +172,7 @@ async function verifyNative() {
     phoenix_live_view: storybook.dependencies.phoenix_live_view,
   });
   assert(!installedPaths(dir).some((path) =>
-    /node_modules\/(?:react(?:-dom)?(?:$|\/)|@duskmoon-dev\/(?:el-|elements|art-elements|components|art-components))/.test(path)),
+    /node_modules\/(?:react(?:-dom)?(?:$|\/)|@duskmoon-dev\/(?:el-|elements|art-elements|components|art-components|code-engine))/.test(path)),
     "Native Phoenix installed an enhancement runtime");
   for (const file of ["app.js", "mix.exs", "consumer.exs"]) {
     cpSync(join(root, "validation/phoenix-native", file), join(dir, file));
@@ -143,7 +185,7 @@ async function verifyNative() {
   mkdirSync(join(dir, "public"));
   run("bun", ["build", "app.js", "--target=browser", "--minify", "--outdir=public"], dir);
   assert.doesNotMatch(readFileSync(join(dir, "public/app.js"), "utf8"),
-    /@duskmoon-dev\/(?:el-|elements|art-elements|components)|react-dom|customElements\.define\(["']el-dm-/);
+    /@duskmoon-dev\/(?:el-|elements|art-elements|components|code-engine)|react-dom|customElements\.define\(["']el-dm-/);
   const css = run("node", ["--input-type=module", "-e",
     'console.log(import.meta.resolve("duskmoon_phoenix/css"))'], dir, true).trim();
   cpSync(fileURLToPath(css), join(dir, "public/app.css"));
@@ -210,7 +252,10 @@ async function verifyNative() {
 }
 
 try {
-  if (mode !== "--serve-native" && mode !== "--yew-only") verifyReact();
+  if (mode === undefined || mode === "--no-browser" || mode === "--react-only") verifyReact();
+  if (mode === undefined || mode === "--no-browser" || mode === "--engine-only" || mode === "--serve-engine") {
+    await verifyCodeEngine();
+  }
   if (mode === undefined || mode === "--no-browser") {
     install("all-web-packages", [...npm.keys()]);
     console.log(`One clean install resolved all ${npm.size} exact npm tarballs`);
@@ -221,7 +266,7 @@ try {
       "--phoenix", join(artifactDir, npm.get("duskmoon_phoenix").file),
     ], root);
   }
-  if (mode !== "--react-only" && mode !== "--yew-only") await verifyNative();
+  if (mode === undefined || mode === "--no-browser" || mode === "--serve-native") await verifyNative();
   if (mode === undefined || mode === "--no-browser" || mode === "--yew-only") verifyYew();
 } finally {
   rmSync(tmp, { recursive: true, force: true });

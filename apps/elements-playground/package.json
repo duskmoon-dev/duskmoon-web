@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@duskmoon-dev/code-engine": "workspace:*",
     "@duskmoon-dev/el-button": "workspace:*",
     "@duskmoon-dev/el-card": "workspace:*",
     "@duskmoon-dev/el-chat": "workspace:*",
+    "@duskmoon-dev/el-code-engine": "workspace:*",
     "@duskmoon-dev/el-input": "workspace:*",
     "@duskmoon-dev/el-markdown": "workspace:*",
     "@duskmoon-dev/el-art-moon": "workspace:*",

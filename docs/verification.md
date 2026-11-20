@@ -8,7 +8,36 @@
 - Follow [release staging](release.md) to package and audit the published entry points, run clean consumers, and simulate recovery after the registry accepts a package but the caller loses the response.
 - Use [the Hologram example](../phoenix/docs/hologram-example.md) for the shared layout, navigation, theme and renderer ownership checks. Hologram starts only in the enabled Storybook example.
 
-## Observed locally
+## Code Engine integration
+
+- Run `bun run build:packages @duskmoon-dev/el-code-engine` to build the engine,
+  Base and adapter in dependency order. Run
+  `bun run build:apps @duskmoon-dev/code-engine-playground` before the package
+  tests to exercise the relocated demo's generated pages and split output.
+- Run `bun run test:packages @duskmoon-dev/code-engine @duskmoon-dev/el-code-engine`.
+  The engine build typechecks the engine. Run
+  `bun run --filter @duskmoon-dev/el-code-engine typecheck` for the adapter.
+- After staging, run
+  `CHROME_BIN=/path/to/chrome node scripts/verify-consumers.mjs STAGE --engine-only`.
+  The first isolated install tests every concrete export, including legacy
+  modes, shared ESM chunks, and strict Bundler and NodeNext declarations.
+  The second installs the exact-version engine with Element Base, the adapter,
+  and Core theme assets. The desktop fixture checks shared extension identity,
+  editing and history, language chunk requests and syntax, themes and layout
+  across ShadowRoots, delayed configuration across remounts, and startup on a
+  page without an editor.
+- Run `node scripts/release.mjs dry-run STAGE SHA` to verify staged bytes and
+  resume the simulation immediately after the npm engine and after the
+  separately released Rust engine.
+
+The imported stylesheet reuse fix covers multiple editor ShadowRoots
+([#9](https://github.com/duskmoon-dev/code-engine/issues/9)). The adapter's
+flex layout fills the default minimum height and scrolls inside bounded
+hosts ([#10](https://github.com/duskmoon-dev/code-engine/issues/10)). The packed
+Chrome fixture verifies both paths, so Storybook uses the normal on-demand
+registration without its prototype patch or injected layout styles.
+
+## Earlier local migration checks
 
 The four source tips resolve as ancestors of the Web checkout. Each import tree matched its original source tree. Git LFS verified the Core and React source tips, and their historical LFS objects were fetched from the original remotes.
 

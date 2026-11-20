@@ -10,34 +10,72 @@ class FakeCompartment {
     configuredExtensions.push(ext);
     return [];
   }
-  reconfigure(_ext: unknown) {
-    return {};
+  reconfigure(ext: unknown) {
+    return { extension: ext };
   }
 }
 
 const configuredExtensions: unknown[] = [];
 const oneDarkExtension = { extension: 'one-dark' };
 
-const fakeEditorState = {
-  readOnly: { of: () => ({}) },
-  create: () => ({
-    doc: { toString: () => '', lines: 0, lineAt: () => ({ number: 1, from: 0 }) },
+function stateFor(doc = '') {
+  return {
+    doc: {
+      toString: () => doc,
+      length: doc.length,
+      lines: doc.split('\n').length,
+      lineAt: () => ({ number: 1, from: 0 }),
+    },
     selection: { main: { head: 0 } },
-  }),
+  };
+}
+
+const fakeEditorState = {
+  readOnly: { of: (value: boolean) => ({ readOnly: value }) },
+  create: (config: { doc?: string } = {}) => stateFor(config.doc),
 };
 
-mock.module('@duskmoon-dev/code-engine/view', () => ({
-  EditorView: class FakeEditorView {
-    state = fakeEditorState.create();
-    static lineWrapping = {};
-    static updateListener = { of: () => ({}) };
-    static domEventHandlers = () => ({});
-    dispatch() {}
-    destroy() {}
-    focus() {}
-    constructor() {}
+class FakeEditorView {
+  state: ReturnType<typeof stateFor>;
+  effects: unknown[] = [];
+  destroyed = false;
+  static lineWrapping = { wrapping: true };
+  static updateListener = { of: () => ({}) };
+  static domEventHandlers = () => ({});
+  constructor(config: { state: ReturnType<typeof stateFor> }) {
+    this.state = config.state;
+    editors.push(this);
+  }
+  dispatch(transaction: { changes?: { insert: string }; effects?: unknown }) {
+    if (this.destroyed) throw new Error('Dispatch after destroy');
+    if (transaction.changes) this.state = stateFor(transaction.changes.insert);
+    if (transaction.effects) {
+      this.effects.push(
+        ...(Array.isArray(transaction.effects) ? transaction.effects : [transaction.effects]),
+      );
+    }
+  }
+  destroy() {
+    this.destroyed = true;
+  }
+  focus() {}
+}
+
+const editors: FakeEditorView[] = [];
+const javascriptExtension = { language: 'javascript' };
+const elixirExtension = { language: 'elixir' };
+let javascriptResult: unknown = javascriptExtension;
+let elixirResult: unknown = elixirExtension;
+
+mock.module('@duskmoon-dev/code-engine/view', () => ({ EditorView: FakeEditorView }));
+mock.module('@duskmoon-dev/code-engine/lang/javascript', () => ({
+  // A helper export must never be mistaken for the language factory.
+  autoCloseTags: () => {
+    throw new Error('Wrong language factory');
   },
+  javascript: () => javascriptResult,
 }));
+mock.module('@duskmoon-dev/code-engine/lang/elixir', () => ({ elixir: () => elixirResult }));
 
 mock.module('@duskmoon-dev/code-engine/state', () => ({
   EditorState: fakeEditorState,
@@ -74,6 +112,9 @@ beforeAll(() => {
 // Clean up DOM after each test
 afterEach(() => {
   document.body.innerHTML = '';
+  editors.length = 0;
+  javascriptResult = javascriptExtension;
+  elixirResult = elixirExtension;
 });
 
 function createElement(
@@ -93,8 +134,7 @@ function createElement(
 
 // Allow microtask queue to flush (BaseElement batches updates)
 async function flush(): Promise<void> {
-  await new Promise((r) => queueMicrotask(r));
-  await new Promise((r) => queueMicrotask(r));
+  for (let i = 0; i < 8; i++) await new Promise((r) => queueMicrotask(r));
 }
 
 describe('ElDmCodeEngine', () => {
@@ -105,6 +145,99 @@ describe('ElDmCodeEngine', () => {
 
     expect(configuredExtensions).toContain(oneDarkExtension);
     expect(configuredExtensions).not.toContainEqual({ background: '#282c34' });
+  });
+
+  describe('configuration lifecycle', () => {
+    it('selects the named language factory when helpers are also exported', async () => {
+      configuredExtensions.length = 0;
+      createElement({ language: 'javascript' });
+      await flush();
+      expect(configuredExtensions).toContain(javascriptExtension);
+    });
+
+    it('preserves document and editor while reconfiguring and refreshing language labels', async () => {
+      const el = createElement({ value: 'initial', language: 'javascript' });
+      await flush();
+      const editor = editors.at(-1)!;
+      el.value = 'edited content';
+      el.language = 'elixir';
+      el.readonly = true;
+      el.wrap = true;
+      el.theme = 'moonlight';
+      await flush();
+      expect(editors.at(-1)).toBe(editor);
+      expect(el.value).toBe('edited content');
+      expect(el.shadowRoot!.querySelector('.lang-badge')!.textContent).toBe('EX');
+      expect(editor.effects).toContainEqual({ extension: elixirExtension });
+    });
+
+    it('ignores an older language result after a newer configuration', async () => {
+      const el = createElement();
+      await flush();
+      const editor = editors.at(-1)!;
+      let resolveLanguage!: (value: unknown) => void;
+      elixirResult = new Promise((resolve) => {
+        resolveLanguage = resolve;
+      });
+      el.language = 'elixir';
+      await flush();
+      el.language = '';
+      await flush();
+      expect(editor.effects.at(-1)).toEqual({ extension: [] });
+      const count = editor.effects.length;
+      resolveLanguage(elixirExtension);
+      await flush();
+      expect(editor.effects.length).toBe(count);
+    });
+
+    it('invalidates pending configuration on disconnect and preserves edits on reconnect', async () => {
+      const el = createElement({ value: 'initial' });
+      await flush();
+      const first = editors.at(-1)!;
+      el.value = 'survives reconnect';
+      let resolveLanguage!: (value: unknown) => void;
+      elixirResult = new Promise((resolve) => {
+        resolveLanguage = resolve;
+      });
+      el.language = 'elixir';
+      await flush();
+      el.remove();
+      expect(first.destroyed).toBe(true);
+      const count = first.effects.length;
+      document.body.append(el);
+      el.language = '';
+      await flush();
+      const second = editors.at(-1)!;
+      expect(second).not.toBe(first);
+      expect(el.value).toBe('survives reconnect');
+      resolveLanguage(elixirExtension);
+      await flush();
+      expect(first.effects.length).toBe(count);
+      expect(editors.at(-1)).toBe(second);
+      expect(second.effects).not.toContainEqual({ extension: elixirExtension });
+    });
+
+    it('invalidates an initial language load when removed and remounted with newer configuration', async () => {
+      let resolveLanguage!: (value: unknown) => void;
+      elixirResult = new Promise((resolve) => {
+        resolveLanguage = resolve;
+      });
+      const el = createElement({ value: 'pending document', language: 'elixir' });
+      await flush();
+      expect(editors).toHaveLength(0);
+      el.value = 'latest document';
+      el.remove();
+      el.language = '';
+      document.body.append(el);
+      await flush();
+      const second = editors.at(-1)!;
+      expect(el.value).toBe('latest document');
+      resolveLanguage(elixirExtension);
+      await flush();
+      expect(editors).toHaveLength(1);
+      expect(editors.at(-1)).toBe(second);
+      expect(el.value).toBe('latest document');
+    });
   });
 
   describe('properties', () => {
