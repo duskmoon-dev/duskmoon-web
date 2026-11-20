@@ -1,21 +1,10 @@
 name: Deploy Duskmoon Web Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: [Web release]
+    types: [completed]
     branches: [main]
-    paths:
-      - .github/workflows/deploy-pages.yml
-      - apps/**
-      - packages/**
-      - yew/**
-      - package.json
-      - bun.lock
-      - bunfig.toml
-      - .gitattributes
-      - VERSION
-      - scripts/js/**
-      - scripts/pages/**
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -25,7 +14,48 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  release:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'workflow_dispatch' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-26.04
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      tag: ${{ steps.select.outputs.tag }}
+      sha: ${{ steps.select.outputs.sha }}
+    steps:
+      - name: Select the latest published Web release
+        id: select
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_RUN: ${{ github.event.workflow_run.id }}
+          RELEASE_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+        run: |
+          finalized=$(gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$RELEASE_RUN/attempts/$RELEASE_ATTEMPT/jobs" \
+            --jq '.jobs[] | select(.name == "Publish GitHub release" and .conclusion == "success") | .id')
+          if [[ -z "$finalized" ]]; then
+            echo "The upstream run only staged artifacts."
+            exit 0
+          fi
+          tag=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+            --jq '.[] | select((.draft | not) and any(.assets[]; .name == "release.json")) | .tag_name' |
+            jq -Rsr '
+              split("\n")
+              | map(capture("^v(?<major>0|[1-9][0-9]*)\\.(?<minor>0|[1-9][0-9]*)\\.(?<patch>0|[1-9][0-9]*)(?:-rc\\.(?<rc>0|[1-9][0-9]*))?$") + { tag: . })
+              | sort_by([(.major | tonumber), (.minor | tonumber), (.patch | tonumber), (.rc == null), (.rc // "0" | tonumber)])
+              | last.tag // error("No published Web release")
+            ')
+          gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern release.json --dir "$RUNNER_TEMP"
+          source=$(jq -er --arg version "${tag#v}" 'select(.version == $version) | .sha | select(test("^[0-9a-f]{40}$"))' "$RUNNER_TEMP/release.json")
+          printf 'tag=%s\nsha=%s\n' "$tag" "$source" >> "$GITHUB_OUTPUT"
+
   build:
+    needs: release
+    if: needs.release.outputs.tag != ''
     runs-on: ubuntu-26.04
     timeout-minutes: 45
     permissions:
@@ -33,6 +63,16 @@ jobs:
       pages: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: refs/tags/${{ needs.release.outputs.tag }}
+          persist-credentials: false
+      - name: Verify the published source
+        env:
+          RELEASE_TAG: ${{ needs.release.outputs.tag }}
+          RELEASE_SOURCE: ${{ needs.release.outputs.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$RELEASE_SOURCE"
+          test "$(cat VERSION)" = "${RELEASE_TAG#v}"
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
@@ -58,7 +98,6 @@ jobs:
           path: ${{ runner.temp }}/pages
 
   deploy:
-    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-26.04
     permissions:

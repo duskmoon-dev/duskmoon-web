@@ -48,8 +48,10 @@ deployment origin and path when hosting it elsewhere.
 
 ## GitHub Pages
 
-The **Deploy Duskmoon Web Pages** workflow starts on relevant pushes to `main`
-or by manual dispatch. It builds the Core, Elements, and React docs, the Code
+The **Deploy Duskmoon Web Pages** workflow builds after **Web release** publishes
+successfully. It selects the highest published Web version, including release
+candidates, and checks out the tag that matches the attached release manifest.
+It builds the Core, Elements, and React docs, the Code
 Engine and Elements playgrounds, the Tailwind and Yew demos, both starter
 projects, and the React/Next.js example. The sites share a
 [navigation page](https://duskmoon-dev.github.io/duskmoon-web/). Phoenix runs
