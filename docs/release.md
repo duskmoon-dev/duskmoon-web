@@ -50,6 +50,7 @@ publishes in dependency order, including `@duskmoon-dev/code-engine` before
 index entry and archive before publishing `yew-duskmoon`. Cargo repackages
 from the pinned commit and checks the staged hash before each `cargo publish`.
 After all three jobs verify their published archives, a separate job publishes
-the GitHub release. Individual registry entries can appear earlier.
+the GitHub release with a versioned link for every package in the manifest.
+Individual registry entries can appear earlier.
 
 If publication stops, rerun the failed job using the same validated artifact. If a registry reports a staged version, review and approve it in the registry before retrying. A new dispatch on `main` can use the original `source_sha`, `version`, and `recovery_run_id` to download the original staging output. A different registry hash is a conflict that stops publication. Keep the original archives available for the recovery window. A same-version archive rebuilt later might differ and is unsuitable for resolving a registry hash conflict.
