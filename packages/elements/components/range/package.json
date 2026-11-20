@@ -1,6 +1,6 @@
 {
   "name": "@duskmoon-dev/el-range",
-  "version": "2.0.0-rc.1",
+  "version": "2.0.0-rc.2",
   "description": "DuskMoon native range input custom element",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -35,8 +35,8 @@
     "lint:check": "eslint src --max-warnings 0"
   },
   "dependencies": {
-    "@duskmoon-dev/el-base": "2.0.0-rc.1",
-    "@duskmoon-dev/core": "2.0.0-rc.1"
+    "@duskmoon-dev/el-base": "2.0.0-rc.2",
+    "@duskmoon-dev/core": "2.0.0-rc.2"
   },
   "devDependencies": {
     "typescript": "6.0.3"

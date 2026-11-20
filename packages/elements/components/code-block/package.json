@@ -1,6 +1,6 @@
 {
   "name": "@duskmoon-dev/el-code-block",
-  "version": "2.0.0-rc.1",
+  "version": "2.0.0-rc.2",
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -37,8 +37,8 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
-    "@duskmoon-dev/el-base": "2.0.0-rc.1",
-    "@duskmoon-dev/core": "2.0.0-rc.1"
+    "@duskmoon-dev/el-base": "2.0.0-rc.2",
+    "@duskmoon-dev/core": "2.0.0-rc.2"
   },
   "devDependencies": {
     "typescript": "6.0.3"

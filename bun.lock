@@ -281,7 +281,7 @@
     },
     "packages/css/core": {
       "name": "@duskmoon-dev/core",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "devDependencies": {
         "@axe-core/playwright": "4.13.0",
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
@@ -299,7 +299,7 @@
     },
     "packages/css/css-art": {
       "name": "@duskmoon-dev/css-art",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "devDependencies": {
         "@types/bun": "latest",
         "lightningcss": "1.33.0",
@@ -308,7 +308,7 @@
     },
     "packages/elements/art-elements": {
       "name": "@duskmoon-dev/art-elements",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/el-art-atom": "2.0.0-rc.1",
         "@duskmoon-dev/el-art-cat-stargazer": "2.0.0-rc.1",
@@ -333,7 +333,7 @@
     },
     "packages/elements/art/atom": {
       "name": "@duskmoon-dev/el-art-atom",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -344,7 +344,7 @@
     },
     "packages/elements/art/cat-stargazer": {
       "name": "@duskmoon-dev/el-art-cat-stargazer",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -355,7 +355,7 @@
     },
     "packages/elements/art/circular-gallery": {
       "name": "@duskmoon-dev/el-art-circular-gallery",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -366,7 +366,7 @@
     },
     "packages/elements/art/color-spin": {
       "name": "@duskmoon-dev/el-art-color-spin",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -377,7 +377,7 @@
     },
     "packages/elements/art/csswitch": {
       "name": "@duskmoon-dev/el-art-csswitch",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -388,7 +388,7 @@
     },
     "packages/elements/art/eclipse": {
       "name": "@duskmoon-dev/el-art-eclipse",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -399,7 +399,7 @@
     },
     "packages/elements/art/flower-animation": {
       "name": "@duskmoon-dev/el-art-flower-animation",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -410,7 +410,7 @@
     },
     "packages/elements/art/gemini-input": {
       "name": "@duskmoon-dev/el-art-gemini-input",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -421,7 +421,7 @@
     },
     "packages/elements/art/moon": {
       "name": "@duskmoon-dev/el-art-moon",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -432,7 +432,7 @@
     },
     "packages/elements/art/mountain": {
       "name": "@duskmoon-dev/el-art-mountain",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -443,7 +443,7 @@
     },
     "packages/elements/art/plasma-ball": {
       "name": "@duskmoon-dev/el-art-plasma-ball",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -454,7 +454,7 @@
     },
     "packages/elements/art/snow": {
       "name": "@duskmoon-dev/el-art-snow",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -465,7 +465,7 @@
     },
     "packages/elements/art/snowball-preloader": {
       "name": "@duskmoon-dev/el-art-snowball-preloader",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -476,7 +476,7 @@
     },
     "packages/elements/art/sun": {
       "name": "@duskmoon-dev/el-art-sun",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -487,7 +487,7 @@
     },
     "packages/elements/art/synthwave-starfield": {
       "name": "@duskmoon-dev/el-art-synthwave-starfield",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -498,14 +498,14 @@
     },
     "packages/elements/base": {
       "name": "@duskmoon-dev/el-base",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "devDependencies": {
         "typescript": "6.0.3",
       },
     },
     "packages/elements/components/accordion": {
       "name": "@duskmoon-dev/el-accordion",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -516,7 +516,7 @@
     },
     "packages/elements/components/alert": {
       "name": "@duskmoon-dev/el-alert",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -527,7 +527,7 @@
     },
     "packages/elements/components/autocomplete": {
       "name": "@duskmoon-dev/el-autocomplete",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -541,7 +541,7 @@
     },
     "packages/elements/components/badge": {
       "name": "@duskmoon-dev/el-badge",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -552,7 +552,7 @@
     },
     "packages/elements/components/bottom-navigation": {
       "name": "@duskmoon-dev/el-bottom-navigation",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -563,7 +563,7 @@
     },
     "packages/elements/components/bottom-sheet": {
       "name": "@duskmoon-dev/el-bottom-sheet",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -574,7 +574,7 @@
     },
     "packages/elements/components/breadcrumbs": {
       "name": "@duskmoon-dev/el-breadcrumbs",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -585,7 +585,7 @@
     },
     "packages/elements/components/button": {
       "name": "@duskmoon-dev/el-button",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -596,7 +596,7 @@
     },
     "packages/elements/components/card": {
       "name": "@duskmoon-dev/el-card",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -607,7 +607,7 @@
     },
     "packages/elements/components/carousel": {
       "name": "@duskmoon-dev/el-carousel",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -618,7 +618,7 @@
     },
     "packages/elements/components/cascader": {
       "name": "@duskmoon-dev/el-cascader",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -629,7 +629,7 @@
     },
     "packages/elements/components/chart": {
       "name": "@duskmoon-dev/el-chart",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -640,7 +640,7 @@
     },
     "packages/elements/components/chat": {
       "name": "@duskmoon-dev/el-chat",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -654,7 +654,7 @@
     },
     "packages/elements/components/chip": {
       "name": "@duskmoon-dev/el-chip",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -665,7 +665,7 @@
     },
     "packages/elements/components/circle-menu": {
       "name": "@duskmoon-dev/el-circle-menu",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -676,7 +676,7 @@
     },
     "packages/elements/components/code-block": {
       "name": "@duskmoon-dev/el-code-block",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -687,7 +687,7 @@
     },
     "packages/elements/components/code-engine": {
       "name": "@duskmoon-dev/el-code-engine",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/code-engine": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -698,7 +698,7 @@
     },
     "packages/elements/components/console-page": {
       "name": "@duskmoon-dev/el-console-page",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -709,7 +709,7 @@
     },
     "packages/elements/components/countdown": {
       "name": "@duskmoon-dev/el-countdown",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -720,7 +720,7 @@
     },
     "packages/elements/components/datepicker": {
       "name": "@duskmoon-dev/el-datepicker",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -734,7 +734,7 @@
     },
     "packages/elements/components/datetime": {
       "name": "@duskmoon-dev/el-datetime",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
       },
@@ -744,7 +744,7 @@
     },
     "packages/elements/components/dialog": {
       "name": "@duskmoon-dev/el-dialog",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -755,7 +755,7 @@
     },
     "packages/elements/components/diff": {
       "name": "@duskmoon-dev/el-diff",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -766,7 +766,7 @@
     },
     "packages/elements/components/drawer": {
       "name": "@duskmoon-dev/el-drawer",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -777,7 +777,7 @@
     },
     "packages/elements/components/dropdown": {
       "name": "@duskmoon-dev/el-dropdown",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -788,7 +788,7 @@
     },
     "packages/elements/components/fab": {
       "name": "@duskmoon-dev/el-fab",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -799,7 +799,7 @@
     },
     "packages/elements/components/file-input": {
       "name": "@duskmoon-dev/el-file-input",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -810,7 +810,7 @@
     },
     "packages/elements/components/file-upload": {
       "name": "@duskmoon-dev/el-file-upload",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -821,7 +821,7 @@
     },
     "packages/elements/components/filter-group": {
       "name": "@duskmoon-dev/el-filter-group",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -832,7 +832,7 @@
     },
     "packages/elements/components/footer": {
       "name": "@duskmoon-dev/el-footer",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -843,7 +843,7 @@
     },
     "packages/elements/components/form": {
       "name": "@duskmoon-dev/el-form",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -854,7 +854,7 @@
     },
     "packages/elements/components/form-group": {
       "name": "@duskmoon-dev/el-form-group",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -865,7 +865,7 @@
     },
     "packages/elements/components/hero": {
       "name": "@duskmoon-dev/el-hero",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -876,7 +876,7 @@
     },
     "packages/elements/components/home-page": {
       "name": "@duskmoon-dev/el-home-page",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -887,7 +887,7 @@
     },
     "packages/elements/components/indicator": {
       "name": "@duskmoon-dev/el-indicator",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -898,7 +898,7 @@
     },
     "packages/elements/components/input": {
       "name": "@duskmoon-dev/el-input",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -909,7 +909,7 @@
     },
     "packages/elements/components/join": {
       "name": "@duskmoon-dev/el-join",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -920,7 +920,7 @@
     },
     "packages/elements/components/kbd": {
       "name": "@duskmoon-dev/el-kbd",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -931,7 +931,7 @@
     },
     "packages/elements/components/link": {
       "name": "@duskmoon-dev/el-link",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -942,7 +942,7 @@
     },
     "packages/elements/components/loading": {
       "name": "@duskmoon-dev/el-loading",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -953,7 +953,7 @@
     },
     "packages/elements/components/markdown": {
       "name": "@duskmoon-dev/el-markdown",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -974,7 +974,7 @@
     },
     "packages/elements/components/markdown-input": {
       "name": "@duskmoon-dev/el-markdown-input",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -999,7 +999,7 @@
     },
     "packages/elements/components/mask": {
       "name": "@duskmoon-dev/el-mask",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1010,7 +1010,7 @@
     },
     "packages/elements/components/megamenu": {
       "name": "@duskmoon-dev/el-megamenu",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1021,7 +1021,7 @@
     },
     "packages/elements/components/menu": {
       "name": "@duskmoon-dev/el-menu",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1032,7 +1032,7 @@
     },
     "packages/elements/components/navbar": {
       "name": "@duskmoon-dev/el-navbar",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1043,7 +1043,7 @@
     },
     "packages/elements/components/navigation": {
       "name": "@duskmoon-dev/el-navigation",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1054,7 +1054,7 @@
     },
     "packages/elements/components/nested-menu": {
       "name": "@duskmoon-dev/el-nested-menu",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1065,7 +1065,7 @@
     },
     "packages/elements/components/otp-input": {
       "name": "@duskmoon-dev/el-otp-input",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1076,7 +1076,7 @@
     },
     "packages/elements/components/pagination": {
       "name": "@duskmoon-dev/el-pagination",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1087,7 +1087,7 @@
     },
     "packages/elements/components/popover": {
       "name": "@duskmoon-dev/el-popover",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1098,7 +1098,7 @@
     },
     "packages/elements/components/pro-data-grid": {
       "name": "@duskmoon-dev/el-pro-data-grid",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
       },
@@ -1108,7 +1108,7 @@
     },
     "packages/elements/components/progress": {
       "name": "@duskmoon-dev/el-progress",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1119,7 +1119,7 @@
     },
     "packages/elements/components/radial-progress": {
       "name": "@duskmoon-dev/el-radial-progress",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1130,7 +1130,7 @@
     },
     "packages/elements/components/range": {
       "name": "@duskmoon-dev/el-range",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1141,7 +1141,7 @@
     },
     "packages/elements/components/segment-control": {
       "name": "@duskmoon-dev/el-segment-control",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1152,7 +1152,7 @@
     },
     "packages/elements/components/select": {
       "name": "@duskmoon-dev/el-select",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1163,7 +1163,7 @@
     },
     "packages/elements/components/sidebar-layout": {
       "name": "@duskmoon-dev/el-sidebar-layout",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1174,7 +1174,7 @@
     },
     "packages/elements/components/sign-page": {
       "name": "@duskmoon-dev/el-sign-page",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1185,7 +1185,7 @@
     },
     "packages/elements/components/slider": {
       "name": "@duskmoon-dev/el-slider",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1196,7 +1196,7 @@
     },
     "packages/elements/components/stack": {
       "name": "@duskmoon-dev/el-stack",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1207,7 +1207,7 @@
     },
     "packages/elements/components/stat": {
       "name": "@duskmoon-dev/el-stat",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1218,7 +1218,7 @@
     },
     "packages/elements/components/stepper": {
       "name": "@duskmoon-dev/el-stepper",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1229,7 +1229,7 @@
     },
     "packages/elements/components/swap": {
       "name": "@duskmoon-dev/el-swap",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1240,7 +1240,7 @@
     },
     "packages/elements/components/switch": {
       "name": "@duskmoon-dev/el-switch",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1251,7 +1251,7 @@
     },
     "packages/elements/components/table": {
       "name": "@duskmoon-dev/el-table",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1262,7 +1262,7 @@
     },
     "packages/elements/components/tabs": {
       "name": "@duskmoon-dev/el-tabs",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1273,7 +1273,7 @@
     },
     "packages/elements/components/theme-controller": {
       "name": "@duskmoon-dev/el-theme-controller",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1284,7 +1284,7 @@
     },
     "packages/elements/components/time-input": {
       "name": "@duskmoon-dev/el-time-input",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1295,7 +1295,7 @@
     },
     "packages/elements/components/toggle-switch": {
       "name": "@duskmoon-dev/el-toggle-switch",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1306,7 +1306,7 @@
     },
     "packages/elements/components/tooltip": {
       "name": "@duskmoon-dev/el-tooltip",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1317,7 +1317,7 @@
     },
     "packages/elements/components/validator": {
       "name": "@duskmoon-dev/el-validator",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
         "@duskmoon-dev/el-base": "2.0.0-rc.1",
@@ -1328,7 +1328,7 @@
     },
     "packages/elements/elements": {
       "name": "@duskmoon-dev/elements",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/el-accordion": "2.0.0-rc.1",
         "@duskmoon-dev/el-alert": "2.0.0-rc.1",
@@ -1416,7 +1416,7 @@
     },
     "packages/engines/code-engine": {
       "name": "@duskmoon-dev/code-engine",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "devDependencies": {
         "@lezer/generator": "1.8.0",
         "@types/bun": "1.3.14",
@@ -1425,7 +1425,7 @@
     },
     "packages/react/art-components": {
       "name": "@duskmoon-dev/art-components",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "devDependencies": {
         "@duskmoon-dev/css-art": "2.0.0-rc.1",
         "@testing-library/react": "16.3.2",
@@ -1441,7 +1441,7 @@
     },
     "packages/react/components": {
       "name": "@duskmoon-dev/components",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "ajv": "^8.20.0",
         "ajv-formats": "^3.0.1",
@@ -1476,7 +1476,7 @@
     },
     "phoenix/apps/duskmoon_phoenix": {
       "name": "duskmoon_phoenix",
-      "version": "2.0.0-rc.1",
+      "version": "2.0.0-rc.2",
       "dependencies": {
         "@duskmoon-dev/core": "2.0.0-rc.1",
       },
