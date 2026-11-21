@@ -86,16 +86,19 @@ defmodule DuskmoonPhoenix.Component.Layout.ThemeSwitcherTest do
     assert result =~ "theme-controller-dropdown"
   end
 
-  test "renders with data-theme attribute" do
+  test "passes an explicit selection to the hook without creating a theme surface" do
     result = render_component(&dm_theme_switcher/1, %{theme: "moonlight"})
 
-    assert result =~ ~s[data-theme="moonlight"]
+    assert result =~ ~s[data-selected-theme="moonlight"]
+    assert result =~ ~r/<input[^>]*value="moonlight"[^>]*checked/
+    refute result =~ "data-theme="
   end
 
-  test "renders with empty theme by default" do
+  test "leaves theme selection to the hook by default" do
     result = render_component(&dm_theme_switcher/1, %{})
 
-    assert result =~ ~s[data-theme=""]
+    refute result =~ "data-selected-theme="
+    refute result =~ "data-theme="
   end
 
   test "renders radio inputs with unique name scoped to component id" do
@@ -226,7 +229,7 @@ defmodule DuskmoonPhoenix.Component.Layout.ThemeSwitcherTest do
     assert result =~ "custom-switcher"
     assert result =~ "theme-controller-dropdown"
     assert result =~ "theme-controller-dropdown-end"
-    assert result =~ ~s[data-theme="sunshine"]
+    assert result =~ ~s[data-selected-theme="sunshine"]
     assert result =~ ~s[phx-hook="ThemeSwitcher"]
     assert result =~ ~s[value="default"]
     assert result =~ ~s[value="sunshine"]

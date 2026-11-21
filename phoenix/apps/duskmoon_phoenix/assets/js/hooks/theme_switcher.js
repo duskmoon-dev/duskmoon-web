@@ -20,7 +20,7 @@ function applyTheme(theme) {
 
 export const ThemeSwitcher = {
   mounted() {
-    const serverTheme = this.el.dataset.theme || "";
+    const serverTheme = this.el.dataset.selectedTheme;
     let theme = serverTheme || localStorage.getItem("theme") || "default";
 
     // Apply theme to document root so CSS selectors activate
@@ -60,7 +60,7 @@ export const ThemeSwitcher = {
 
   updated() {
     // Sync with server state if changed
-    const serverTheme = this.el.dataset.theme;
+    const serverTheme = this.el.dataset.selectedTheme;
     if (serverTheme) {
       applyTheme(serverTheme);
       const themeInputs = this.el.querySelectorAll(".theme-controller-item");

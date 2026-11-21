@@ -28,7 +28,7 @@ defmodule DuskmoonPhoenix.Component.Layout.ThemeSwitcher do
   @doc type: :component
   attr(:id, :any, default: nil, doc: "HTML id attribute")
   attr(:class, :any, default: nil, doc: "Additional CSS classes")
-  attr(:theme, :string, default: "", doc: "The active theme value")
+  attr(:theme, :string, default: nil, doc: "The active theme value")
 
   attr(:select_theme_label, :string,
     default: "Select theme",
@@ -56,7 +56,7 @@ defmodule DuskmoonPhoenix.Component.Layout.ThemeSwitcher do
       id={@base_id}
       class={["theme-controller-dropdown theme-controller-dropdown-end", @class]}
       phx-hook="ThemeSwitcher"
-      data-theme={@theme}
+      data-selected-theme={@theme}
       {@rest}
     >
       <summary class="theme-controller-trigger" aria-label={@select_theme_label} aria-haspopup="menu">
