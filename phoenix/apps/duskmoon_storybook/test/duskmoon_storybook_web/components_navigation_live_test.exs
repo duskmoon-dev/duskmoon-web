@@ -283,7 +283,8 @@ defmodule DuskmoonStorybookWeb.ComponentsNavigationLiveTest do
     for theme <- ["moonlight", "sunshine", "default"] do
       view |> element("#theme-switcher-demo") |> render_hook("theme_changed", %{theme: theme})
 
-      assert has_element?(view, "#theme-switcher-demo[data-theme='#{theme}']")
+      assert has_element?(view, "#theme-switcher-demo[data-selected-theme='#{theme}']")
+      refute has_element?(view, "#theme-switcher-demo[data-theme]")
       assert has_element?(view, "#theme-switcher-demo input[value='#{theme}'][checked]")
       refute has_element?(view, "#theme-switcher-demo input[checked]:not([value='#{theme}'])")
       assert find_live_child(view, sidebar_id).pid == sidebar.pid
@@ -293,7 +294,7 @@ defmodule DuskmoonStorybookWeb.ComponentsNavigationLiveTest do
     |> element("#theme-switcher-demo")
     |> render_hook("theme_changed", %{theme: "unsupported-theme"})
 
-    assert has_element?(view, "#theme-switcher-demo[data-theme=default]")
+    assert has_element?(view, "#theme-switcher-demo[data-selected-theme=default]")
     assert has_element?(view, "#theme-switcher-demo input[value=default][checked]")
     refute has_element?(view, "#theme-switcher-demo input[checked]:not([value=default])")
     assert find_live_child(view, sidebar_id).pid == sidebar.pid
