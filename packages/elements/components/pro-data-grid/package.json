@@ -1,6 +1,6 @@
 {
   "name": "@duskmoon-dev/el-pro-data-grid",
-  "version": "2.0.0-rc.3",
+  "version": "2.0.0-rc.4",
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -37,7 +37,7 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
-    "@duskmoon-dev/el-base": "2.0.0-rc.3"
+    "@duskmoon-dev/el-base": "2.0.0-rc.4"
   },
   "devDependencies": {
     "typescript": "6.0.3"

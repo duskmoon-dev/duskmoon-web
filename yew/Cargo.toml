@@ -8,7 +8,7 @@ exclude = [
 resolver = "2"
 
 [workspace.package]
-version = "2.0.0-rc.3"
+version = "2.0.0-rc.4"
 
 [workspace.dependencies]
-code-engine = { version = "=2.0.0-rc.3", path = "packages/code-engine" }
+code-engine = { version = "=2.0.0-rc.4", path = "packages/code-engine" }

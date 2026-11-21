@@ -10,6 +10,12 @@ The unified Web release series starts at `2.0.0` with `2.0.0-rc.0` as its first 
 2. Run `bun install` to update the root lock and `node scripts/release.mjs check`. The checker rejects an omitted public workspace or any same-group dependency that resolves to another version.
 3. Record breaking changes, fixes and additions by package. The rest of the packages are version-alignment-only releases.
 
+## 2.0.0-rc.4
+
+- `duskmoon_phoenix` keeps the theme switcher wrapper transparent in Sunshine and Moonlight and supports explicit theme selection. [#1](https://github.com/duskmoon-dev/duskmoon-web/issues/1)
+- `@duskmoon-dev/el-code-engine` preserves keyboard focus on toolbar buttons when editor configuration changes.
+- The remaining public packages align at the coordinated Web version.
+
 ## 2.0.0-rc.3
 
 - The Web source snapshot includes separate [consumer skills](../skills/README.md) and [repository development skills](../.agents/skills/README.md). The Phoenix consumer skill is `duskmoon-phoenix`.
