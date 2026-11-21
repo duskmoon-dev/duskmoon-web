@@ -430,15 +430,11 @@ export class ElDmCodeEngine extends BaseElement {
 
   protected update(): void {
     this.#configVersion++;
-    if (!this.#editor) {
-      // First render: create the container then mount the editor.
-      super.update();
-      void this.#mountEditor();
-    } else {
-      // Keep the editor DOM and document while updating the surrounding bars.
-      this.shadowRoot!.querySelector('.topbar')!.outerHTML = this.#renderTopbar();
-      this.shadowRoot!.querySelector('.bottombar')!.outerHTML = this.#renderBottombar();
+    this.#updateBars();
+    if (this.#editor) {
       void this.#applyConfig();
+    } else {
+      void this.#mountEditor();
     }
   }
 
@@ -451,6 +447,8 @@ export class ElDmCodeEngine extends BaseElement {
   };
 
   connectedCallback(): void {
+    // Create the editor host and toolbar nodes once per connection.
+    super.update();
     super.connectedCallback();
     this.shadowRoot!.addEventListener('click', this.#clickHandler);
   }
@@ -474,21 +472,19 @@ export class ElDmCodeEngine extends BaseElement {
   // ── Bar rendering ───────────────────────────────────────────────────
 
   #renderTopbar(): string {
-    const badge = this.language
-      ? `<span class="lang-badge">${LANG_BADGES[this.language] ?? this.language.toUpperCase()}</span>`
-      : '';
-    const t = (this as unknown as { title: string }).title;
-    const title = t ? `<span class="topbar-title">${t}</span>` : '';
     return `
       <div class="topbar" part="topbar">
         <slot name="topbar">
-          <div class="topbar-left">${badge}${title}</div>
+          <div class="topbar-left">
+            <span class="lang-badge" hidden></span>
+            <span class="topbar-title" hidden></span>
+          </div>
           <div class="topbar-right">
             <button class="bar-btn" data-action="undo" title="Undo">${ICON_UNDO}</button>
             <button class="bar-btn" data-action="redo" title="Redo">${ICON_REDO}</button>
             <button class="bar-btn" data-action="wrap" title="Toggle line wrap">${ICON_WRAP}</button>
             <button class="bar-btn" data-action="copy" title="Copy">${ICON_COPY}</button>
-            <button class="bar-btn" data-action="fullscreen" title="Toggle fullscreen">${this.#isFullscreen ? ICON_EXIT_FULLSCREEN : ICON_FULLSCREEN}</button>
+            <button class="bar-btn" data-action="fullscreen" title="${this.#isFullscreen ? 'Exit fullscreen' : 'Toggle fullscreen'}">${this.#isFullscreen ? ICON_EXIT_FULLSCREEN : ICON_FULLSCREEN}</button>
           </div>
         </slot>
       </div>
@@ -496,7 +492,6 @@ export class ElDmCodeEngine extends BaseElement {
   }
 
   #renderBottombar(): string {
-    const langName = this.language ? (LANG_NAMES[this.language] ?? this.language) : '';
     return `
       <div class="bottombar" part="bottombar">
         <slot name="bottombar">
@@ -506,11 +501,30 @@ export class ElDmCodeEngine extends BaseElement {
           </div>
           <div class="bottombar-right">
             <span>UTF-8</span>
-            ${langName ? `<span>${langName}</span>` : ''}
+            <span class="bottombar-language" hidden></span>
           </div>
         </slot>
       </div>
     `;
+  }
+
+  #updateBars(): void {
+    const root = this.shadowRoot!;
+    const { language, title } = this;
+    const badge = language ? (LANG_BADGES[language] ?? language.toUpperCase()) : '';
+    const langName = language ? (LANG_NAMES[language] ?? language) : '';
+    for (const [selector, text] of [
+      ['.lang-badge', badge],
+      ['.topbar-title', title ?? ''],
+      ['.bottombar-language', langName],
+    ]) {
+      const label = root.querySelector<HTMLElement>(selector)!;
+      label.textContent = text;
+      label.hidden = !text;
+    }
+    root
+      .querySelector('[data-action="wrap"]')!
+      .setAttribute('aria-pressed', String(Boolean(this.wrap)));
   }
 
   // ── Action handlers ─────────────────────────────────────────────────
@@ -595,7 +609,7 @@ export class ElDmCodeEngine extends BaseElement {
 
     const configVersion = this.#configVersion;
     const langExt = await this.#loadLanguage(this.language);
-    // A reactive update or disconnect can replace the mount while the language loads.
+    // A reactive update or disconnect can supersede this mount while the language loads.
     if (
       configVersion !== this.#configVersion ||
       this.#editor ||

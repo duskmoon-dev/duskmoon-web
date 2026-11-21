@@ -105,6 +105,16 @@ async function adapterChecks(page, origin) {
   const natural = await page.evaluate(() => window.fixture.snapshot('secondary'));
   assert(natural.hostHeight >= 200 && Math.abs(natural.editorHeight - natural.hostHeight) <= 2,
     'Short documents fill the default minimum height without a layout patch');
+  await page.evaluate(() => document.getElementById('secondary').showTopbar = true);
+  const wrapButton = page.locator('#secondary').getByRole('button', { name: 'Toggle line wrap' });
+  await wrapButton.focus();
+  for (const [key, wrapped] of [['Space', true], ['Enter', false]]) {
+    await page.keyboard.press(key);
+    await page.waitForFunction((wrapped) =>
+      ['pre-wrap', 'break-spaces'].includes(window.fixture.snapshot('secondary').whiteSpace) === wrapped, wrapped);
+    assert.equal(await wrapButton.getAttribute('aria-pressed'), String(wrapped));
+    assert(await wrapButton.evaluate((button) => button.matches(':focus')), `${key} keeps focus on the wrap toggle`);
+  }
   assert.equal(await page.locator('#primary [slot="topbar"]').textContent(), 'Custom topbar');
   const content = page.locator('#primary .cm-content');
   await content.click();
@@ -264,7 +274,7 @@ export async function verifyCodeEngineBrowser({ standalone, adapter, chromium, m
       assert.deepEqual(errors, [], 'Production editor console and asynchronous errors');
       assert.deepEqual(failures, [], 'Production language and shared chunk requests');
       assert(requests.some((url) => new URL(url).pathname.startsWith('/adapter/chunks/')));
-      console.log('Packed Chrome editors passed standalone identity/editing, adapter events/history/configuration, syntax/chunks, themes/ShadowRoots, scrolling, remount/loading and editor-free requests');
+      console.log('Packed Chrome editors passed standalone identity/editing, adapter events/history/configuration, toolbar keyboard focus, syntax/chunks, themes/ShadowRoots, scrolling, remount/loading and editor-free requests');
     } finally {
       await browser.close();
     }
