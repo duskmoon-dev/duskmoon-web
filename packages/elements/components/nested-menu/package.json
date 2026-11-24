@@ -1,6 +1,6 @@
 {
   "name": "@duskmoon-dev/el-nested-menu",
-  "version": "2.0.0-rc.4",
+  "version": "2.1.0",
   "description": "DuskMoon Nested Menu custom element for sidebar navigation with collapsible levels",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -34,8 +34,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@duskmoon-dev/el-base": "2.0.0-rc.4",
-    "@duskmoon-dev/core": "2.0.0-rc.4"
+    "@duskmoon-dev/el-base": "2.1.0",
+    "@duskmoon-dev/core": "2.1.0"
   },
   "devDependencies": {
     "typescript": "6.0.3"

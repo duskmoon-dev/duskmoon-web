@@ -10,6 +10,13 @@ The unified Web release series starts at `2.0.0` with `2.0.0-rc.0` as its first 
 2. Run `bun install` to update the root lock and `node scripts/release.mjs check`. The checker rejects an omitted public workspace or any same-group dependency that resolves to another version.
 3. Record breaking changes, fixes and additions by package. The rest of the packages are version-alignment-only releases.
 
+## 2.1.0
+
+- `@duskmoon-dev/core` adds styles for grouped Settings UI, including inset separators, navigation, control rows, and descriptions.
+- `@duskmoon-dev/components` adds `SettingsList`, `SettingsSection`, and `SettingsTile` for links, switches, read-only values, and custom controls.
+- The Core CSS and React docs include interactive Settings examples with keyboard support and responsive layouts.
+- The remaining public packages align at the coordinated Web version.
+
 ## 2.0.0-rc.4
 
 - `duskmoon_phoenix` keeps the theme switcher wrapper transparent in Sunshine and Moonlight and supports explicit theme selection. [#1](https://github.com/duskmoon-dev/duskmoon-web/issues/1)
