@@ -157,6 +157,7 @@ async function runBuild() {
       "src/components/splitter/index.ts",
       "src/components/statistic/index.ts",
       "src/components/steps/index.ts",
+      "src/components/settings/index.ts",
       "src/components/switch/index.ts",
       "src/components/swap/index.ts",
       "src/components/tabs/index.ts",

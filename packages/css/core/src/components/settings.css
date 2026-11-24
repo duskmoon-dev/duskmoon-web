@@ -1,0 +1,148 @@
+@layer components {
+  .settings-list {
+    display: grid;
+    gap: 1.25rem;
+    min-inline-size: 0;
+  }
+
+  .settings-section {
+    --settings-row-padding: 1rem;
+    --settings-leading-size: 1.25rem;
+    --settings-row-gap: 0.75rem;
+
+    min-inline-size: 0;
+  }
+
+  .settings-section-title,
+  .settings-section-description {
+    padding-inline: var(--settings-row-padding);
+    color: var(--color-on-surface-variant);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .settings-section-title {
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+  }
+
+  .settings-section-description {
+    margin: 0.5rem 0 0;
+    overflow-wrap: anywhere;
+  }
+
+  .settings-section-items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-radius: var(--radius-md, 0.75rem);
+    background: var(--color-surface-container-low);
+    overflow: clip;
+  }
+
+  .settings-section-items > li {
+    position: relative;
+    margin: 0;
+    padding: 0;
+  }
+
+  .settings-section-items > li + li::before {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: var(--settings-row-padding);
+    border-block-start: 1px solid var(--color-outline-variant);
+    pointer-events: none;
+    content: "";
+  }
+
+  .settings-section-items > li + li:has(> .settings-row > .settings-row-leading)::before {
+    inset-inline-start: calc(var(--settings-row-padding) + var(--settings-leading-size) + var(--settings-row-gap));
+  }
+
+  .settings-row {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem var(--settings-row-gap);
+    min-block-size: 3rem;
+    padding: 0.625rem var(--settings-row-padding);
+    color: var(--color-on-surface);
+    text-decoration: none;
+  }
+
+  a.settings-row:hover {
+    background: var(--color-surface-container);
+  }
+
+  a.settings-row:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+
+  .settings-row-leading {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--settings-leading-size);
+    block-size: var(--settings-leading-size);
+    color: var(--color-on-surface-variant);
+  }
+
+  .settings-row-leading > svg {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .settings-row-content {
+    display: grid;
+    flex: 1 1 12ch;
+    min-inline-size: 0;
+    gap: 0.125rem;
+    overflow-wrap: anywhere;
+  }
+
+  .settings-row-title {
+    font-weight: 500;
+  }
+
+  .settings-row-description,
+  .settings-row-trailing {
+    color: var(--color-on-surface-variant);
+    font-size: 0.875rem;
+  }
+
+  .settings-row-trailing {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-inline-start: auto;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .settings-row-trailing > :where(input, select, textarea) {
+    max-inline-size: 100%;
+  }
+
+  .settings-row-chevron {
+    flex: none;
+    inline-size: 0.4375rem;
+    block-size: 0.4375rem;
+    border-block-start: 2px solid currentColor;
+    border-inline-end: 2px solid currentColor;
+    rotate: 45deg;
+  }
+
+  .settings-row-chevron:dir(rtl) {
+    rotate: -45deg;
+  }
+
+  .settings-row-stacked > .settings-row-trailing {
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
+}

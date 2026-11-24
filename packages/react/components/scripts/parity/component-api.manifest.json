@@ -663,6 +663,17 @@
       "status": "implemented"
     },
     {
+      "id": "settings",
+      "kind": "standard-component",
+      "source": "duskmoon",
+      "exportName": "SettingsList",
+      "directory": "settings",
+      "rootExport": "./components/settings",
+      "packageSubpath": "./settings",
+      "buildEntrypoint": "src/components/settings/index.ts",
+      "status": "implemented"
+    },
+    {
       "id": "switch",
       "kind": "standard-component",
       "source": "duskmoon",

@@ -48,6 +48,12 @@
       "import": "./dist/esm/components/filter-group.js",
       "default": "./dist/esm/components/filter-group.js"
     },
+    "./components/settings": {
+      "types": "./dist/esm/components/settings.d.ts",
+      "style": "./dist/components/settings.css",
+      "import": "./dist/esm/components/settings.js",
+      "default": "./dist/esm/components/settings.js"
+    },
     "./components/toggle-switch": {
       "types": "./dist/esm/components/toggle-switch.d.ts",
       "style": "./dist/components/toggle-switch.css",

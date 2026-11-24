@@ -9,6 +9,7 @@ import { ButtonPreview, isButtonPreviewDemo } from "./ButtonPreviews";
 import { chatShowcasePreviews } from "./ChatPreviews";
 import { DropdownPreview, isDropdownPreviewDemo } from "./DropdownPreviews";
 import { DmLayoutPreview } from "./DmLayoutPreviews";
+import { SettingsPreview } from "./SettingsPreview";
 import {
   PopoverFormPreview,
   PopconfirmAsyncPreview,
@@ -1068,6 +1069,10 @@ export default function DemoRenderer({
     demoTitle === "Native form and field states"
   ) {
     return <GeminiInputContractPreview />;
+  }
+
+  if (componentId === "settings") {
+    return <SettingsPreview />;
   }
 
   // Handle special case utility/hook/types

@@ -107,6 +107,7 @@ const targetCategories: Record<string, DocCategoryId> = {
   segmented: "data-entry",
   select: "data-entry",
   slider: "data-entry",
+  settings: "data-entry",
   switch: "data-entry",
   "time-picker": "data-entry",
   "tree-select": "data-entry",

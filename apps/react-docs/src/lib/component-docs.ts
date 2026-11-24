@@ -1739,6 +1739,22 @@ function demosFor(
     return [{ ...example, source: "authored" }];
   }
 
+  if (target.id === "settings") {
+    const preview = fs.readFileSync(
+      path.join(repoRoot, "apps/react-docs/src/components/SettingsPreview.tsx"),
+      "utf8",
+    );
+    return [
+      {
+        title: "Application settings",
+        description:
+          "Try a control, then reset the example to restore the defaults. Read-only values, descriptions and labeled custom controls use the same grouped layout.",
+        code: 'import "@duskmoon-dev/components/styles.css";\n' + preview.trimEnd(),
+        source: "authored",
+      },
+    ];
+  }
+
   if (target.id === "markdown") {
     return [
       {

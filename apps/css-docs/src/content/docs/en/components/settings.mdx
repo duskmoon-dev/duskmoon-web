@@ -1,0 +1,176 @@
+---
+title: Settings
+description: Group application preferences, editable controls, and read-only information.
+category: components
+published: true
+tags: ['settings', 'list', 'switch']
+---
+
+import ComponentShowcase from '../../../../components/showcase/ComponentShowcase.astro';
+
+Group related settings on one surface. Use a row description for one setting and a section description for information that applies to the whole group.
+
+<ComponentShowcase title="Application settings" description="Try a control, then reset the example to restore the defaults." code={`<form class="settings-list">
+  <section class="settings-section" aria-labelledby="settings-general" aria-describedby="settings-general-help">
+    <h4 class="settings-section-title" id="settings-general">General</h4>
+    <ul class="settings-section-items" role="list">
+      <li>
+        <a class="settings-row" href="#display-language">
+          <span class="settings-row-leading" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg>
+          </span>
+          <span class="settings-row-content"><span class="settings-row-title">Language</span></span>
+          <span class="settings-row-trailing">English <span class="settings-row-chevron" aria-hidden="true"></span></span>
+        </a>
+      </li>
+      <li>
+        <div class="settings-row" id="display-language">
+          <span class="settings-row-leading" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+          </span>
+          <span class="settings-row-content">
+            <span class="settings-row-title">Display language</span>
+            <span class="settings-row-description">Inherited from your device.</span>
+          </span>
+          <span class="settings-row-trailing">English</span>
+        </div>
+      </li>
+      <li>
+        <div class="settings-row">
+          <span class="settings-row-leading" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          </span>
+          <span class="settings-row-content">
+            <label class="settings-row-title" for="settings-email">Email updates</label>
+            <span class="settings-row-description" id="settings-email-help">Receive a weekly summary.</span>
+          </span>
+          <span class="settings-row-trailing">
+            <input class="switch" type="checkbox" role="switch" id="settings-email" name="email" aria-describedby="settings-email-help">
+          </span>
+        </div>
+      </li>
+    </ul>
+    <p class="settings-section-description" id="settings-general-help">Device preferences can apply to more than one workspace.</p>
+  </section>
+
+  <section class="settings-section" aria-labelledby="settings-editor">
+    <h4 class="settings-section-title" id="settings-editor">Editor</h4>
+    <ul class="settings-section-items" role="list">
+      <li>
+        <div class="settings-row">
+          <span class="settings-row-content"><label class="settings-row-title" for="settings-profile">Profile name</label></span>
+          <div class="settings-row-trailing"><input class="input input-sm" id="settings-profile" name="profile" value="Default"></div>
+        </div>
+      </li>
+      <li>
+        <div class="settings-row">
+          <span class="settings-row-content">
+            <label class="settings-row-title" for="settings-size">Font size</label>
+            <span class="settings-row-description" id="settings-size-help">Adjust within 12–24 px.</span>
+          </span>
+          <div class="settings-row-trailing"><input class="range range-sm" type="range" id="settings-size" name="fontSize" min="12" max="24" value="16" aria-describedby="settings-size-help"></div>
+        </div>
+      </li>
+      <li>
+        <div class="settings-row">
+          <span class="settings-row-content"><label class="settings-row-title" for="settings-tab-width">Tab width</label></span>
+          <div class="settings-row-trailing">
+            <select class="select select-sm" id="settings-tab-width" name="tabWidth">
+              <option selected>2 spaces</option><option>4 spaces</option><option>8 spaces</option>
+            </select>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="settings-row">
+          <span class="settings-row-content"><label class="settings-row-title" for="settings-wrap">Wrap long lines</label></span>
+          <div class="settings-row-trailing"><input class="checkbox" type="checkbox" id="settings-wrap" name="wrap" checked></div>
+        </div>
+      </li>
+      <li>
+        <div class="settings-row settings-row-stacked">
+          <span class="settings-row-content"><label class="settings-row-title" for="settings-notes">Profile notes</label></span>
+          <div class="settings-row-trailing"><textarea class="textarea w-full" id="settings-notes" name="notes" rows="2"></textarea></div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="settings-section" aria-labelledby="settings-startup">
+    <h4 class="settings-section-title" id="settings-startup">Startup</h4>
+    <ul class="settings-section-items" role="list">
+      <li>
+        <div class="settings-row settings-row-stacked">
+          <span class="settings-row-content"><span class="settings-row-title" id="settings-on-launch">On launch</span></span>
+          <div class="settings-row-trailing" role="radiogroup" aria-labelledby="settings-on-launch">
+            <label class="radio-label"><input class="radio" type="radio" name="launch" value="restore" checked> Restore session</label>
+            <label class="radio-label"><input class="radio" type="radio" name="launch" value="new"> Start fresh</label>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="settings-row settings-row-stacked">
+          <span class="settings-row-content">
+            <span class="settings-row-title" id="settings-restore">Restore with session</span>
+            <span class="settings-row-description" id="settings-restore-help">Select which items reopen with a restored session.</span>
+          </span>
+          <div class="settings-row-trailing" role="group" aria-labelledby="settings-restore" aria-describedby="settings-restore-help">
+            <label class="checkbox-label"><input class="checkbox" type="checkbox" name="restore" value="tabs" checked> Open tabs</label>
+            <label class="checkbox-label"><input class="checkbox" type="checkbox" name="restore" value="layout"> Panel layout</label>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="settings-section" aria-labelledby="settings-about">
+    <h4 class="settings-section-title" id="settings-about">About</h4>
+    <ul class="settings-section-items" role="list">
+      <li>
+        <div class="settings-row">
+          <span class="settings-row-content"><span class="settings-row-title">Release channel</span></span>
+          <span class="settings-row-trailing"><span class="badge badge-primary">Stable</span></span>
+        </div>
+      </li>
+      <li>
+        <div class="settings-row">
+          <span class="settings-row-content"><span class="settings-row-title">Example preferences</span></span>
+          <div class="settings-row-trailing"><button class="btn btn-ghost btn-sm" type="reset">Reset example</button></div>
+        </div>
+      </li>
+    </ul>
+    <p class="settings-section-description">Changes are kept in this page for the current session.</p>
+  </section>
+</form>`} />
+
+## Configuration types
+
+| Setting | Native HTML |
+| --- | --- |
+| Navigation | A link, optional current value, and decorative chevron |
+| Switch or checkbox | A labeled checkbox with switch or checkbox styling |
+| Text, range, select, and multiline text | A labeled text input, range input, select, or textarea |
+| One choice or multiple choices | A labeled group of radios or checkboxes |
+| Read-only information | A value, badge, or description |
+| Custom action | A labeled button or other control in the trailing slot |
+
+The group surface and inset separators come from `.settings-section-items`. Use `.settings-row-stacked` for a control that needs its own line. Associate help text with its control, choice group, or section using `aria-describedby`.
+
+## Imports
+
+The aggregate Core CSS includes Settings and the native controls used here. For individual imports, load the layout and styles for the controls you use.
+
+```css
+@import "@duskmoon-dev/core/base.css";
+@import "@duskmoon-dev/core/themes/sunshine";
+@import "@duskmoon-dev/core/components/settings.css";
+@import "@duskmoon-dev/core/components/switch.css";
+@import "@duskmoon-dev/core/components/checkbox.css";
+@import "@duskmoon-dev/core/components/input.css";
+@import "@duskmoon-dev/core/components/range.css";
+@import "@duskmoon-dev/core/components/select.css";
+@import "@duskmoon-dev/core/components/textarea.css";
+@import "@duskmoon-dev/core/components/radio.css";
+@import "@duskmoon-dev/core/components/badge.css";
+@import "@duskmoon-dev/core/components/button.css";
+```

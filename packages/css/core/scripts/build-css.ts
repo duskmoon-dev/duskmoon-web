@@ -177,6 +177,7 @@ const componentFiles = [
   'stepper',
   'stack',
   'swap',
+  'settings',
   'switch',
   'table',
   'tabs',

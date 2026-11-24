@@ -339,6 +339,10 @@
       "types": "./dist/components/steps/index.d.ts",
       "import": "./dist/components/steps/index.js"
     },
+    "./settings": {
+      "types": "./dist/components/settings/index.d.ts",
+      "import": "./dist/components/settings/index.js"
+    },
     "./switch": {
       "types": "./dist/components/switch/index.d.ts",
       "import": "./dist/components/switch/index.js"

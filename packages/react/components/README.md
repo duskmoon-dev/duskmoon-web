@@ -41,7 +41,7 @@ import { Button, DmTable, theme } from "@duskmoon-dev/components";
 
 ## Public Surface
 
-- 79 standard components such as `Button`, `Chat`, `OtpInput`, `Swap`, `Fab`,
+- 80 standard components such as `Button`, `Chat`, `OtpInput`, `Swap`, `Fab`,
   `Megamenu`, `ConsolePage`, `Table`, `Modal`, `Select`, and `Typography`.
 - 21 DuskMoon workflow components such as `DmLayout`, `DmSearch`, `DmTable`,
   `DmProTable`, and `DmToolbar`.
@@ -49,6 +49,11 @@ import { Button, DmTable, theme } from "@duskmoon-dev/components";
   `unstableSetRender`, `GetProps`, `GetRef`, and DuskMoon theme helpers.
 - Component subpath exports follow `@duskmoon-dev/components/{component-id}`,
   for example `@duskmoon-dev/components/date-picker`.
+
+Use `SettingsList`, `SettingsSection`, and `SettingsTile` from
+`@duskmoon-dev/components/settings` for grouped preferences.
+`SettingsTile.Link` renders a native link and `SettingsTile.Switch` takes
+`checked` and `onCheckedChange` from the application.
 
 `OtpInput` uses one native input with decorative slots. `Swap` uses a native
 checkbox. `Fab`, `Megamenu`, and the mobile menu in `ConsolePage` use the

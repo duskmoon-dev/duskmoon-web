@@ -146,6 +146,7 @@ export * from "./components/spin";
 export * from "./components/splitter";
 export * from "./components/statistic";
 export * from "./components/steps";
+export * from "./components/settings";
 export * from "./components/switch";
 export * from "./components/swap";
 export * from "./components/tabs";
