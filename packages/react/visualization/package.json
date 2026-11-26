@@ -1,6 +1,6 @@
 {
   "name": "@duskmoon-dev/visualization",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Duskmoon chart components for React",
   "type": "module",
   "main": "./dist/index.js",
@@ -20,7 +20,7 @@
     "test": "bun test src"
   },
   "dependencies": {
-    "@duskmoon-dev/visualization-core": "2.1.0",
+    "@duskmoon-dev/visualization-core": "2.2.0",
     "@visx/scale": "4.0.0",
     "@visx/shape": "4.0.0"
   },

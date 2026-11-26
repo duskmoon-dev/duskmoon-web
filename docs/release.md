@@ -2,13 +2,22 @@
 
 Every formal Web release publishes the entire public inventory at the version in root [VERSION](../VERSION). This includes the npm TypeScript engine and Elements adapter, both Phoenix distributions, and the `code-engine` and `yew-duskmoon` crates. For an unchanged package, describe the release as version alignment only. An incompatible stable API change bumps the group major. Compatible additions bump the minor and compatible fixes bump the patch.
 
-The unified Web release series starts at `2.0.0` with `2.0.0-rc.0` as its first release candidate. Candidates use `X.Y.Z-rc.N`, the npm `rc` dist-tag, and GitHub's prerelease flag. Test with an exact published version. The inventory covers 99 distributions across 96 npm packages, one Hex package, and two crates. Historical registry observations appear in [the source inventory](package-inventory.json). Design, Duskmoon Bundler, and Bundler's Hologram fork have independent release versions.
+The unified Web release series starts at `2.0.0` with `2.0.0-rc.0` as its first release candidate. Candidates use `X.Y.Z-rc.N`, the npm `rc` dist-tag, and GitHub's prerelease flag. Test with an exact published version. The inventory covers 101 distributions across 98 npm packages, one Hex package, and two crates. Historical registry observations appear in [the source inventory](package-inventory.json). Design, Duskmoon Bundler, and Bundler's Hologram fork have independent release versions.
 
 ## Update a release
 
 1. Edit `VERSION` and run `node scripts/release.mjs sync` with Cargo available. Commit the updated public manifests, generated Phoenix `VERSION` file, and Cargo locks.
 2. Run `bun install` to update the root lock and `node scripts/release.mjs check`. The checker rejects an omitted public workspace or any same-group dependency that resolves to another version.
 3. Record breaking changes, fixes and additions by package. The rest of the packages are version-alignment-only releases.
+
+## 2.2.0
+
+- `@duskmoon-dev/visualization-core` and `@duskmoon-dev/visualization` add the
+  shared visualization contract and optional React line, bar, scatter, heatmap,
+  network, and offline map charts.
+- `duskmoon_phoenix/react-visualization` adds an opt-in chart hook for LiveView
+  with revisioned updates and selection and brush events.
+- The remaining public packages align at the coordinated Web version.
 
 ## 2.1.0
 
