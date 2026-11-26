@@ -65,3 +65,48 @@ The automated native-tabs browser fixture timed out on navigation in the focused
 See [the paired production measurements](performance.md) for requests, transfer sizes, paint, control readiness, main-thread work and layout shift.
 
 The existing Storybook lock includes Plug 1.20.3 through an exact `gaoxy_http 0.15.1` requirement. Hex reports EEF-CVE-2026-120287 for that Plug version. Moving Storybook to Plug 1.20.4 requires a compatible Gaoxy cohort upgrade. The independent native Hex consumer resolved Plug 1.20.4.
+
+## Shared visualization
+
+From the Web repository root, verify the contract and build both visualization
+packages before running the shared fixtures and release inventory check.
+
+```sh
+node specs/visualization/v1/verify.mjs
+bun run build:packages @duskmoon-dev/visualization
+bun run test:packages @duskmoon-dev/visualization-core @duskmoon-dev/visualization
+bun run verify:react-boundary
+node scripts/release.mjs check
+node scripts/verify-consumers.mjs ARTIFACTS --visualization-only
+```
+
+The consumer command installs the staged visualization npm tarballs in an
+isolated workspace and checks Node SSR, declarations, React peer resolution
+and Chromium interactions. Set `CHROME_BIN` when using a system Chromium.
+
+Build the React docs and serve the built site on port 4489. The browser suite
+compares the wide sunshine and narrow moonlight baselines and checks that raw
+data remains accessible independently of mark visibility. Set
+`DUSKMOON_VIZ_STORYBOOK_URL` to include the LiveView smoke test against a
+running Storybook with both asset graphs built.
+
+```sh
+bun run --filter @duskmoon-dev/react-docs build
+bun x playwright test -c validation/visualization-browser/playwright.config.mjs
+```
+
+In the Flutter workspace, verify the snapshot and generated gallery data
+before running the visualization package suite. The golden tests use the same
+fixture IDs, fixed fonts and Flutter's native text and layout. Cross-platform
+review compares ordering, gaps, baselines, fills, and topology. SVG and
+Flutter render text, ticks and controls with platform-specific spacing.
+
+```sh
+node specs/visualization/v1/verify.mjs specs/visualization/v1.lock.json
+dart --disable-dart-dev example/design_preview/tool/visualization_fixtures.dart --check
+cd packages/duskmoon_visualization
+flutter test
+```
+
+See [the benchmark procedures](visualization-performance.md) for the measured
+workloads and runtime-specific timing methods.

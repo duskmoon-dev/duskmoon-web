@@ -3,7 +3,8 @@ import { dirname, join } from "node:path";
 import { assertNoElementReference } from "./react-imports.mjs";
 
 const root = join(import.meta.dirname, "../..");
-const packages = ["packages/react/components", "packages/react/art-components"];
+const rootManifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+const packages = rootManifest.workspaces.filter((path) => path.startsWith("packages/react/"));
 const runtimeGroups = ["dependencies", "optionalDependencies", "peerDependencies"];
 const visited = new Set();
 

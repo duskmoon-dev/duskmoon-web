@@ -14,6 +14,7 @@
     "./svg/bsi/*.svg": "./priv/bsi/svg/*.svg",
     "./react-form": "./assets/js/react_form/index.js",
     "./react-chat": "./assets/js/react_chat/index.js",
+    "./react-visualization": "./assets/js/react_visualization/index.js",
     "./elements": "./assets/js/elements.js",
     "./lazy-hook": "./assets/js/lazy_hook.js",
     "./elements.css": "./assets/css/element-theme-bridge.css",
@@ -56,6 +57,7 @@
     "bootstrap-icons": "1.13.2",
     "postcss": "8.5.32",
     "@duskmoon-dev/components": "2.1.0",
+    "@duskmoon-dev/visualization": "2.1.0",
     "@duskmoon-dev/css-art": "2.1.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
@@ -70,6 +72,7 @@
     "@lexical/history": "0.53.0",
     "@lexical/plain-text": "0.53.0",
     "@duskmoon-dev/components": "2.1.0",
+    "@duskmoon-dev/visualization": "2.1.0",
     "@duskmoon-dev/css-art": "2.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -85,6 +88,9 @@
       "optional": true
     },
     "@duskmoon-dev/components": {
+      "optional": true
+    },
+    "@duskmoon-dev/visualization": {
       "optional": true
     },
     "@duskmoon-dev/css-art": {

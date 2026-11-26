@@ -25,6 +25,10 @@ const hooks = {
     () => loadReactFeature("loadChat"),
     { synchronize: true },
   ),
+  DuskmoonReactVisualization: lazyHook(
+    () => loadReactFeature("loadVisualization"),
+    { events: ["visualization.update"], synchronize: true },
+  ),
   DuskmoonComposedChat: lazyHook(
     () => loadReactFeature("loadComposedChat"),
     { synchronize: true },

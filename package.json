@@ -13,6 +13,7 @@
     "packages/elements/art/*",
     "packages/react/components",
     "packages/react/art-components",
+    "packages/react/visualization",
     "apps/*",
     "phoenix/apps/*",
     "yew/example"

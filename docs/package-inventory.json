@@ -3451,6 +3451,66 @@
       }
     },
     {
+      "name": "@duskmoon-dev/visualization-core",
+      "family": "engines",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-web",
+      "sourcePath": "packages/engines/visualization-core",
+      "path": "packages/engines/visualization-core",
+      "sourceRuntimeDependencies": {},
+      "sourceAssets": [
+        "dist",
+        "README.md"
+      ],
+      "sourceChecks": [
+        "build",
+        "test"
+      ],
+      "sourceDocs": [
+        "packages/engines/visualization-core/README.md"
+      ],
+      "sourceLicense": "MIT",
+      "published": {
+        "status": 404,
+        "checkedOn": "2026-11-26"
+      }
+    },
+    {
+      "name": "@duskmoon-dev/visualization",
+      "family": "react",
+      "registry": "npm",
+      "sourceRepository": "duskmoon-web",
+      "sourcePath": "packages/react/visualization",
+      "path": "packages/react/visualization",
+      "sourceRuntimeDependencies": {
+        "dependencies": {
+          "@duskmoon-dev/visualization-core": "2.1.0",
+          "@visx/scale": "4.0.0",
+          "@visx/shape": "4.0.0"
+        },
+        "peerDependencies": {
+          "react": "^19.0.0",
+          "react-dom": "^19.0.0"
+        }
+      },
+      "sourceAssets": [
+        "dist",
+        "README.md"
+      ],
+      "sourceChecks": [
+        "build",
+        "test"
+      ],
+      "sourceDocs": [
+        "packages/react/visualization/README.md"
+      ],
+      "sourceLicense": "MIT",
+      "published": {
+        "status": 404,
+        "checkedOn": "2026-11-26"
+      }
+    },
+    {
       "name": "@duskmoon-dev/code-engine",
       "family": "engines",
       "registry": "npm",

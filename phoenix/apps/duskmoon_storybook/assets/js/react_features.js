@@ -6,3 +6,6 @@ export const loadChat = () =>
 
 export const loadComposedChat = () =>
   import("./react_chat.js").then((module) => module.DuskmoonComposedChat);
+
+export const loadVisualization = () =>
+  import("duskmoon_phoenix/react-visualization").then((module) => module.DuskmoonReactVisualization);

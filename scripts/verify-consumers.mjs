@@ -10,7 +10,7 @@ import { setTimeout as delay } from "node:timers/promises";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const [output, mode, ...extra] = process.argv.slice(2);
-const modes = ["--react-only", "--yew-only", "--engine-only", "--serve-native", "--serve-engine", "--no-browser"];
+const modes = ["--react-only", "--visualization-only", "--yew-only", "--engine-only", "--serve-native", "--serve-engine", "--no-browser"];
 assert(output && !extra.length, `Usage: node scripts/verify-consumers.mjs ARTIFACTS [${modes.join("|")}]`);
 assert(mode === undefined || modes.includes(mode), "Unknown consumer mode");
 const artifactDir = resolve(output);
@@ -166,6 +166,170 @@ function verifyReact() {
   console.log("Isolated React tarballs: SSR, types, bundle and one React runtime passed");
 }
 
+
+async function verifyVisualization() {
+  const core = "@duskmoon-dev/visualization-core";
+  const react = "@duskmoon-dev/visualization";
+  for (const name of [core, react]) assert.equal(npm.get(name)?.version, version, name);
+  const dir = install("visualization-consumer", [core, react], Object.fromEntries(
+    ["react", "react-dom", "typescript", "@types/react", "@types/react-dom"].map(
+      (name) => [name, rootPackage.devDependencies[name]],
+    ),
+  ));
+  const installed = installedPaths(dir);
+  const duskmoonPackages = installed.filter((path) => path.includes("node_modules/@duskmoon-dev/"));
+  assert.deepEqual(duskmoonPackages.sort(), [react, core].map((name) => "node_modules/" + name).sort());
+  for (const name of ["react", "react-dom"]) {
+    assert.deepEqual(installed.filter((path) => path.endsWith("node_modules/" + name)), ["node_modules/" + name]);
+  }
+  const chartManifest = JSON.parse(readFileSync(join(dir, "node_modules", react, "package.json")));
+  assert.equal(chartManifest.dependencies[core], version);
+  const fixtures = Object.fromEntries(["xy", "heatmap", "scenes"].map((group) => [group,
+    JSON.parse(readFileSync(join(root, "specs/visualization/v1/fixtures", group + ".json"))),
+  ]));
+  cpSync(join(root, "validation/visualization-consumer.mjs"), join(dir, "examples.mjs"));
+  writeFileSync(join(dir, "fixtures.json"), JSON.stringify(fixtures));
+  writeFileSync(join(dir, "ssr.mjs"), `
+import { renderToStaticMarkup } from "react-dom/server";
+import { examples } from "./examples.mjs";
+import fixtures from "./fixtures.json" with { type: "json" };
+process.stdout.write(renderToStaticMarkup(examples(fixtures, 480)));
+`);
+  const html = run("node", ["ssr.mjs"], dir, true);
+  assert.equal((html.match(/<svg /g) ?? []).length, 6);
+  assert.match(html, /data-datum-id="b2"[^>]*height="0"/);
+  assert.match(html, /data-cell-id="missing"/);
+  writeFileSync(join(dir, "check.ts"), `
+import { type LineInput, DmVizLineChart } from "@duskmoon-dev/visualization";
+import { layoutXY } from "@duskmoon-dev/visualization-core";
+const chart: LineInput = { kind: "line", xAxis: { type: "time" }, yAxis: { type: "numeric" }, series: [] };
+layoutXY(chart);
+DmVizLineChart({ chart, width: 480 });
+`);
+  run("node", ["node_modules/typescript/bin/tsc", "--strict", "--target", "ES2022",
+    "--module", "NodeNext", "--noEmit", "check.ts"], dir);
+  if (mode === "--no-browser") return;
+
+  writeFileSync(join(dir, "client.mjs"), `
+import { createElement, StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { examples } from "./examples.mjs";
+import fixtures from "./fixtures.json";
+const root = createRoot(document.getElementById("mount"));
+window.chartEvents = [];
+root.render(createElement(StrictMode, null, examples(fixtures, undefined, (event) => window.chartEvents.push(event))));
+window.unmountCharts = () => root.unmount();
+`);
+  run("bun", ["build", "client.mjs", "--target=browser", "--outfile=client.js"], dir);
+  const { chromium } = await import("@playwright/test");
+  const browser = await chromium.launch({ executablePath: process.env.CHROME_BIN });
+  try {
+    const page = await browser.newPage({ hasTouch: true });
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await page.route("http://visualization.local/**", (route) => {
+      if (new URL(route.request().url()).pathname === "/client.js") {
+        return route.fulfill({ path: join(dir, "client.js"), contentType: "text/javascript" });
+      }
+      return route.fulfill({ contentType: "text/html", body:
+        '<!doctype html><meta charset="UTF-8"><div id="mount"></div><script type="module" src="/client.js"></script>' });
+    });
+    await page.goto("http://visualization.local/", { waitUntil: "networkidle" });
+    const line = page.getByRole("img", { name: "Gapped line" });
+    const bars = page.getByRole("img", { name: "Grouped bars" });
+    const scatter = page.getByRole("img", { name: "Missing coordinates" });
+    const heatmap = page.getByRole("img", { name: "Ordered heatmap" });
+    await heatmap.waitFor();
+    assert.equal(await line.locator("[data-series-id] > path").count(), 2);
+    assert.equal(await bars.locator('rect[data-datum-id="b2"]').getAttribute("height"), "0");
+    assert.equal(await bars.locator('rect[data-datum-id="a1"]').getAttribute("height"), "192");
+    assert.equal(await scatter.locator('g[data-datum-id="p"] circle').getAttribute("r"), "4");
+    const missing = heatmap.locator('g[data-cell-id="missing"] rect');
+    assert.equal(await missing.evaluate((element) => getComputedStyle(element).fill), "rgb(18, 52, 86)");
+    const events = () => page.evaluate(() => window.chartEvents);
+    const clearEvents = () => page.evaluate(() => { window.chartEvents.length = 0; });
+    const zero = bars.locator('rect[data-datum-id="b2"]');
+    await bars.scrollIntoViewIfNeeded();
+    const zeroBounds = await zero.boundingBox();
+    assert(zeroBounds);
+    await clearEvents();
+    await page.mouse.move(zeroBounds.x + zeroBounds.width / 2, zeroBounds.y + 1);
+    await page.mouse.click(zeroBounds.x + zeroBounds.width / 2, zeroBounds.y + 1);
+    assert((await events()).some((event) => event.type === "tooltip" &&
+      event.target.datumId === "b2" && event.raw.y === 0));
+    assert((await events()).some((event) => event.type === "selection" && event.ids[0]?.datumId === "b2"));
+
+    await page.getByRole("figure", { name: "Grouped bars" })
+      .getByRole("button", { name: "Clear selection" }).click();
+    await clearEvents();
+    await bars.scrollIntoViewIfNeeded();
+    const touchBounds = await zero.boundingBox();
+    assert(touchBounds);
+    await page.touchscreen.tap(touchBounds.x + touchBounds.width / 2, touchBounds.y + 1);
+    assert((await events()).some((event) => event.type === "selection" && event.ids[0]?.datumId === "b2"));
+
+    const linePlot = line.locator("[data-plot-interaction]");
+    await linePlot.scrollIntoViewIfNeeded();
+    await clearEvents();
+    await linePlot.press("ArrowRight");
+    await linePlot.press("Enter");
+    assert((await events()).some((event) => event.type === "selection" && event.ids[0]?.datumId === "second"));
+    await linePlot.press("=");
+    assert((await events()).some((event) => event.type === "viewport" && event.viewport.kind === "line"));
+    const lineBounds = await linePlot.boundingBox();
+    assert(lineBounds);
+    await clearEvents();
+    await page.mouse.move(lineBounds.x + lineBounds.width * .25, lineBounds.y + 40);
+    await page.mouse.down();
+    await page.mouse.move(lineBounds.x + lineBounds.width * .75, lineBounds.y + 40, { steps: 5 });
+    await page.mouse.up();
+    assert((await events()).some((event) => event.type === "brush" && event.range[0] < event.range[1]));
+    assert(!(await events()).some((event) => event.type === "selection"));
+    await line.locator("..").locator("..").getByRole("button", { name: "a", exact: true }).click();
+    assert((await events()).some((event) => event.type === "visibility" && event.visible === false));
+    const map = page.getByRole("img", { name: "Mercator map" });
+    await map.scrollIntoViewIfNeeded();
+    const mapBounds = await map.boundingBox();
+    assert(mapBounds);
+    await clearEvents();
+    await page.mouse.click(mapBounds.x + mapBounds.width / 2, mapBounds.y + mapBounds.height / 2);
+    assert(!(await events()).some((event) => event.type === "selection"));
+    const marker = await map.locator('circle[data-feature-id="marker"]').boundingBox();
+    assert(marker);
+    await page.mouse.click(marker.x + marker.width / 2, marker.y + marker.height / 2);
+    assert((await events()).some((event) =>
+      event.type === "selection" && event.ids[0]?.kind === "feature" && event.ids[0]?.id === "marker"));
+
+    const network = page.getByRole("img", { name: "Fixed network" });
+    await network.scrollIntoViewIfNeeded();
+    await page.getByRole("figure", { name: "Fixed network" })
+      .getByRole("button", { name: "Zoom out" }).click();
+    await network.scrollIntoViewIfNeeded();
+    const node = await network.locator('[data-node-id="west"] circle').boundingBox();
+    assert(node);
+    await clearEvents();
+    await page.mouse.move(node.x + node.width / 2, node.y + node.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(node.x + node.width / 2 + 75, node.y + node.height / 2 + 75, { steps: 5 });
+    await page.mouse.up();
+    const moved = (await events()).find((event) => event.type === "nodeMove");
+    assert.equal(moved?.id, "west");
+    assert(Math.abs(moved.position[0] - 4) < 1e-9 && Math.abs(moved.position[1] - 4) < 1e-9);
+    await page.locator("main").evaluate((element) => { element.style.width = "320px"; });
+    await page.waitForFunction(() => document.querySelector("svg")?.getAttribute("width") === "320");
+    await page.locator("main").evaluate((element) => { element.style.display = "none"; });
+    await page.waitForFunction(() => !document.querySelector("svg"));
+    await page.locator("main").evaluate((element) => { element.style.display = ""; });
+    await heatmap.waitFor();
+    await page.evaluate(() => window.unmountCharts());
+    await page.waitForFunction(() => !document.querySelector("svg"));
+    assert.deepEqual(errors, []);
+    console.log("Isolated visualization tarballs: SSR, types, Chromium hit testing, keyboard, touch, brush, resize and unmount passed");
+  } finally {
+    await browser.close();
+  }
+}
+
 async function verifyNative() {
   const dir = install("phoenix-native", ["@duskmoon-dev/core", "duskmoon_phoenix"], {
     phoenix: storybook.dependencies.phoenix,
@@ -253,6 +417,7 @@ async function verifyNative() {
 
 try {
   if (mode === undefined || mode === "--no-browser" || mode === "--react-only") verifyReact();
+  if (mode === undefined || mode === "--no-browser" || mode === "--visualization-only") await verifyVisualization();
   if (mode === undefined || mode === "--no-browser" || mode === "--engine-only" || mode === "--serve-engine") {
     await verifyCodeEngine();
   }

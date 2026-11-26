@@ -1,0 +1,31 @@
+{
+  "name": "@duskmoon-dev/visualization-core",
+  "version": "2.1.0",
+  "description": "Portable Duskmoon chart data and geometry",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "bun test src"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duskmoon-dev/duskmoon-web.git",
+    "directory": "packages/engines/visualization-core"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

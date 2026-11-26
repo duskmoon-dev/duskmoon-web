@@ -1,0 +1,40 @@
+{
+  "name": "@duskmoon-dev/visualization",
+  "version": "2.1.0",
+  "description": "Duskmoon chart components for React",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "bun run build.ts && tsc -p tsconfig.json --emitDeclarationOnly",
+    "test": "bun test src"
+  },
+  "dependencies": {
+    "@duskmoon-dev/visualization-core": "2.1.0",
+    "@visx/scale": "4.0.0",
+    "@visx/shape": "4.0.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duskmoon-dev/duskmoon-web.git",
+    "directory": "packages/react/visualization"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

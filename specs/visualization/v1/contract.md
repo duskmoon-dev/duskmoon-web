@@ -1,6 +1,6 @@
-# Duskmoon Visualization Contract 1.0.0-draft.1
+# Duskmoon Visualization Contract 1.0.0
 
-This candidate covers the portable input and observable behavior of the six Duskmoon visualization components. The Web repository owns the editable contract. The Flutter copy is a snapshot. The capability matrix records scope and implementation status separately. Use the fixtures and paired expected results to verify behavior independently of rendering libraries.
+Version 1.0.0 covers the portable input and observable behavior of the six Duskmoon visualization components. The Web repository owns the editable contract. The Flutter copy is a snapshot. The capability matrix records scope and implementation status separately. Use the fixtures and paired expected results to verify behavior independently of rendering libraries.
 
 ## Inputs and validation
 

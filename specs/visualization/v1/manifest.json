@@ -1,18 +1,18 @@
 {
-  "version": "1.0.0-draft.1",
+  "version": "1.0.0",
   "source": "https://github.com/duskmoon-dev/duskmoon-web",
   "files": [
     {
       "path": "README.md",
-      "sha256": "3c8d8a5231dd6ed517901f4ed3d5e23af91be010709e5a7c97be579366359165"
+      "sha256": "22ba72f8aefa159be2b0af4d2ac395b7d73aa7e78dfb6a7299ccb5460d934663"
     },
     {
       "path": "capabilities.json",
-      "sha256": "ed2d855d9582441321af6b5bbf4c989dba82c236aa58084f64b2abd91d764248"
+      "sha256": "bc52379cd0081eebc8f62df128ffa231953cdcd74f1efef47bcb3699b1435d3e"
     },
     {
       "path": "contract.md",
-      "sha256": "3f8fe7bf138e96d73cf0accbb822f59a6b7b64c9304231d17ecb1b5ccb96e26d"
+      "sha256": "c66e00ad10435d0c498761a24cf741510744e7329953f856c2189d62ed25e687"
     },
     {
       "path": "expected/heatmap.json",

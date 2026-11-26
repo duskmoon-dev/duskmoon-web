@@ -1,0 +1,89 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import {
+  DmVizBarChart,
+  DmVizHeatmap,
+  DmVizLineChart,
+  DmVizMapChart,
+  DmVizNetworkGraph,
+  DmVizScatterChart,
+} from "@duskmoon-dev/visualization";
+import type {
+  BarInput, HeatmapInput, LineInput, MapInput, NetworkInput, ScatterInput,
+} from "@duskmoon-dev/visualization";
+import xy from "../../../../../specs/visualization/v1/fixtures/xy.json";
+import heatmap from "../../../../../specs/visualization/v1/fixtures/heatmap.json";
+import scenes from "../../../../../specs/visualization/v1/fixtures/scenes.json";
+
+const line = xy["line-input-order-gap-and-repeated-x"].chart as LineInput;
+const bar = xy["bar-grouped-vertical"].chart as BarInput;
+const scatter = xy["scatter-missing"].chart as ScatterInput;
+const cells = heatmap["ordered-continuous-and-missing"].chart as HeatmapInput;
+const network = scenes["network-fixed"].chart as NetworkInput;
+const map = scenes["mercator-fit-holes-and-points"].chart as unknown as MapInput;
+---
+
+<DocsLayout title="Visualization" description="Explore the six charts using shared Web and Flutter data.">
+  <div class="viz-catalog">
+    <header>
+      <h1>Visualization</h1>
+      <p>These charts use the same fixtures as the Flutter showcase. Use the chart actions and data controls to inspect each example.</p>
+    </header>
+    <section aria-labelledby="line-example">
+      <h2 id="line-example">Line</h2>
+      <p>Input order, repeated x values, and a missing point that breaks the line.</p>
+      <DmVizLineChart client:only="react" chart={{ ...line, options: { title: "Ordered line", marker: { visible: true } } }} />
+      <code>line-input-order-gap-and-repeated-x</code>
+    </section>
+    <section aria-labelledby="bar-example">
+      <h2 id="bar-example">Bar</h2>
+      <p>Two series with positive, negative, and zero values, using category labels.</p>
+      <DmVizBarChart client:only="react" chart={{ ...bar, options: { title: "Grouped bars" } }} />
+      <code>bar-grouped-vertical</code>
+    </section>
+    <section aria-labelledby="scatter-example">
+      <h2 id="scatter-example">Scatter</h2>
+      <p>Only records with both coordinates appear in the plot. The data table retains all records.</p>
+      <DmVizScatterChart client:only="react" chart={{ ...scatter, options: { title: "Missing coordinates" } }} />
+      <code>scatter-missing</code>
+    </section>
+    <section aria-labelledby="heatmap-example">
+      <h2 id="heatmap-example">Heatmap</h2>
+      <p>Ordered rows and columns with a continuous scale and an explicit missing value.</p>
+      <DmVizHeatmap client:only="react" chart={{ ...cells, options: { ...cells.options, title: "Ordered heatmap" } }} />
+      <code>ordered-continuous-and-missing</code>
+    </section>
+    <section aria-labelledby="network-example">
+      <h2 id="network-example">Network</h2>
+      <p>Fixed node positions. Drag a node to move it or drag the background to pan.</p>
+      <DmVizNetworkGraph client:only="react" chart={{ ...network, options: { title: "Fixed network" } }} />
+      <code>network-fixed</code>
+    </section>
+    <section aria-labelledby="map-example">
+      <h2 id="map-example">Map</h2>
+      <p>Offline Mercator geometry with a polygon hole, multiple polygons, and a point marker.</p>
+      <DmVizMapChart client:only="react" chart={{ ...map, options: { ...map.options, title: "Mercator map" } }} />
+      <code>mercator-fit-holes-and-points</code>
+    </section>
+  </div>
+</DocsLayout>
+
+<style>
+  .viz-catalog {
+    margin-inline: auto;
+    max-inline-size: 76rem;
+    padding: 1.5rem;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+  }
+
+  header { grid-column: 1 / -1; }
+  section {
+    min-inline-size: 0;
+    padding: 1rem;
+    border: 1px solid var(--color-outline-variant);
+    border-radius: 1rem;
+  }
+  code { overflow-wrap: anywhere; }
+</style>
